@@ -1,0 +1,29 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<section class="panel">
+  <div class="panel-header"><h2>Notifications</h2></div>
+  <div class="list-group">
+    {% for n in page %}
+    <div class="list-group-item {% if n.status != 'read' %}list-group-item-primary{% endif %}">
+      <div class="d-flex justify-content-between">
+        <div>
+          <strong>{{ n.subject }}</strong>
+          <div class="small">{{ n.body|truncatechars:200 }}</div>
+          <div class="text-muted small">{{ n.created_at }} · {{ n.get_channel_display }}</div>
+        </div>
+        {% if n.status != 'read' %}
+        <form method="post" action="{% url 'service_desk:notification_read' n.pk %}">
+          {% csrf_token %}
+          <button class="btn btn-sm btn-outline-secondary" type="submit">Mark read</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+    {% empty %}
+    <div class="p-4 text-center text-muted">No notifications.</div>
+    {% endfor %}
+  </div>
+  {% include "components/pagination.html" with page=page %}
+</section>
+{% endblock %}

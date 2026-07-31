@@ -1,0 +1,28 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<section class="panel">
+  <h1 class="h3">{{ ci.ci_id }} — {{ ci.name }}</h1>
+  <p class="text-muted">{% if ci.ci_class %}{{ ci.ci_class.name }} · {% endif %}{{ ci.environment }} · criticality {{ ci.criticality }}</p>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <h2 class="h6">Attributes</h2>
+      <pre class="bg-light p-3 rounded small">{{ ci.attributes }}</pre>
+      {% if ci.asset %}<p>Linked asset: <a href="{% url 'service_desk:asset_detail' ci.asset_id %}">{{ ci.asset }}</a></p>{% endif %}
+    </div>
+    <div class="col-md-6">
+      <h2 class="h6">Dependencies (downstream)</h2>
+      <ul>
+        {% for rel in outbound %}
+        <li>{{ rel.get_relation_type_display }} → <a href="{% url 'cmdb_app:detail' rel.target_id %}">{{ rel.target }}</a></li>
+        {% empty %}<li class="text-muted">None</li>{% endfor %}
+      </ul>
+      <h2 class="h6">Dependents (upstream)</h2>
+      <ul>
+        {% for rel in inbound %}
+        <li><a href="{% url 'cmdb_app:detail' rel.source_id %}">{{ rel.source }}</a> → {{ rel.get_relation_type_display }}</li>
+        {% empty %}<li class="text-muted">None</li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>
+{% endblock %}

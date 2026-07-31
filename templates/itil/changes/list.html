@@ -1,0 +1,30 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<section class="panel">
+  <div class="panel-header">
+    <h2>Change requests</h2>
+    <div class="d-flex gap-2">
+      <a class="btn btn-outline-secondary btn-sm" href="{% url 'changes:cab_list' %}">CAB</a>
+      <a class="btn btn-primary btn-sm" href="{% url 'changes:create' %}">New change</a>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead><tr><th>Number</th><th>Title</th><th>Type</th><th>State</th><th>Risk</th><th>Updated</th></tr></thead>
+      <tbody>
+        {% for t in changes %}
+        <tr>
+          <td><a href="{% url 'changes:detail' t.pk %}"><strong>{{ t.ticket_number }}</strong></a></td>
+          <td>{{ t.title }}</td>
+          <td>{% if t.change_request %}{{ t.change_request.get_change_type_display }}{% endif %}</td>
+          <td>{% if t.change_request %}{{ t.change_request.get_state_display }}{% endif %}</td>
+          <td>{% if t.change_request %}{{ t.change_request.get_risk_display }}{% endif %}</td>
+          <td>{{ t.updated_at|timesince }} ago</td>
+        </tr>
+        {% empty %}<tr><td colspan="6" class="text-center text-muted py-4">No open changes.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "components/pagination.html" with page=page %}
+</section>
+{% endblock %}

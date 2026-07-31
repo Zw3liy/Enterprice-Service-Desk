@@ -1,0 +1,14 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<section class="panel" style="max-width:720px">
+  <div class="panel-header"><h2>New vendor</h2></div>
+  <form method="post">{% csrf_token %}
+    <div class="mb-3"><label class="form-label">Name</label><input class="form-control" name="name" required></div>
+    <div class="mb-3"><label class="form-label">Code</label><input class="form-control" name="code" placeholder="auto if blank"></div>
+    <div class="mb-3"><label class="form-label">Support email</label><input class="form-control" type="email" name="support_email"></div>
+    <div class="mb-3"><label class="form-label">Website</label><input class="form-control" type="url" name="website"></div>
+    <div class="mb-3"><label class="form-label">Notes</label><textarea class="form-control" name="notes" rows="3"></textarea></div>
+    <button class="btn btn-primary" type="submit">Save</button>
+  </form>
+</section>
+{% endblock %}

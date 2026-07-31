@@ -1,0 +1,18 @@
+:root {
+  --esd-bg: #f4f6f9;
+  --esd-surface: #ffffff;
+  --esd-text: #1f2937;
+  --esd-muted: #6b7280;
+  --esd-border: #e5e7eb;
+  --esd-primary: #2563eb;
+  --esd-primary-dark: #1d4ed8;
+  --esd-danger: #dc2626;
+  --esd-warning: #d97706;
+  --esd-success: #059669;
+  --esd-sidebar: #0f172a;
+  --esd-sidebar-text: #e2e8f0;
+  --esd-sidebar-width: 260px;
+  --esd-radius: 12px;
+  --esd-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  --esd-font: "Segoe UI", system-ui, -apple-system, sans-serif;
+}

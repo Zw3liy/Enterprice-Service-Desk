@@ -1,0 +1,23 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<section class="panel" style="max-width:800px">
+  <div class="panel-header"><h2>Create change</h2></div>
+  <form method="post">{% csrf_token %}
+    <div class="mb-3"><label class="form-label">Title</label><input class="form-control" name="title" required></div>
+    <div class="mb-3"><label class="form-label">Description</label><textarea class="form-control" name="description" rows="3"></textarea></div>
+    <div class="row g-2">
+      <div class="col-md-6"><label class="form-label">Type</label>
+        <select name="change_type" class="form-select">{% for v,l in change_types %}<option value="{{ v }}">{{ l }}</option>{% endfor %}</select>
+      </div>
+      <div class="col-md-6"><label class="form-label">Risk</label>
+        <select name="risk" class="form-select">{% for v,l in risks %}<option value="{{ v }}">{{ l }}</option>{% endfor %}</select>
+      </div>
+    </div>
+    <div class="mb-3 mt-2"><label class="form-label">Justification</label><textarea class="form-control" name="justification" rows="2"></textarea></div>
+    <div class="mb-3"><label class="form-label">Implementation plan</label><textarea class="form-control" name="implementation_plan" rows="2"></textarea></div>
+    <div class="mb-3"><label class="form-label">Rollback plan</label><textarea class="form-control" name="rollback_plan" rows="2"></textarea></div>
+    <div class="mb-3"><label class="form-label">Test plan</label><textarea class="form-control" name="test_plan" rows="2"></textarea></div>
+    <button class="btn btn-primary" type="submit">Create</button>
+  </form>
+</section>
+{% endblock %}

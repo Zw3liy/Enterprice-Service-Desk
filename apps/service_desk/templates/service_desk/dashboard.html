@@ -1,48 +1,125 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Enterprise Service Desk</title>
-</head>
+{% extends "layouts/base.html" %}
+{% load humanize %}
 
-<body>
+{% block content %}
+<section class="dashboard">
+  <div class="kpi-grid">
+    <article class="kpi-card">
+      <span class="kpi-label">Open tickets</span>
+      <strong class="kpi-value">{{ open_tickets|default:0 }}</strong>
+      <small>{{ unassigned_tickets }} unassigned</small>
+    </article>
+    <article class="kpi-card">
+      <span class="kpi-label">Total tickets</span>
+      <strong class="kpi-value">{{ total_tickets|default:0 }}</strong>
+      <small>{{ created_7d }} created (7d)</small>
+    </article>
+    <article class="kpi-card">
+      <span class="kpi-label">Resolved</span>
+      <strong class="kpi-value">{{ resolved_tickets|default:0 }}</strong>
+      <small>{{ resolved_7d }} in last 7 days</small>
+    </article>
+    <article class="kpi-card danger">
+      <span class="kpi-label">SLA breaches</span>
+      <strong class="kpi-value">{{ breached_tickets|default:0 }}</strong>
+      <small>Compliance {{ sla_compliance_pct|default:"—" }}%</small>
+    </article>
+    <article class="kpi-card">
+      <span class="kpi-label">My open</span>
+      <strong class="kpi-value">{{ my_open_tickets|default:0 }}</strong>
+      <small>{{ major_incidents }} major incidents</small>
+    </article>
+    <article class="kpi-card">
+      <span class="kpi-label">CSAT</span>
+      <strong class="kpi-value">{{ avg_csat|default:"—" }}</strong>
+      <small>{{ knowledge_articles }} KB articles · {{ assets_total }} assets</small>
+    </article>
+  </div>
 
-<h1>
-Enterprise Service Desk Dashboard
-</h1>
+  <div class="row g-3 mt-1">
+    <div class="col-lg-8">
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Recent tickets</h2>
+          <a href="{% url 'service_desk:ticket_list' %}">View all</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Number</th>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Assignee</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for t in recent_tickets %}
+              <tr>
+                <td><a href="{% url 'service_desk:ticket_detail' t.pk %}">{{ t.ticket_number }}</a></td>
+                <td>{{ t.title|truncatechars:60 }}</td>
+                <td>
+                  {% if t.status %}
+                  <span class="badge" style="background:{{ t.status.colour }}">{{ t.status.name }}</span>
+                  {% else %}—{% endif %}
+                </td>
+                <td>
+                  {% if t.priority %}
+                  <span class="badge" style="background:{{ t.priority.colour }}">{{ t.priority.name }}</span>
+                  {% else %}—{% endif %}
+                </td>
+                <td>{% if t.assignee %}{{ t.assignee.username }}{% else %}<span class="text-muted">Unassigned</span>{% endif %}</td>
+                <td>{{ t.created_at|timesince }} ago</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="6" class="text-center text-muted py-4">No tickets yet. <a href="{% url 'service_desk:ticket_create' %}">Create the first one</a>.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="panel mb-3">
+        <div class="panel-header"><h2>Open by status</h2></div>
+        <ul class="stat-list">
+          {% for row in by_status %}
+          <li>
+            <span>{% if row.status__name %}{{ row.status__name }}{% else %}Unset{% endif %}</span>
+            <strong>{{ row.count }}</strong>
+          </li>
+          {% empty %}
+          <li class="text-muted">No open tickets</li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><h2>Open by priority</h2></div>
+        <ul class="stat-list">
+          {% for row in by_priority %}
+          <li>
+            <span>{% if row.priority__name %}{{ row.priority__name }}{% else %}Unset{% endif %}</span>
+            <strong>{{ row.count }}</strong>
+          </li>
+          {% empty %}
+          <li class="text-muted">No open tickets</li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="panel mt-3">
+        <div class="panel-header"><h2>Volume trend (30d)</h2></div>
+        <canvas id="trendChart" height="140"></canvas>
+        <script type="application/json" id="trendData">{{ trend_json|default:"[]"|safe }}</script>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
 
-
-<h2>
-IT Support Overview
-</h2>
-
-
-<table border="1">
-
-<tr>
-<th>Total Tickets</th>
-<th>Open</th>
-<th>Resolved</th>
-</tr>
-
-
-<tr>
-
-<td>
-{{ total_tickets }}
-</td>
-
-<td>
-{{ open_tickets }}
-</td>
-
-<td>
-{{ resolved_tickets }}
-</td>
-
-</tr>
-
-</table>
-
-
-</body>
-</html>
+{% block extra_js %}
+<script>
+  window.ESD_TREND = {{ trend_json|default:"[]"|safe }};
+</script>
+{% endblock %}

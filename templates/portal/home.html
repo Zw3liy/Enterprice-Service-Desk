@@ -1,0 +1,57 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<section class="dashboard">
+  <div class="panel mb-3">
+    <h2 class="h4 mb-1">Welcome{% if profile.display_name %}, {{ profile.display_name }}{% endif %}</h2>
+    <p class="text-muted mb-0">{{ company.name }} service portal</p>
+  </div>
+  {% if announcements %}
+  <div class="mb-3">
+    {% for a in announcements %}
+    <div class="alert alert-info"><strong>{{ a.title }}</strong><div class="small">{{ a.body|truncatechars:200 }}</div></div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  <div class="row g-3">
+    <div class="col-lg-4">
+      <div class="panel h-100">
+        <div class="panel-header"><h3 class="h6 mb-0">Quick actions</h3></div>
+        <a class="btn btn-primary w-100 mb-2" href="{% url 'portal:new_request' %}">Submit a request</a>
+        <a class="btn btn-outline-secondary w-100 mb-2" href="{% url 'portal:tickets' %}">My tickets</a>
+        <a class="btn btn-outline-secondary w-100 mb-2" href="{% url 'portal:catalog' %}">Service catalog</a>
+        <a class="btn btn-outline-secondary w-100" href="{% url 'portal:knowledge' %}">Help center</a>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="panel h-100">
+        <div class="panel-header"><h3 class="h6 mb-0">My recent requests</h3></div>
+        <ul class="mb-0">
+          {% for t in tickets %}
+          <li><a href="{% url 'portal:ticket_detail' t.pk %}">{{ t.ticket_number }}</a> — {{ t.title|truncatechars:40 }}</li>
+          {% empty %}<li class="text-muted">No requests yet</li>{% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="panel h-100">
+        <div class="panel-header"><h3 class="h6 mb-0">Popular services</h3></div>
+        <ul class="mb-0">
+          {% for c in catalog %}
+          <li>{{ c.name }} <span class="text-muted small">{{ c.department }}</span></li>
+          {% empty %}<li class="text-muted">Catalog empty</li>{% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+  {% if articles %}
+  <div class="panel mt-3">
+    <div class="panel-header"><h3 class="h6 mb-0">Helpful articles</h3></div>
+    <ul class="mb-0">
+      {% for a in articles %}
+      <li><a href="{% url 'service_desk:knowledge_detail' a.slug %}">{{ a.title }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

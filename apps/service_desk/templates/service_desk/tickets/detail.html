@@ -1,0 +1,174 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<section class="ticket-detail">
+  <div class="panel mb-3">
+    <div class="d-flex flex-wrap justify-content-between gap-2">
+      <div>
+        <div class="text-muted small">{{ ticket.ticket_number }} · {{ ticket.get_ticket_type_display }} · {{ ticket.get_channel_display }}</div>
+        <h2 class="h3 mb-1">{{ ticket.title }}{% if ticket.is_major_incident %} <span class="badge text-bg-danger">MAJOR</span>{% endif %}</h2>
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+          {% if ticket.status %}<span class="badge" style="background:{{ ticket.status.colour }}">{{ ticket.status.name }}</span>{% endif %}
+          {% if ticket.priority %}<span class="badge" style="background:{{ ticket.priority.colour }}">{{ ticket.priority.name }}</span>{% endif %}
+          {% if ticket.queue %}<span class="badge text-bg-secondary">{{ ticket.queue.name }}</span>{% endif %}
+          {% if ticket.sla_resolution_breached %}<span class="badge text-bg-danger">Resolution SLA breached</span>{% endif %}
+          {% if ticket.sla_response_breached %}<span class="badge text-bg-warning text-dark">Response SLA breached</span>{% endif %}
+        </div>
+      </div>
+      <div class="text-end small text-muted">
+        <div>Created {{ ticket.created_at }}</div>
+        {% if ticket.assignee %}<div>Assignee: <strong>{{ ticket.assignee.username }}</strong></div>{% endif %}
+        {% if ticket.resolution_due_at %}<div>Resolve by {{ ticket.resolution_due_at }}</div>{% endif %}
+      </div>
+    </div>
+    <hr>
+    <div class="ticket-body">{{ ticket.description|linebreaksbr }}</div>
+    {% if ticket.ai_summary %}
+    <div class="ai-box mt-3">
+      <strong><i class="fa fa-robot"></i> AI summary</strong>
+      <p class="mb-1">{{ ticket.ai_summary }}</p>
+      <small class="text-muted">
+        Sentiment {{ ticket.sentiment_score|default:"—" }}
+        {% if ticket.ai_category_suggestion %} · Suggested category: {{ ticket.ai_category_suggestion }}{% endif %}
+      </small>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <div class="panel mb-3">
+        <div class="panel-header"><h3 class="h5 mb-0">Conversation</h3></div>
+        <div class="timeline">
+          {% for c in comments %}
+          <article class="timeline-item {% if c.is_internal %}internal{% endif %}">
+            <header>
+              <strong>{% if c.author %}{{ c.author.username }}{% else %}System{% endif %}</strong>
+              <span class="text-muted">{{ c.created_at }}</span>
+              {% if c.is_internal %}<span class="badge text-bg-dark">Internal</span>{% endif %}
+            </header>
+            <div>{{ c.body|linebreaksbr }}</div>
+          </article>
+          {% empty %}
+          <p class="text-muted">No comments yet.</p>
+          {% endfor %}
+        </div>
+        <form method="post" action="{% url 'service_desk:ticket_comment' ticket.pk %}" class="mt-3">
+          {% csrf_token %}
+          {{ comment_form.body }}
+          <div class="form-check my-2">{{ comment_form.is_internal }} <label class="form-check-label">Internal note</label></div>
+          <button class="btn btn-primary btn-sm" type="submit">Add comment</button>
+        </form>
+      </div>
+
+      <div class="panel mb-3">
+        <div class="panel-header"><h3 class="h5 mb-0">Work logs</h3></div>
+        <ul class="list-group list-group-flush mb-3">
+          {% for w in work_logs %}
+          <li class="list-group-item d-flex justify-content-between">
+            <span>{{ w.description }} <small class="text-muted">— {{ w.author }}</small></span>
+            <span>{{ w.minutes_spent }} min{% if w.is_billable %} · billable{% endif %}</span>
+          </li>
+          {% empty %}
+          <li class="list-group-item text-muted">No work logged.</li>
+          {% endfor %}
+        </ul>
+        <form method="post" action="{% url 'service_desk:ticket_worklog' ticket.pk %}" class="row g-2">
+          {% csrf_token %}
+          <div class="col-md-7">{{ worklog_form.description }}</div>
+          <div class="col-md-2">{{ worklog_form.minutes_spent }}</div>
+          <div class="col-md-2 form-check">{{ worklog_form.is_billable }} <label class="form-check-label">Billable</label></div>
+          <div class="col-md-1"><button class="btn btn-outline-primary btn-sm w-100" type="submit">Add</button></div>
+        </form>
+      </div>
+
+      <div class="panel mb-3">
+        <div class="panel-header"><h3 class="h5 mb-0">Attachments</h3></div>
+        <ul>
+          {% for a in attachments %}
+          <li><a href="{{ a.file.url }}" target="_blank" rel="noopener">{{ a.original_name }}</a> <small class="text-muted">({{ a.size_bytes }} bytes)</small></li>
+          {% empty %}
+          <li class="text-muted">No attachments.</li>
+          {% endfor %}
+        </ul>
+        <form method="post" action="{% url 'service_desk:ticket_attach' ticket.pk %}" enctype="multipart/form-data" class="d-flex gap-2">
+          {% csrf_token %}
+          {{ attachment_form.file }}
+          <button class="btn btn-sm btn-outline-secondary" type="submit">Upload</button>
+        </form>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><h3 class="h5 mb-0">Audit trail</h3></div>
+        <ul class="small mb-0">
+          {% for log in audit_logs %}
+          <li><span class="text-muted">{{ log.created_at }}</span> — <code>{{ log.action }}</code> {% if log.actor %}by {{ log.actor }}{% endif %} {{ log.message }}</li>
+          {% empty %}
+          <li class="text-muted">No audit events.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="panel mb-3">
+        <div class="panel-header"><h3 class="h5 mb-0">Update</h3></div>
+        <form method="post" action="{% url 'service_desk:ticket_update' ticket.pk %}">
+          {% csrf_token %}
+          {% for field in update_form %}
+          <div class="mb-2">
+            <label class="form-label small">{{ field.label }}</label>
+            {{ field }}
+          </div>
+          {% endfor %}
+          <button class="btn btn-primary btn-sm w-100" type="submit">Save changes</button>
+        </form>
+      </div>
+
+      <div class="panel mb-3">
+        <div class="panel-header"><h3 class="h5 mb-0">Assignment</h3></div>
+        <form method="post" action="{% url 'service_desk:ticket_assign' ticket.pk %}">
+          {% csrf_token %}
+          <div class="mb-2"><label class="form-label small">Assignee</label>{{ assign_form.assignee }}</div>
+          <div class="mb-2"><label class="form-label small">Queue</label>{{ assign_form.queue }}</div>
+          <div class="mb-2"><label class="form-label small">Note</label>{{ assign_form.note }}</div>
+          <div class="form-check mb-2">{{ assign_form.auto_assign }} <label class="form-check-label">Auto-assign</label></div>
+          <button class="btn btn-outline-primary btn-sm w-100" type="submit">Assign</button>
+        </form>
+      </div>
+
+      <div class="panel mb-3">
+        <div class="panel-header"><h3 class="h5 mb-0">Suggested knowledge</h3></div>
+        <ul class="mb-0">
+          {% for a in recommended_articles %}
+          <li><a href="{% url 'service_desk:knowledge_detail' a.slug %}">{{ a.title }}</a></li>
+          {% empty %}
+          <li class="text-muted">No suggestions.</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="panel mb-3">
+        <div class="panel-header"><h3 class="h5 mb-0">CSAT feedback</h3></div>
+        <form method="post" action="{% url 'service_desk:ticket_feedback' ticket.pk %}">
+          {% csrf_token %}
+          <div class="mb-2"><label class="form-label small">Rating (1-5)</label>{{ feedback_form.rating }}</div>
+          <div class="mb-2">{{ feedback_form.comment }}</div>
+          <button class="btn btn-success btn-sm w-100" type="submit">Submit feedback</button>
+        </form>
+      </div>
+
+      {% if escalations %}
+      <div class="panel">
+        <div class="panel-header"><h3 class="h5 mb-0">Escalations</h3></div>
+        <ul class="small mb-0">
+          {% for e in escalations %}
+          <li>L{{ e.level }} · {{ e.state }} · {{ e.reason|truncatechars:80 }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

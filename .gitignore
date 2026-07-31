@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+*.sqlite3
+db.sqlite3
+backups/
+verification_*.json
+.coverage
+htmlcov/
+
+# Django
+staticfiles/
+media/
+logs/*.log
+*.log
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Build / test
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+dist/
+build/
+
+# Secrets
+*.pem
+*.key
+.env.local

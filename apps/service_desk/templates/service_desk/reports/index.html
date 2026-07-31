@@ -1,0 +1,41 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<section class="dashboard">
+  <div class="kpi-grid">
+    <article class="kpi-card"><span class="kpi-label">Open</span><strong class="kpi-value">{{ summary.open_tickets }}</strong></article>
+    <article class="kpi-card"><span class="kpi-label">Resolved</span><strong class="kpi-value">{{ summary.resolved_tickets }}</strong></article>
+    <article class="kpi-card"><span class="kpi-label">SLA compliance</span><strong class="kpi-value">{{ summary.sla_compliance_pct|default:"—" }}%</strong></article>
+    <article class="kpi-card"><span class="kpi-label">CSAT</span><strong class="kpi-value">{{ summary.avg_csat|default:"—" }}</strong></article>
+    <article class="kpi-card"><span class="kpi-label">Created 30d</span><strong class="kpi-value">{{ summary.created_30d }}</strong></article>
+    <article class="kpi-card"><span class="kpi-label">Breached</span><strong class="kpi-value">{{ summary.breached_tickets }}</strong></article>
+  </div>
+  <div class="row g-3 mt-2">
+    <div class="col-md-6">
+      <div class="panel">
+        <div class="panel-header"><h2>By type</h2></div>
+        <ul class="stat-list">
+          {% for row in summary.by_type %}
+          <li><span>{{ row.ticket_type }}</span><strong>{{ row.count }}</strong></li>
+          {% empty %}<li class="text-muted">No data</li>{% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="panel">
+        <div class="panel-header"><h2>By status (open)</h2></div>
+        <ul class="stat-list">
+          {% for row in summary.by_status %}
+          <li><span>{{ row.status__name|default:"Unset" }}</span><strong>{{ row.count }}</strong></li>
+          {% empty %}<li class="text-muted">No data</li>{% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="panel mt-3">
+    <div class="panel-header"><h2>API access</h2></div>
+    <p class="mb-1">JSON dashboard: <code>/api/v1/dashboard/</code></p>
+    <p class="mb-0">Tickets API: <code>/api/v1/tickets/</code></p>
+  </div>
+</section>
+{% endblock %}

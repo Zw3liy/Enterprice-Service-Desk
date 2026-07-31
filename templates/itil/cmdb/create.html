@@ -1,0 +1,22 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<section class="panel" style="max-width:720px">
+  <div class="panel-header"><h2>New configuration item</h2></div>
+  <form method="post">{% csrf_token %}
+    <div class="mb-3"><label class="form-label">Name</label><input class="form-control" name="name" required></div>
+    <div class="mb-3"><label class="form-label">CI ID</label><input class="form-control" name="ci_id" placeholder="Auto if blank"></div>
+    <div class="mb-3"><label class="form-label">Class</label>
+      <select name="ci_class" class="form-select">
+        {% for c in classes %}<option value="{{ c.code }}">{{ c.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="mb-3"><label class="form-label">Environment</label>
+      <select name="environment" class="form-select">
+        <option>production</option><option>staging</option><option>development</option><option>dr</option>
+      </select>
+    </div>
+    <div class="mb-3"><label class="form-label">Criticality (1-5)</label><input class="form-control" type="number" name="criticality" value="3" min="1" max="5"></div>
+    <button class="btn btn-primary" type="submit">Save</button>
+  </form>
+</section>
+{% endblock %}

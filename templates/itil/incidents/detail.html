@@ -1,0 +1,71 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<section class="ticket-detail">
+  <div class="panel mb-3">
+    <div class="text-muted small">{{ ticket.ticket_number }} · Incident</div>
+    <h2 class="h3">{{ ticket.title }}{% if ticket.is_major_incident %} <span class="badge text-bg-danger">MAJOR</span>{% endif %}</h2>
+    <div class="ticket-body mt-2">{{ ticket.description|linebreaksbr }}</div>
+  </div>
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <div class="panel mb-3">
+        <div class="panel-header"><h3 class="h5 mb-0">Timeline</h3></div>
+        <ul class="list-group list-group-flush mb-3">
+          {% for e in timeline %}
+          <li class="list-group-item">
+            <strong>{{ e.event_type }}</strong> — {{ e.message }}
+            <div class="small text-muted">{{ e.created_at }} {% if e.author %}· {{ e.author }}{% endif %}{% if e.is_public %} · public{% endif %}</div>
+          </li>
+          {% empty %}<li class="list-group-item text-muted">No timeline events.</li>{% endfor %}
+        </ul>
+        <form method="post" action="{% url 'incidents:add_timeline' ticket.pk %}">
+          {% csrf_token %}
+          <textarea name="message" class="form-control mb-2" rows="2" required placeholder="Add timeline update…"></textarea>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" name="is_public" id="pub"><label class="form-check-label" for="pub">Public update</label></div>
+          <button class="btn btn-sm btn-primary" type="submit">Add</button>
+        </form>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      {% if not major %}
+      <div class="panel mb-3">
+        <div class="panel-header"><h3 class="h5 mb-0">Declare major</h3></div>
+        <form method="post" action="{% url 'incidents:declare_major' ticket.pk %}">
+          {% csrf_token %}
+          <div class="mb-2"><label class="form-label small">Severity</label>
+            <select name="severity" class="form-select form-select-sm">
+              <option value="sev1">SEV1</option><option value="sev2">SEV2</option><option value="sev3">SEV3</option>
+            </select>
+          </div>
+          <div class="mb-2"><label class="form-label small">Commander</label>
+            <select name="commander" class="form-select form-select-sm">
+              <option value="">—</option>
+              {% for a in agents %}<option value="{{ a.pk }}">{{ a.username }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="mb-2"><label class="form-label small">Customer impact</label>
+            <textarea name="customer_impact" class="form-control form-control-sm" rows="2"></textarea>
+          </div>
+          <div class="mb-2"><label class="form-label small">Bridge channel</label>
+            <input name="bridge_channel" class="form-control form-control-sm">
+          </div>
+          <button class="btn btn-danger btn-sm w-100" type="submit">Declare major incident</button>
+        </form>
+      </div>
+      {% else %}
+      <div class="panel mb-3">
+        <div class="panel-header"><h3 class="h5 mb-0">Major incident</h3></div>
+        <dl class="row small mb-0">
+          <dt class="col-5">Severity</dt><dd class="col-7">{{ major.get_severity_display }}</dd>
+          <dt class="col-5">Commander</dt><dd class="col-7">{% if major.commander %}{{ major.commander }}{% else %}—{% endif %}</dd>
+          <dt class="col-5">Declared</dt><dd class="col-7">{{ major.declared_at }}</dd>
+          <dt class="col-5">Bridge</dt><dd class="col-7">{{ major.bridge_channel|default:"—" }}</dd>
+        </dl>
+        {% if major.customer_impact %}<p class="small mt-2">{{ major.customer_impact }}</p>{% endif %}
+      </div>
+      {% endif %}
+      <a class="btn btn-outline-secondary btn-sm w-100" href="{% url 'service_desk:ticket_detail' ticket.pk %}">Open full ticket</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

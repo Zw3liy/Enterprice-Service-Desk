@@ -1,0 +1,51 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<section class="row g-3">
+  <div class="col-lg-8">
+    <div class="panel">
+      <div class="panel-header"><h2>AI Service Assistant</h2></div>
+      <form method="post">{% csrf_token %}
+        <div class="mb-3">
+          <textarea class="form-control" name="message" rows="4" required placeholder="Describe the issue or ask a question…"></textarea>
+        </div>
+        <div class="mb-3">
+          <label class="form-label small">Provider</label>
+          <select name="provider" class="form-select form-select-sm" style="max-width:200px">
+            <option value="local">Local rules</option>
+            <option value="openai">OpenAI</option>
+            <option value="claude">Claude</option>
+            <option value="ollama">Ollama</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" type="submit">Ask</button>
+      </form>
+      {% if answer %}
+      <hr>
+      <div class="ai-box">
+        <strong>Assistant</strong>
+        <pre class="mb-0" style="white-space:pre-wrap;font-family:inherit">{{ answer }}</pre>
+      </div>
+      {% if classification %}
+      <p class="small text-muted mt-2">
+        Category: {{ classification.category }} · Priority hint: {{ classification.priority_hint }} · Sentiment: {{ classification.sentiment }}
+      </p>
+      {% endif %}
+      {% if articles %}
+      <h3 class="h6 mt-3">Related articles</h3>
+      <ul>{% for a in articles %}<li>{{ a.title }}</li>{% endfor %}</ul>
+      {% endif %}
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="panel">
+      <div class="panel-header"><h3 class="h6 mb-0">Recent conversations</h3></div>
+      <ul class="mb-0 small">
+        {% for c in history %}
+        <li>#{{ c.id }} — {{ c.title|truncatechars:40 }} <span class="text-muted">{{ c.updated_at|timesince }} ago</span></li>
+        {% empty %}<li class="text-muted">No history</li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>
+{% endblock %}

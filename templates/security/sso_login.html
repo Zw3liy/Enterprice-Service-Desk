@@ -1,0 +1,18 @@
+{% extends "layouts/base.html" %}
+{% block body_class %}auth-body{% endblock %}
+{% block auth_content %}
+<div class="auth-card">
+  <h1 class="h3 text-center mb-3">Enterprise SSO</h1>
+  <p class="text-muted text-center">Sign in with your identity provider</p>
+  <div class="d-grid gap-2">
+    {% for p in providers %}
+      {% if p == "saml_demo" %}
+      <a class="btn btn-outline-primary" href="{% url 'identity:saml_acs' %}?email=demo.sso@example.com">SAML (demo)</a>
+      {% else %}
+      <a class="btn btn-primary" href="{% url 'identity:oauth_start' p %}">Continue with {{ p }}</a>
+      {% endif %}
+    {% endfor %}
+  </div>
+  <p class="text-center mt-3 mb-0 small"><a href="{% url 'login' %}">Password login</a></p>
+</div>
+{% endblock %}

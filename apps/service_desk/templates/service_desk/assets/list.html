@@ -1,0 +1,38 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<section class="panel">
+  <div class="panel-header">
+    <h2>Configuration items</h2>
+    {% if user.is_staff %}<a class="btn btn-sm btn-primary" href="{% url 'service_desk:asset_create' %}">New asset</a>{% endif %}
+  </div>
+  <form method="get" class="mb-3 d-flex gap-2">
+    <input class="form-control" type="search" name="q" value="{{ q }}" placeholder="Search assets…">
+    <button class="btn btn-outline-primary" type="submit">Search</button>
+  </form>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th>Tag</th><th>Name</th><th>Type</th><th>State</th><th>Location</th><th>Department</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in page %}
+        <tr>
+          <td><a href="{% url 'service_desk:asset_detail' a.pk %}"><strong>{{ a.asset_tag }}</strong></a></td>
+          <td>{{ a.name }}</td>
+          <td>{{ a.get_asset_type_display }}</td>
+          <td>{{ a.get_lifecycle_state_display }}</td>
+          <td>{{ a.location|default:"—" }}</td>
+          <td>{% if a.department %}{{ a.department.name }}{% else %}—{% endif %}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="text-center text-muted py-4">No assets found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "components/pagination.html" with page=page %}
+</section>
+{% endblock %}

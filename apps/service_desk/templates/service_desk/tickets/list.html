@@ -1,0 +1,67 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<section class="tickets-page">
+  <div class="panel">
+    <div class="panel-header">
+      <h2>Ticket queue</h2>
+      <a class="btn btn-primary btn-sm" href="{% url 'service_desk:ticket_create' %}"><i class="fa fa-plus"></i> New</a>
+    </div>
+    <form method="get" class="filter-bar row g-2 mb-3">
+      <div class="col-md-3">{{ filter_form.q }}</div>
+      <div class="col-md-2">{{ filter_form.status }}</div>
+      <div class="col-md-2">{{ filter_form.priority }}</div>
+      <div class="col-md-2">{{ filter_form.queue }}</div>
+      <div class="col-md-2">{{ filter_form.ticket_type }}</div>
+      <div class="col-md-1 d-flex align-items-center gap-2">
+        <label class="form-check-label small">{{ filter_form.open_only }} Open</label>
+      </div>
+      <div class="col-12 d-flex gap-2">
+        <label class="form-check-label small">{{ filter_form.mine }} Mine only</label>
+        <button class="btn btn-sm btn-outline-primary" type="submit">Filter</button>
+        <a class="btn btn-sm btn-link" href="{% url 'service_desk:ticket_list' %}">Reset</a>
+      </div>
+    </form>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Number</th>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Queue</th>
+            <th>Assignee</th>
+            <th>SLA</th>
+            <th>Updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for t in tickets %}
+          <tr class="{% if t.sla_resolution_breached %}table-danger{% elif t.sla_response_breached %}table-warning{% endif %}">
+            <td><a href="{% url 'service_desk:ticket_detail' t.pk %}"><strong>{{ t.ticket_number }}</strong></a></td>
+            <td>{{ t.title|truncatechars:70 }}{% if t.is_major_incident %} <span class="badge text-bg-danger">MAJOR</span>{% endif %}</td>
+            <td>{{ t.get_ticket_type_display }}</td>
+            <td>{% if t.status %}<span class="badge" style="background:{{ t.status.colour }}">{{ t.status.name }}</span>{% else %}—{% endif %}</td>
+            <td>{% if t.priority %}<span class="badge" style="background:{{ t.priority.colour }}">{{ t.priority.name }}</span>{% else %}—{% endif %}</td>
+            <td>{% if t.queue %}{{ t.queue.name }}{% else %}—{% endif %}</td>
+            <td>{% if t.assignee %}{{ t.assignee.username }}{% else %}<span class="text-muted">—</span>{% endif %}</td>
+            <td>
+              {% if t.resolution_due_at %}
+                {% if t.sla_resolution_breached %}<span class="text-danger">Breached</span>
+                {% else %}<span class="text-muted">Due {{ t.resolution_due_at|timesince }}</span>{% endif %}
+              {% else %}—{% endif %}
+            </td>
+            <td>{{ t.updated_at|timesince }} ago</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="9" class="text-center text-muted py-5">No tickets match your filters.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% include "components/pagination.html" with page=page %}
+  </div>
+</section>
+{% endblock %}

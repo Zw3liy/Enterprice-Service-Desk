@@ -1,0 +1,21 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<article class="panel" style="max-width:900px">
+  <h1 class="h3">{{ article.title }}</h1>
+  <p class="text-muted small">
+    {% if article.category %}{{ article.category.name }} · {% endif %}
+    {{ article.view_count }} views ·
+    {% if article.published_at %}Published {{ article.published_at }}{% endif %}
+  </p>
+  {% if article.summary %}<p class="lead">{{ article.summary }}</p>{% endif %}
+  <div class="kb-body">{{ article.body|linebreaks }}</div>
+  <hr>
+  <form method="post" action="{% url 'service_desk:knowledge_feedback' article.slug %}" class="d-flex gap-2 align-items-center">
+    {% csrf_token %}
+    <span class="small text-muted">Was this helpful?</span>
+    <button class="btn btn-sm btn-outline-success" name="helpful" value="1" type="submit">Yes ({{ article.helpful_yes }})</button>
+    <button class="btn btn-sm btn-outline-secondary" name="helpful" value="0" type="submit">No ({{ article.helpful_no }})</button>
+  </form>
+</article>
+{% endblock %}

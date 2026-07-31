@@ -1,0 +1,20 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<section class="panel">
+  <h1 class="h3">{{ vendor.name }}</h1>
+  <p class="text-muted">{{ vendor.code }} · risk {{ vendor.risk_rating }}</p>
+  <dl class="row small">
+    <dt class="col-3">Email</dt><dd class="col-9">{{ vendor.support_email|default:"—" }}</dd>
+    <dt class="col-3">Phone</dt><dd class="col-9">{{ vendor.support_phone|default:"—" }}</dd>
+    <dt class="col-3">Website</dt><dd class="col-9">{% if vendor.website %}<a href="{{ vendor.website }}" target="_blank" rel="noopener">{{ vendor.website }}</a>{% else %}—{% endif %}</dd>
+    <dt class="col-3">Account mgr</dt><dd class="col-9">{{ vendor.account_manager|default:"—" }}</dd>
+  </dl>
+  {% if vendor.notes %}<p>{{ vendor.notes|linebreaks }}</p>{% endif %}
+  <h2 class="h6 mt-3">Contracts</h2>
+  <ul>
+    {% for c in vendor.contracts.all %}
+    <li>{{ c.title }} — {{ c.get_status_display }} {% if c.end_date %}(ends {{ c.end_date }}){% endif %}</li>
+    {% empty %}<li class="text-muted">No contracts</li>{% endfor %}
+  </ul>
+</section>
+{% endblock %}
