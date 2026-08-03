@@ -1,0 +1,468 @@
+/* ==========================================================
+   ENTERPRISE UI FRAMEWORK
+   VARIABLES SYSTEM
+   
+   Colors
+   Typography
+   Spacing
+   Borders
+   Shadows
+   Animation
+   Theme Controls
+========================================================== */
+
+
+/* ==========================================================
+   ROOT VARIABLES
+========================================================== */
+
+:root {
+
+
+    /* ======================================================
+       BRAND COLORS
+    ====================================================== */
+
+    --primary: #0d6efd;
+    --primary-dark: #084298;
+    --primary-light: #6ea8fe;
+
+
+    --secondary: #6c757d;
+    --secondary-dark: #495057;
+
+
+    --success: #198754;
+    --success-dark: #146c43;
+
+
+    --danger: #dc3545;
+    --danger-dark: #b02a37;
+
+
+    --warning: #ffc107;
+    --warning-dark: #cc9a06;
+
+
+    --info: #0dcaf0;
+    --info-dark: #087990;
+
+
+
+    /* ======================================================
+       BACKGROUND COLORS
+    ====================================================== */
+
+    --background: #f8f9fa;
+
+    --surface: #ffffff;
+
+    --surface-hover: #f1f3f5;
+
+    --sidebar-bg: #111827;
+
+    --navbar-bg: #ffffff;
+
+
+
+    /* ======================================================
+       TEXT COLORS
+    ====================================================== */
+
+    --text:
+
+        #212529;
+
+
+    --text-light:
+
+        #6c757d;
+
+
+    --text-muted:
+
+        #adb5bd;
+
+
+    --text-white:
+
+        #ffffff;
+
+
+
+    /* ======================================================
+       BORDER SYSTEM
+    ====================================================== */
+
+    --border:
+
+        #dee2e6;
+
+
+    --border-light:
+
+        #e9ecef;
+
+
+    --border-dark:
+
+        #adb5bd;
+
+
+
+    /* ======================================================
+       TYPOGRAPHY
+    ====================================================== */
+
+    --font-family:
+
+        "Inter",
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+
+    --font-size-base:
+
+        16px;
+
+
+    --font-size-sm:
+
+        .875rem;
+
+
+    --font-size-lg:
+
+        1.125rem;
+
+
+    --font-weight-normal:
+
+        400;
+
+
+    --font-weight-medium:
+
+        500;
+
+
+    --font-weight-semibold:
+
+        600;
+
+
+    --font-weight-bold:
+
+        700;
+
+
+
+    /* ======================================================
+       HEADINGS
+    ====================================================== */
+
+    --heading-xl:
+
+        2.5rem;
+
+
+    --heading-lg:
+
+        2rem;
+
+
+    --heading-md:
+
+        1.5rem;
+
+
+    --heading-sm:
+
+        1.25rem;
+
+
+
+    /* ======================================================
+       SPACING SYSTEM
+    ====================================================== */
+
+    --space-1:
+
+        4px;
+
+
+    --space-2:
+
+        8px;
+
+
+    --space-3:
+
+        12px;
+
+
+    --space-4:
+
+        16px;
+
+
+    --space-5:
+
+        24px;
+
+
+    --space-6:
+
+        32px;
+
+
+    --space-7:
+
+        48px;
+
+
+    --space-8:
+
+        64px;
+
+
+
+    /* ======================================================
+       BORDER RADIUS
+    ====================================================== */
+
+    --radius-sm:
+
+        6px;
+
+
+    --radius:
+
+        12px;
+
+
+    --radius-lg:
+
+        18px;
+
+
+    --radius-xl:
+
+        24px;
+
+
+    --radius-pill:
+
+        999px;
+
+
+
+    /* ======================================================
+       SHADOW SYSTEM
+    ====================================================== */
+
+    --shadow-sm:
+
+        0 1px 3px rgba(0,0,0,.08);
+
+
+    --shadow:
+
+        0 4px 12px rgba(0,0,0,.10);
+
+
+    --shadow-lg:
+
+        0 10px 30px rgba(0,0,0,.15);
+
+
+
+    /* ======================================================
+       TRANSITIONS
+    ====================================================== */
+
+    --transition-fast:
+
+        .15s ease;
+
+
+    --transition:
+
+        .3s ease;
+
+
+    --transition-slow:
+
+        .5s ease;
+
+
+
+    /* ======================================================
+       LAYOUT
+    ====================================================== */
+
+    --sidebar-width:
+
+        260px;
+
+
+    --sidebar-collapsed:
+
+        80px;
+
+
+    --navbar-height:
+
+        70px;
+
+
+    --content-padding:
+
+        30px;
+
+
+
+    /* ======================================================
+       Z INDEX MANAGEMENT
+    ====================================================== */
+
+    --z-dropdown:
+
+        1000;
+
+
+    --z-sticky:
+
+        1020;
+
+
+    --z-fixed:
+
+        1030;
+
+
+    --z-modal:
+
+        1050;
+
+
+    --z-tooltip:
+
+        1070;
+
+
+
+    /* ======================================================
+       FORM CONTROLS
+    ====================================================== */
+
+    --input-height:
+
+        44px;
+
+
+    --input-radius:
+
+        8px;
+
+
+    --button-height:
+
+        42px;
+
+
+
+}
+
+
+/* ==========================================================
+   DARK MODE SUPPORT
+========================================================== */
+
+[data-theme="dark"] {
+
+
+    --background:
+
+        #111827;
+
+
+    --surface:
+
+        #1f2937;
+
+
+    --surface-hover:
+
+        #374151;
+
+
+    --text:
+
+        #f9fafb;
+
+
+    --text-light:
+
+        #d1d5db;
+
+
+    --text-muted:
+
+        #9ca3af;
+
+
+    --border:
+
+        #374151;
+
+
+    --border-light:
+
+        #4b5563;
+
+
+    --navbar-bg:
+
+        #1f2937;
+
+
+}
+
+
+
+/* ==========================================================
+   GLOBAL RESET VARIABLES
+========================================================== */
+
+* {
+
+    box-sizing:border-box;
+
+}
+
+
+html {
+
+    font-size:var(--font-size-base);
+
+}
+
+
+body {
+
+    font-family:var(--font-family);
+
+    background:var(--background);
+
+    color:var(--text);
+
+    transition:
+
+        background var(--transition),
+
+        color var(--transition);
+
+}

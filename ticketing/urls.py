@@ -1,24 +1,52 @@
+"""
+==============================================================
+Enterprise Service Desk
+Main URL Configuration
+==============================================================
+"""
+
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import include, path
 
 
 urlpatterns = [
 
-    # Enterprise Service Desk Homepage
-    path(
-        "",
-        include("apps.service_desk.urls")
-    ),
+    # ==========================================================
+    # Administration
+    # ==========================================================
 
-
-    # Admin Console
     path(
         "admin/",
         admin.site.urls
     ),
 
 
-    # Service Desk Module API/UI namespace
+    # ==========================================================
+    # Authentication
+    # Django built-in login/logout/password management
+    # ==========================================================
+
+    path(
+        "accounts/",
+        include("django.contrib.auth.urls")
+    ),
+
+
+    # ==========================================================
+    # Enterprise UI
+    # Dashboard, profile, settings, search
+    # ==========================================================
+
+    path(
+        "",
+        include("apps.ui.urls")
+    ),
+
+
+    # ==========================================================
+    # Service Desk Core
+    # ==========================================================
+
     path(
         "service-desk/",
         include("apps.service_desk.urls")

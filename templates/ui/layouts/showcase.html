@@ -1,0 +1,55 @@
+{% extends "ui/layouts/base.html" %}
+
+{% block title %}
+Enterprise UI
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+
+{% for card in kpis %}
+
+<div class="col-md-3">
+
+<div class="card shadow-sm mb-4">
+
+<div class="card-body">
+
+<h6>{{ card.title }}</h6>
+
+<h2>{{ card.value }}</h2>
+
+</div>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+<div class="card">
+
+<div class="card-header">
+
+Enterprise Dashboard
+
+</div>
+
+<div class="card-body">
+
+<p>
+
+This page is the Design System showcase.
+
+All future enterprise modules will inherit this layout.
+
+</p>
+
+</div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,353 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+
+{% block content %}
+
+
+<div class="dashboard-container">
+
+
+    <!-- Header -->
+
+    <div class="dashboard-header">
+
+        <div>
+
+            <h1>
+                Enterprise Dashboard
+            </h1>
+
+
+            <p>
+                Welcome to the Enterprise Service Desk
+            </p>
+
+
+        </div>
+
+
+
+        <button 
+        class="btn btn-primary"
+        onclick="window.location.reload();">
+
+
+            <i class="fas fa-sync-alt"></i>
+
+            Refresh
+
+
+        </button>
+
+
+    </div>
+
+
+
+
+    <!-- Breadcrumb -->
+
+
+    <nav aria-label="breadcrumb">
+
+        <ol class="breadcrumb">
+
+            <li class="breadcrumb-item">
+
+                <a href="{% url 'dashboard' %}">
+                    Home
+                </a>
+
+            </li>
+
+
+            <li class="breadcrumb-item active">
+
+                Dashboard
+
+            </li>
+
+
+        </ol>
+
+
+    </nav>
+
+
+
+
+
+
+    <!-- KPI CARDS -->
+
+
+    <div class="kpi-grid">
+
+
+        <div class="kpi-card">
+
+
+            <div class="kpi-title">
+                Open Tickets
+            </div>
+
+
+            <div class="kpi-value">
+
+                {{ open_tickets|default:"0" }}
+
+            </div>
+
+
+        </div>
+
+
+
+
+
+        <div class="kpi-card">
+
+
+            <div class="kpi-title">
+                Closed Today
+            </div>
+
+
+            <div class="kpi-value">
+
+                {{ closed_today|default:"0" }}
+
+            </div>
+
+
+        </div>
+
+
+
+
+
+        <div class="kpi-card">
+
+
+            <div class="kpi-title">
+                SLA Compliance
+            </div>
+
+
+            <div class="kpi-value">
+
+                {{ sla_percentage|default:"100" }}%
+
+            </div>
+
+
+        </div>
+
+
+
+
+
+        <div class="kpi-card">
+
+
+            <div class="kpi-title">
+                Active Users
+            </div>
+
+
+            <div class="kpi-value">
+
+                {{ active_users|default:"0" }}
+
+            </div>
+
+
+        </div>
+
+
+
+    </div>
+
+
+
+
+
+
+
+    <!-- RECENT TICKETS -->
+
+
+    <div class="dashboard-card">
+
+
+        <div class="card-header">
+
+            <h3>
+                Recent Tickets
+            </h3>
+
+        </div>
+
+
+
+
+
+        <div class="table-responsive">
+
+
+        <table>
+
+
+            <thead>
+
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Subject</th>
+
+                    <th>Status</th>
+
+                    <th>Priority</th>
+
+
+                </tr>
+
+
+            </thead>
+
+
+
+
+
+            <tbody>
+
+
+
+            {% for ticket in recent_tickets %}
+
+
+                <tr>
+
+
+                    <td>
+                        {{ ticket.id }}
+                    </td>
+
+
+                    <td>
+                        {{ ticket.subject }}
+                    </td>
+
+
+                    <td>
+
+
+                        {% if ticket.status == "Open" %}
+
+
+                        <span class="badge warning">
+
+                            {{ ticket.status }}
+
+                        </span>
+
+
+                        {% else %}
+
+
+                        <span class="badge success">
+
+                            {{ ticket.status }}
+
+                        </span>
+
+
+                        {% endif %}
+
+
+                    </td>
+
+
+
+
+                    <td>
+
+
+                        {% if ticket.priority == "High" %}
+
+
+                        <span class="badge danger">
+
+                            {{ ticket.priority }}
+
+                        </span>
+
+
+                        {% else %}
+
+
+                        <span class="badge secondary">
+
+                            {{ ticket.priority }}
+
+                        </span>
+
+
+                        {% endif %}
+
+
+
+                    </td>
+
+
+
+                </tr>
+
+
+
+            {% empty %}
+
+
+
+                <tr>
+
+                    <td colspan="4">
+
+                        No tickets available
+
+                    </td>
+
+
+                </tr>
+
+
+
+            {% endfor %}
+
+
+
+
+            </tbody>
+
+
+        </table>
+
+
+        </div>
+
+
+
+    </div>
+
+
+
+
+</div>
+
+
+
+{% endblock %}

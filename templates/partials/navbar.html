@@ -1,0 +1,156 @@
+```html
+<!-- ==========================================================
+     ENTERPRISE NAVBAR
+========================================================== -->
+
+<header class="navbar">
+
+    <div class="navbar-left">
+
+        <!-- Sidebar Toggle -->
+
+        <button
+            class="btn btn-light"
+            data-sidebar-toggle>
+
+            <i class="fas fa-bars"></i>
+
+        </button>
+
+        <!-- Search -->
+
+        <div class="search-box">
+
+            <i class="fas fa-search"></i>
+
+            <input
+                type="text"
+                placeholder="Search tickets, users, assets...">
+
+        </div>
+
+    </div>
+
+    <div class="navbar-right">
+
+        <!-- Theme Toggle -->
+
+        <button
+            class="btn btn-light"
+            data-theme-toggle
+            title="Toggle Theme">
+
+            <i class="fas fa-moon"></i>
+
+        </button>
+
+        <!-- Notifications -->
+
+        <button
+            class="btn btn-light position-relative">
+
+            <i class="fas fa-bell"></i>
+
+            <span class="badge badge-danger">
+
+                3
+
+            </span>
+
+        </button>
+
+        <!-- Messages -->
+
+        <button
+            class="btn btn-light position-relative">
+
+            <i class="fas fa-envelope"></i>
+
+            <span class="badge badge-primary">
+
+                5
+
+            </span>
+
+        </button>
+
+        <!-- User Dropdown -->
+
+        <div class="dropdown">
+
+            <button
+                class="btn btn-light dropdown-toggle"
+                data-bs-toggle="dropdown">
+
+                <i class="fas fa-user-circle"></i>
+
+                <span>
+
+                    {% if request.user.is_authenticated %}
+                        {{ request.user.get_full_name|default:request.user.username }}
+                    {% else %}
+                        Guest
+                    {% endif %}
+
+                </span>
+
+            </button>
+
+            <ul class="dropdown-menu dropdown-menu-end">
+
+                <li>
+
+                    <a
+                        class="dropdown-item"
+                        href="#">
+
+                        <i class="fas fa-user me-2"></i>
+
+                        Profile
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a
+                        class="dropdown-item"
+                        href="#">
+
+                        <i class="fas fa-gear me-2"></i>
+
+                        Settings
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <hr class="dropdown-divider">
+
+                </li>
+
+                <li>
+
+                    <a
+                        class="dropdown-item text-danger"
+                        href="#">
+
+                        <i class="fas fa-right-from-bracket me-2"></i>
+
+                        Logout
+
+                    </a>
+
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</header>
+```

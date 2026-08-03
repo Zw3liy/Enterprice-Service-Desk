@@ -1,0 +1,43 @@
+{% load static %}
+
+<aside class="sidebar bg-dark text-white vh-100 p-3">
+
+    <div class="mb-4 text-center">
+        <h4>
+            <i class="fas fa-headset"></i>
+            Enterprise Service Desk
+        </h4>
+    </div>
+
+    <nav class="nav flex-column">
+
+        <a href="{% url 'dashboard' %}" class="nav-link text-white mb-2">
+            <i class="fas fa-home me-2"></i>
+            Dashboard
+        </a>
+
+        <a href="{% url 'ticket_list' %}" class="nav-link text-white mb-2">
+            <i class="fas fa-ticket-alt me-2"></i>
+            Tickets
+        </a>
+
+        <a href="{% url 'ticket_create' %}" class="nav-link text-white mb-2">
+            <i class="fas fa-plus-circle me-2"></i>
+            Create Ticket
+        </a>
+
+        <a href="/admin/" class="nav-link text-white mb-2">
+            <i class="fas fa-user-shield me-2"></i>
+            Administration
+        </a>
+
+        <hr class="text-secondary">
+
+        <a href="{% url 'logout' %}" class="nav-link text-danger">
+            <i class="fas fa-sign-out-alt me-2"></i>
+            Logout
+        </a>
+
+    </nav>
+
+</aside>

@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Delete Ticket
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-6">
+
+            <div class="card border-danger shadow">
+
+                <div class="card-header bg-danger text-white">
+
+                    <h3 class="mb-0">
+
+                        <i class="fas fa-trash-alt"></i>
+
+                        Delete Ticket
+
+                    </h3>
+
+                </div>
+
+                <div class="card-body text-center">
+
+                    <i class="fas fa-exclamation-triangle fa-4x text-warning mb-4"></i>
+
+                    <h4>
+
+                        Are you sure?
+
+                    </h4>
+
+                    <p class="lead">
+
+                        You are about to permanently delete this ticket.
+
+                    </p>
+
+                    <div class="alert alert-light border">
+
+                        <strong>{{ ticket.ticket_number }}</strong>
+
+                        <br>
+
+                        {{ ticket.subject }}
+
+                    </div>
+
+                    <p class="text-danger">
+
+                        <strong>
+
+                            This action cannot be undone.
+
+                        </strong>
+
+                    </p>
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger">
+
+                            <i class="fas fa-trash"></i>
+
+                            Delete Ticket
+
+                        </button>
+
+                        <a
+                            href="{% url 'ticket_detail' ticket.pk %}"
+                            class="btn btn-secondary">
+
+                            <i class="fas fa-times"></i>
+
+                            Cancel
+
+                        </a>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,199 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f7fb;
+}
+
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 260px;
+    background: #111827;
+    color: white;
+    padding: 25px;
+    flex-shrink: 0;
+}
+
+.sidebar h2 {
+    margin-bottom: 30px;
+}
+
+.sidebar a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.sidebar a:hover {
+    background: #2563eb;
+}
+
+.main-content {
+    flex: 1;
+    padding: 25px;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.kpi-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,.08);
+}
+
+.kpi-title {
+    color: #6b7280;
+}
+
+.kpi-value {
+    font-size: 32px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.dashboard-card {
+    background: white;
+    margin-top: 30px;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.badge {
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+}
+
+.warning {
+    background: #facc15;
+}
+
+.danger {
+    background: #ef4444;
+    color: white;
+}
+
+.success {
+    background: #22c55e;
+    color: white;
+}
+
+.secondary {
+    background: #9ca3af;
+    color: white;
+}
+
+@media(max-width:900px) {
+
+    .kpi-grid {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:600px) {
+
+    .app-layout {
+        display:block;
+    }
+
+    .sidebar {
+        width:100%;
+    }
+
+    .kpi-grid {
+        grid-template-columns:1fr;
+    }
+
+}
+
+.navbar {
+
+    background:white;
+
+    padding:15px 25px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    border-bottom:1px solid #ddd;
+
+    margin-bottom:25px;
+
+}
+
+
+.navbar-brand {
+
+    font-size:20px;
+
+    font-weight:bold;
+
+}
+
+
+.navbar-user {
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+}
+
+
+.logout-btn {
+
+    background:#dc2626;
+
+    color:white;
+
+    padding:8px 15px;
+
+    border-radius:6px;
+
+    text-decoration:none;
+
+}
+
+
+.logout-btn:hover {
+
+    background:#b91c1c;
+
+}

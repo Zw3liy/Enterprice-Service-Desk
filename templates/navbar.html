@@ -1,0 +1,22 @@
+<nav class="navbar">
+
+    <div class="navbar-brand">
+        Enterprise Service Desk
+    </div>
+
+
+    <div class="navbar-user">
+
+        <span>
+            Welcome, {{ request.user.username }}
+        </span>
+
+
+        <a href="{% url 'logout' %}" class="logout-btn">
+            Logout
+        </a>
+
+    </div>
+
+
+</nav>

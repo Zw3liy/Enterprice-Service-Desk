@@ -1,0 +1,106 @@
+{% load static %}
+
+<aside class="sidebar" id="sidebar">
+
+    <div class="sidebar-brand">
+        <a href="/">
+            <span class="brand-icon">🎫</span>
+            <span class="brand-text">
+                Enterprise
+                <small>Service Desk</small>
+            </span>
+        </a>
+    </div>
+
+    <nav class="sidebar-nav">
+
+        <div class="nav-section">
+            <span class="nav-title">MAIN</span>
+
+            <a href="/"
+               class="nav-link {% if request.path == '/' %}active{% endif %}">
+                <span>🏠</span>
+                Dashboard
+            </a>
+
+            <a href="/service-desk/"
+               class="nav-link {% if '/service-desk/' in request.path %}active{% endif %}">
+                <span>🎫</span>
+                Service Desk
+            </a>
+
+            <a href="/ui/"
+               class="nav-link {% if '/ui/' in request.path %}active{% endif %}">
+                <span>🎨</span>
+                UI Showcase
+            </a>
+
+        </div>
+
+        <div class="nav-section">
+
+            <span class="nav-title">
+                IT OPERATIONS
+            </span>
+
+            <a href="#"
+               class="nav-link">
+                <span>🖥️</span>
+                Assets (CMDB)
+            </a>
+
+            <a href="#"
+               class="nav-link">
+                <span>📚</span>
+                Knowledge Base
+            </a>
+
+            <a href="#"
+               class="nav-link">
+                <span>📈</span>
+                SLA Management
+            </a>
+
+            <a href="#"
+               class="nav-link">
+                <span>⚙️</span>
+                Automation
+            </a>
+
+        </div>
+
+        <div class="nav-section">
+
+            <span class="nav-title">
+                ADMINISTRATION
+            </span>
+
+            <a href="/admin/"
+               class="nav-link">
+                <span>🛡️</span>
+                Django Admin
+            </a>
+
+            <a href="#"
+               class="nav-link">
+                <span>👥</span>
+                Users
+            </a>
+
+            <a href="#"
+               class="nav-link">
+                <span>🏢</span>
+                Companies
+            </a>
+
+            <a href="#"
+               class="nav-link">
+                <span>⚙️</span>
+                Settings
+            </a>
+
+        </div>
+
+    </nav>
+
+</aside>

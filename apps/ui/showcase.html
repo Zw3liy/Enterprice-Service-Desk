@@ -1,0 +1,304 @@
+{% extends "ui/layouts/base.html" %}
+
+{% block title %}
+Enterprise UI Showcase
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header mb-4">
+
+    <h1 class="fw-bold">
+        Enterprise Design System
+    </h1>
+
+    <p class="text-muted">
+        This page demonstrates all reusable frontend components.
+    </p>
+
+</div>
+
+<div class="row">
+
+    <div class="col-md-3">
+
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-body">
+
+                <h6 class="text-muted">
+                    Open Tickets
+                </h6>
+
+                <h2 class="fw-bold">
+                    143
+                </h2>
+
+                <span class="badge bg-success">
+                    +12%
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-body">
+
+                <h6 class="text-muted">
+                    SLA Compliance
+                </h6>
+
+                <h2 class="fw-bold">
+                    98%
+                </h2>
+
+                <span class="badge bg-primary">
+                    Healthy
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-body">
+
+                <h6 class="text-muted">
+                    Engineers
+                </h6>
+
+                <h2 class="fw-bold">
+                    28
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-body">
+
+                <h6 class="text-muted">
+                    Customers
+                </h6>
+
+                <h2 class="fw-bold">
+                    517
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-header">
+
+        <h5 class="mb-0">
+            Buttons
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        <button class="btn btn-primary">
+            Primary
+        </button>
+
+        <button class="btn btn-success">
+            Success
+        </button>
+
+        <button class="btn btn-warning">
+            Warning
+        </button>
+
+        <button class="btn btn-danger">
+            Danger
+        </button>
+
+        <button class="btn btn-secondary">
+            Secondary
+        </button>
+
+    </div>
+
+</div>
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-header">
+
+        <h5 class="mb-0">
+            Alerts
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="alert alert-success">
+            Ticket resolved successfully.
+        </div>
+
+        <div class="alert alert-warning">
+            SLA breach approaching.
+        </div>
+
+        <div class="alert alert-danger">
+            Critical incident detected.
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-header">
+
+        <h5 class="mb-0">
+            Sample Table
+        </h5>
+
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table table-hover">
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>Subject</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+
+                    <td>#1001</td>
+                    <td>Email Server Offline</td>
+                    <td>
+                        <span class="badge bg-danger">
+                            Open
+                        </span>
+                    </td>
+                    <td>Critical</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>#1002</td>
+                    <td>VPN Issue</td>
+                    <td>
+                        <span class="badge bg-warning text-dark">
+                            In Progress
+                        </span>
+                    </td>
+                    <td>High</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>#1003</td>
+                    <td>Password Reset</td>
+                    <td>
+                        <span class="badge bg-success">
+                            Closed
+                        </span>
+                    </td>
+                    <td>Low</td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<div class="card shadow-sm">
+
+    <div class="card-header">
+
+        <h5 class="mb-0">
+            Sample Form
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        <form>
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Ticket Subject
+                </label>
+
+                <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Enter subject">
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Description
+                </label>
+
+                <textarea
+                    class="form-control"
+                    rows="4"></textarea>
+
+            </div>
+
+            <button class="btn btn-primary">
+
+                Submit
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

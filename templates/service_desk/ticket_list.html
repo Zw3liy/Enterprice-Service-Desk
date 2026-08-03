@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Ticket Management
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2>
+                <i class="fas fa-ticket-alt"></i>
+                Ticket Management
+            </h2>
+
+            <p class="text-muted">
+                Manage and monitor all service desk tickets.
+            </p>
+        </div>
+
+        <a href="{% url 'ticket_create' %}"
+           class="btn btn-primary">
+
+            <i class="fas fa-plus"></i>
+            Create Ticket
+
+        </a>
+
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <table class="table table-hover align-middle">
+
+                <thead class="table-dark">
+
+                    <tr>
+
+                        <th>Ticket #</th>
+
+                        <th>Subject</th>
+
+                        <th>Category</th>
+
+                        <th>Priority</th>
+
+                        <th>Status</th>
+
+                        <th>Assigned To</th>
+
+                        <th>Created</th>
+
+                        <th width="180">
+
+                            Actions
+
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for ticket in tickets %}
+
+                    <tr>
+
+                        <td>
+
+                            {{ ticket.ticket_number }}
+
+                        </td>
+
+                        <td>
+
+                            {{ ticket.subject }}
+
+                        </td>
+
+                        <td>
+
+                            {{ ticket.get_category_display }}
+
+                        </td>
+
+                        <td>
+
+                            {% if ticket.priority == "CRITICAL" %}
+                                <span class="badge bg-danger">
+                            {% elif ticket.priority == "HIGH" %}
+                                <span class="badge bg-warning text-dark">
+                            {% elif ticket.priority == "MEDIUM" %}
+                                <span class="badge bg-primary">
+                            {% else %}
+                                <span class="badge bg-secondary">
+                            {% endif %}
+
+                            {{ ticket.get_priority_display }}
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            {% if ticket.status == "OPEN" %}
+                                <span class="badge bg-success">
+                            {% elif ticket.status == "IN_PROGRESS" %}
+                                <span class="badge bg-info">
+                            {% elif ticket.status == "ON_HOLD" %}
+                                <span class="badge bg-warning text-dark">
+                            {% elif ticket.status == "RESOLVED" %}
+                                <span class="badge bg-primary">
+                            {% else %}
+                                <span class="badge bg-dark">
+                            {% endif %}
+
+                            {{ ticket.get_status_display }}
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            {{ ticket.assigned_to|default:"Unassigned" }}
+
+                        </td>
+
+                        <td>
+
+                            {{ ticket.created_at|date:"Y-m-d H:i" }}
+
+                        </td>
+
+                        <td>
+
+                            <a href="{% url 'ticket_detail' ticket.pk %}"
+                               class="btn btn-sm btn-outline-primary">
+
+                                View
+
+                            </a>
+
+                            <a href="{% url 'ticket_update' ticket.pk %}"
+                               class="btn btn-sm btn-outline-warning">
+
+                                Edit
+
+                            </a>
+
+                            <a href="{% url 'ticket_delete' ticket.pk %}"
+                               class="btn btn-sm btn-outline-danger">
+
+                                Delete
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+
+                        <td colspan="8"
+                            class="text-center text-muted py-5">
+
+                            <i class="fas fa-inbox fa-3x mb-3"></i>
+
+                            <h5>No tickets found</h5>
+
+                            <p>Create your first service desk ticket.</p>
+
+                            <a href="{% url 'ticket_create' %}"
+                               class="btn btn-success">
+
+                                Create Ticket
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,37 +1,27 @@
-"""
-Django settings for ticketing project.
-
-Enterprise Service Desk Platform
-Phase 6 - Application Layer
-"""
-
 from pathlib import Path
+import os
 
-
-# -------------------------------------------------
-# BASE DIRECTORY
-# -------------------------------------------------
+# ==================================================
+# BASE CONFIGURATION
+# ==================================================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# -------------------------------------------------
+# ==================================================
 # SECURITY
-# -------------------------------------------------
+# ==================================================
 
-SECRET_KEY = "django-insecure-a)ek*sm1cxz@pst6qkgfc&h3-d!memp1ng1wtj)nhp*dxa-_wp"
+SECRET_KEY = "django-insecure-change-this-key"
 
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-]
+ALLOWED_HOSTS = []
 
 
-# -------------------------------------------------
+# ==================================================
 # APPLICATIONS
-# -------------------------------------------------
+# ==================================================
 
 INSTALLED_APPS = [
 
@@ -43,16 +33,16 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-
-    # Enterprise Service Desk
-    "apps.service_desk",
+    # Project Apps
+    "apps.ui",
+	"apps.service_desk",
 
 ]
 
 
-# -------------------------------------------------
+# ==================================================
 # MIDDLEWARE
-# -------------------------------------------------
+# ==================================================
 
 MIDDLEWARE = [
 
@@ -73,22 +63,21 @@ MIDDLEWARE = [
 ]
 
 
-# -------------------------------------------------
+# ==================================================
 # URL CONFIGURATION
-# -------------------------------------------------
+# ==================================================
 
 ROOT_URLCONF = "ticketing.urls"
 
 
-# -------------------------------------------------
+# ==================================================
 # TEMPLATES
-# -------------------------------------------------
+# ==================================================
 
 TEMPLATES = [
 
     {
-        "BACKEND":
-        "django.template.backends.django.DjangoTemplates",
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
 
         "DIRS": [
             BASE_DIR / "templates",
@@ -107,74 +96,48 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
 
             ],
+
         },
+
     },
+
 ]
 
 
-# -------------------------------------------------
-# SERVER
-# -------------------------------------------------
+# ==================================================
+# WSGI
+# ==================================================
 
 WSGI_APPLICATION = "ticketing.wsgi.application"
 
-ASGI_APPLICATION = "ticketing.asgi.application"
 
-
-
-# -------------------------------------------------
+# ==================================================
 # DATABASE
-# -------------------------------------------------
+# ==================================================
 
 DATABASES = {
 
     "default": {
 
-        "ENGINE":
-        "django.db.backends.sqlite3",
+        "ENGINE": "django.db.backends.sqlite3",
 
-        "NAME":
-        BASE_DIR / "db.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
 
     }
 
 }
 
 
-
-# -------------------------------------------------
+# ==================================================
 # PASSWORD VALIDATION
-# -------------------------------------------------
+# ==================================================
 
-AUTH_PASSWORD_VALIDATORS = [
-
-    {
-        "NAME":
-        "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-
-    {
-        "NAME":
-        "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-
-    {
-        "NAME":
-        "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-
-    {
-        "NAME":
-        "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
-
-]
+AUTH_PASSWORD_VALIDATORS = []
 
 
-
-# -------------------------------------------------
+# ==================================================
 # INTERNATIONALIZATION
-# -------------------------------------------------
+# ==================================================
 
 LANGUAGE_CODE = "en-us"
 
@@ -185,47 +148,41 @@ USE_I18N = True
 USE_TZ = True
 
 
-
-# -------------------------------------------------
+# ==================================================
 # STATIC FILES
-# -------------------------------------------------
+# ==================================================
 
-STATIC_URL = "/static/"
-
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_URL = "static/"
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
-# -------------------------------------------------
+# ==================================================
 # MEDIA FILES
-# Ticket attachments / screenshots / documents
-# -------------------------------------------------
+# ==================================================
 
 MEDIA_URL = "/media/"
 
 MEDIA_ROOT = BASE_DIR / "media"
 
 
-
-# -------------------------------------------------
+# ==================================================
 # DEFAULT PRIMARY KEY
-# -------------------------------------------------
+# ==================================================
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
+# ==================================================
+# AUTHENTICATION
+# ==================================================
 
-# -------------------------------------------------
-# LOGIN CONFIGURATION
-# Phase 6 Authentication
-# -------------------------------------------------
+LOGIN_URL = "/accounts/login/"
 
-LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL = "/"
 
-LOGIN_REDIRECT_URL = "/service-desk/"
-
-LOGOUT_REDIRECT_URL = "/login/"
+LOGOUT_REDIRECT_URL = "/accounts/login/"
