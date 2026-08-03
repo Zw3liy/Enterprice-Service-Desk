@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-asgiref==3.12.1
-Django==6.0.7
-djangorestframework==3.17.1
-sqlparse==0.5.5
-tzdata==2026.3
-watchdog==6.0.0
-=======
 # Enterprise Service Desk — production dependencies
 Django>=5.0,<6
 djangorestframework>=3.15
@@ -27,4 +19,3 @@ reportlab>=4.0
 Markdown>=3.5
 bleach>=6.1
 python-dotenv>=1.0
->>>>>>> 43f299f104a26a02e672f1ae2b81774211179472

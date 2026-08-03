@@ -1,10 +1,4 @@
-<<<<<<< HEAD
-from django.urls import path
-
-from . import views
-=======
 """URL routes for the Service Desk application."""
->>>>>>> 43f299f104a26a02e672f1ae2b81774211179472
 
 from django.urls import include, path
 
@@ -13,46 +7,6 @@ from apps.service_desk import views
 app_name = "service_desk"
 
 urlpatterns = [
-<<<<<<< HEAD
-
-    path(
-        "",
-        views.dashboard,
-        name="dashboard",
-    ),
-
-    path(
-        "tickets/",
-        views.ticket_list,
-        name="ticket_list",
-    ),
-
-    path(
-        "tickets/create/",
-        views.ticket_create,
-        name="ticket_create",
-    ),
-
-    path(
-        "tickets/<int:pk>/",
-        views.ticket_detail,
-        name="ticket_detail",
-    ),
-
-    path(
-        "tickets/<int:pk>/edit/",
-        views.ticket_update,
-        name="ticket_update",
-    ),
-
-    path(
-        "tickets/<int:pk>/delete/",
-        views.ticket_delete,
-        name="ticket_delete",
-    ),
-
-]
-=======
     path("", views.DashboardView.as_view(), name="dashboard"),
     path("dashboard/", views.DashboardView.as_view(), name="dashboard_alt"),
     # Tickets
@@ -95,4 +49,3 @@ urlpatterns = [
 ticketing_urlpatterns = [
     path("tickets/", views.ticket_list, name="ticket_list"),
 ]
->>>>>>> 43f299f104a26a02e672f1ae2b81774211179472

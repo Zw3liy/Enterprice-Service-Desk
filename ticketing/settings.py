@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 """
 Django settings for the Enterprise Service Desk platform.
 """
@@ -7,39 +5,14 @@ Django settings for the Enterprise Service Desk platform.
 from __future__ import annotations
 
 import os
->>>>>>> 43f299f104a26a02e672f1ae2b81774211179472
 from pathlib import Path
-import os
 
-<<<<<<< HEAD
-# ==================================================
-# BASE CONFIGURATION
-# ==================================================
-
-=======
->>>>>>> 43f299f104a26a02e672f1ae2b81774211179472
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Optional .env loading without hard dependency failure
 try:
     from dotenv import load_dotenv
 
-<<<<<<< HEAD
-# ==================================================
-# SECURITY
-# ==================================================
-
-SECRET_KEY = "django-insecure-change-this-key"
-
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
-
-# ==================================================
-# APPLICATIONS
-# ==================================================
-=======
     load_dotenv(BASE_DIR / ".env")
 except Exception:
     pass
@@ -74,7 +47,6 @@ CSRF_TRUSTED_ORIGINS = env_list(
     "DJANGO_CSRF_TRUSTED_ORIGINS",
     "http://localhost:8000,http://127.0.0.1:8000",
 )
->>>>>>> 43f299f104a26a02e672f1ae2b81774211179472
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -83,20 +55,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-<<<<<<< HEAD
-
-    # Project Apps
-    "apps.ui",
-	"apps.service_desk",
-
-]
-
-
-# ==================================================
-# MIDDLEWARE
-# ==================================================
-
-=======
     "django.contrib.humanize",
     # Third party
     "rest_framework",
@@ -155,7 +113,6 @@ INSTALLED_APPS = [
     "apps.knowledge_management.apps.KnowledgeManagementConfig",
 ]
 
->>>>>>> 43f299f104a26a02e672f1ae2b81774211179472
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -170,35 +127,12 @@ MIDDLEWARE = [
     "apps.service_desk.middleware.AuditContextMiddleware",
 ]
 
-<<<<<<< HEAD
-
-# ==================================================
-# URL CONFIGURATION
-# ==================================================
-
 ROOT_URLCONF = "ticketing.urls"
 
-
-# ==================================================
-# TEMPLATES
-# ==================================================
-
-=======
-ROOT_URLCONF = "ticketing.urls"
-
->>>>>>> 43f299f104a26a02e672f1ae2b81774211179472
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-<<<<<<< HEAD
-
-        "DIRS": [
-            BASE_DIR / "templates",
-        ],
-
-=======
         "DIRS": [BASE_DIR / "templates"],
->>>>>>> 43f299f104a26a02e672f1ae2b81774211179472
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -208,51 +142,10 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "apps.service_desk.context_processors.service_desk_globals",
             ],
-
         },
-
     },
-
 ]
 
-<<<<<<< HEAD
-
-# ==================================================
-# WSGI
-# ==================================================
-
-WSGI_APPLICATION = "ticketing.wsgi.application"
-
-
-# ==================================================
-# DATABASE
-# ==================================================
-
-DATABASES = {
-
-    "default": {
-
-        "ENGINE": "django.db.backends.sqlite3",
-
-        "NAME": BASE_DIR / "db.sqlite3",
-
-    }
-
-}
-
-
-# ==================================================
-# PASSWORD VALIDATION
-# ==================================================
-
-AUTH_PASSWORD_VALIDATORS = []
-
-
-# ==================================================
-# INTERNATIONALIZATION
-# ==================================================
-
-=======
 WSGI_APPLICATION = "ticketing.wsgi.application"
 ASGI_APPLICATION = "ticketing.asgi.application"
 
@@ -288,31 +181,11 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
->>>>>>> 43f299f104a26a02e672f1ae2b81774211179472
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = env("DJANGO_TIME_ZONE", "Africa/Johannesburg")
 USE_I18N = True
 USE_TZ = True
 
-<<<<<<< HEAD
-
-# ==================================================
-# STATIC FILES
-# ==================================================
-
-STATIC_URL = "static/"
-
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
-
-STATIC_ROOT = BASE_DIR / "staticfiles"
-
-
-# ==================================================
-# MEDIA FILES
-# ==================================================
-=======
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
@@ -326,36 +199,16 @@ STORAGES = {
         else "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
->>>>>>> 43f299f104a26a02e672f1ae2b81774211179472
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-<<<<<<< HEAD
-
-# ==================================================
-# DEFAULT PRIMARY KEY
-# ==================================================
-
-=======
->>>>>>> 43f299f104a26a02e672f1ae2b81774211179472
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "service_desk:dashboard"
 LOGOUT_REDIRECT_URL = "login"
 
-<<<<<<< HEAD
-# ==================================================
-# AUTHENTICATION
-# ==================================================
-
-LOGIN_URL = "/accounts/login/"
-
-LOGIN_REDIRECT_URL = "/"
-
-LOGOUT_REDIRECT_URL = "/accounts/login/"
-=======
 # ---------------------------------------------------------------------------
 # DRF
 # ---------------------------------------------------------------------------
@@ -524,4 +377,3 @@ _ESD_MAX_MB = int(env("ESD_MAX_ATTACHMENT_MB", "25") or "25")
 DATA_UPLOAD_MAX_MEMORY_SIZE = _ESD_MAX_MB * 1024 * 1024
 FILE_UPLOAD_MAX_MEMORY_SIZE = _ESD_MAX_MB * 1024 * 1024
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
->>>>>>> 43f299f104a26a02e672f1ae2b81774211179472

@@ -1,16 +1,4 @@
-<<<<<<< HEAD
-"""
-==============================================================
-Enterprise Service Desk
-Main URL Configuration
-==============================================================
-"""
-
-from django.contrib import admin
-from django.urls import include, path
-=======
 """Root URL configuration for Enterprise Service Desk."""
->>>>>>> 43f299f104a26a02e672f1ae2b81774211179472
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -30,51 +18,6 @@ admin.site.site_title = "ESD Admin"
 admin.site.index_title = "Platform control plane"
 
 urlpatterns = [
-<<<<<<< HEAD
-
-    # ==========================================================
-    # Administration
-    # ==========================================================
-
-    path(
-        "admin/",
-        admin.site.urls
-    ),
-
-
-    # ==========================================================
-    # Authentication
-    # Django built-in login/logout/password management
-    # ==========================================================
-
-    path(
-        "accounts/",
-        include("django.contrib.auth.urls")
-    ),
-
-
-    # ==========================================================
-    # Enterprise UI
-    # Dashboard, profile, settings, search
-    # ==========================================================
-
-    path(
-        "",
-        include("apps.ui.urls")
-    ),
-
-
-    # ==========================================================
-    # Service Desk Core
-    # ==========================================================
-
-    path(
-        "service-desk/",
-        include("apps.service_desk.urls")
-    ),
-
-]
-=======
     path("admin/", admin.site.urls),
     path("login/", ServiceDeskLoginView.as_view(), name="login"),
     path("logout/", ServiceDeskLogoutView.as_view(), name="logout"),
@@ -144,4 +87,3 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
->>>>>>> 43f299f104a26a02e672f1ae2b81774211179472

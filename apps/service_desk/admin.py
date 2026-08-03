@@ -1,10 +1,7 @@
 """Django admin registrations for the Service Desk domain."""
 
 from django.contrib import admin
-from .models import Ticket
 
-<<<<<<< HEAD
-=======
 from apps.service_desk import models as m
 
 
@@ -111,7 +108,6 @@ class EscalationPolicyInline(admin.TabularInline):
     model = m.EscalationPolicy
     extra = 0
     filter_horizontal = ("notify_users",)
->>>>>>> 43f299f104a26a02e672f1ae2b81774211179472
 
 
 @admin.register(m.EscalationPolicy)
@@ -136,77 +132,6 @@ class WorkLogInline(admin.TabularInline):
 class TicketAdmin(admin.ModelAdmin):
     list_display = (
         "ticket_number",
-<<<<<<< HEAD
-        "subject",
-        "status",
-        "priority",
-        "category",
-        "created_by",
-        "assigned_to",
-        "created_at",
-        "updated_at",
-    )
-
-    list_filter = (
-        "status",
-        "priority",
-        "category",
-        "created_at",
-    )
-
-    search_fields = (
-        "ticket_number",
-        "subject",
-        "description",
-        "created_by__username",
-    )
-
-    readonly_fields = (
-        "ticket_number",
-        "created_at",
-        "updated_at",
-        "resolved_at",
-    )
-
-    ordering = (
-        "-created_at",
-    )
-
-    fieldsets = (
-        (
-            "Ticket Information",
-            {
-                "fields": (
-                    "ticket_number",
-                    "subject",
-                    "description",
-                    "category",
-                    "priority",
-                    "status",
-                )
-            },
-        ),
-        (
-            "Assignment",
-            {
-                "fields": (
-                    "created_by",
-                    "assigned_to",
-                )
-            },
-        ),
-        (
-            "Dates",
-            {
-                "fields": (
-                    "created_at",
-                    "updated_at",
-                    "resolved_at",
-                )
-            },
-        ),
-    )
-=======
         "title",
         "ticket_type",
         "status",
@@ -368,4 +293,3 @@ class CustomerFeedbackAdmin(admin.ModelAdmin):
 @admin.register(m.TicketWatcher)
 class TicketWatcherAdmin(admin.ModelAdmin):
     list_display = ("ticket", "user", "created_at")
->>>>>>> 43f299f104a26a02e672f1ae2b81774211179472
