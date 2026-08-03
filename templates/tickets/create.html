@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}New Support Ticket · Enterprise Service Desk{% endblock %}
+
+{% block body %}
+
+<div class="esd-page">
+    <div class="esd-shell">
+
+        <div class="esd-brand">
+            <span class="esd-brand__mark" aria-hidden="true">
+                <i class="fa-solid fa-headset"></i>
+            </span>
+            <span>Internal Helpdesk</span>
+        </div>
+
+        <main id="main-content" class="esd-card">
+
+            <header class="esd-card__header">
+                <h1 class="esd-card__title">New Support Ticket</h1>
+                <p class="esd-card__subtitle">
+                    The more detail you give, the faster this gets fixed.
+                </p>
+            </header>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="esd-alert esd-alert--{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% elif message.tags == 'warning' %}warning{% else %}info{% endif %}"
+                         role="alert">
+                        <i class="fa-solid {% if message.tags == 'success' %}fa-circle-check{% elif message.tags == 'error' %}fa-circle-exclamation{% else %}fa-circle-info{% endif %}"
+                           aria-hidden="true"></i>
+                        <div class="esd-alert__body">{{ message }}</div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% if form.non_field_errors %}
+                <div class="esd-alert esd-alert--error" role="alert">
+                    <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                    <div class="esd-alert__body">
+                        <p class="esd-alert__title">We could not submit this ticket</p>
+                        <ul>
+                            {% for error in form.non_field_errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+
+            <form method="post"
+                  action=""
+                  enctype="multipart/form-data"
+                  novalidate
+                  data-ticket-form
+                  aria-labelledby="ticket-form-heading">
+
+                {% csrf_token %}
+
+                <h2 id="ticket-form-heading" class="visually-hidden">
+                    Support ticket details
+                </h2>
+
+                {% comment %}
+                Named-field layout. Any field the backend adds that is not
+                listed below still renders, via the fallback loop at the end,
+                so no form field is ever silently dropped.
+                {% endcomment %}
+
+                {# Row 1 - Your Name | Work Email #}
+                <div class="esd-grid esd-grid--2">
+                    {% if form.requester_name %}
+                        {% include "includes/form_fields.html" with field=form.requester_name %}
+                    {% endif %}
+                    {% if form.work_email %}
+                        {% include "includes/form_fields.html" with field=form.work_email %}
+                    {% endif %}
+                </div>
+
+                {# Row 2 - Department | Category | Priority #}
+                <div class="esd-grid esd-grid--3">
+                    {% if form.department %}
+                        {% include "includes/form_fields.html" with field=form.department %}
+                    {% endif %}
+                    {% if form.request_type %}
+                        {% include "includes/form_fields.html" with field=form.request_type %}
+                    {% endif %}
+                    {% if form.priority %}
+                        {% include "includes/form_fields.html" with field=form.priority %}
+                    {% endif %}
+                </div>
+
+                {# Row 3 - Issue Title #}
+                {% if form.title %}
+                    {% include "includes/form_fields.html" with field=form.title %}
+                {% endif %}
+
+                {# Row 4 - Description #}
+                {% if form.description %}
+                    {% include "includes/form_fields.html" with field=form.description %}
+                {% endif %}
+
+                {# Row 5 - Attachment upload (only if the backend form exposes it) #}
+                {% if form.attachment or form.attachments or form.file %}
+                    {% with upload=form.attachment|default:form.attachments|default:form.file %}
+                        <div class="esd-field-group{% if upload.errors %} esd-field-group--invalid{% endif %}">
+
+                            <label class="esd-label" for="{{ upload.id_for_label }}">
+                                {{ upload.label }}{% if not upload.field.required %}<span class="esd-label__optional">(optional)</span>{% endif %}
+                            </label>
+
+                            <div class="esd-upload" data-upload-zone>
+                                <div class="esd-upload__icon" aria-hidden="true">
+                                    <i class="fa-solid fa-paperclip"></i>
+                                </div>
+                                <p class="esd-upload__text">
+                                    <strong>Click to upload</strong> or drag and drop
+                                </p>
+                                <p class="esd-upload__hint">
+                                    Screenshots and logs help us resolve issues faster.
+                                </p>
+
+                                {{ upload }}
+
+                                <ul class="esd-upload__files" data-upload-list hidden></ul>
+                            </div>
+
+                            {% if upload.help_text %}
+                                <small class="esd-help">{{ upload.help_text|safe }}</small>
+                            {% endif %}
+
+                            {% for error in upload.errors %}
+                                <p class="esd-error">
+                                    <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                                    <span>{{ error }}</span>
+                                </p>
+                            {% endfor %}
+
+                        </div>
+                    {% endwith %}
+                {% endif %}
+
+                {% comment %}
+                Fallback: render any remaining backend fields (dynamic custom
+                fields, new fields added later) so validation is never bypassed.
+                {% endcomment %}
+                {% for field in form %}
+                    {% if field.name != "requester_name" and field.name != "work_email" and field.name != "department" and field.name != "request_type" and field.name != "priority" and field.name != "title" and field.name != "description" and field.name != "attachment" and field.name != "attachments" and field.name != "file" %}
+                        {% if field.is_hidden %}
+                            {{ field }}
+                        {% else %}
+                            {% include "includes/form_fields.html" with field=field %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+                {# Row 6 - Submit #}
+                <div class="esd-actions">
+                    <button type="submit"
+                            class="esd-btn esd-btn--primary esd-btn--block"
+                            data-submit-button>
+                        <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+                        <span data-submit-label>Submit ticket</span>
+                    </button>
+
+                    <p class="esd-form__footnote">
+                        You will get a confirmation with your ticket number
+                        right after submitting.
+                    </p>
+                </div>
+
+            </form>
+
+        </main>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/ticket_form.js' %}" defer></script>
+{% endblock %}

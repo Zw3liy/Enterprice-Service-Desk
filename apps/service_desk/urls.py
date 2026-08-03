@@ -8,4 +8,9 @@ urlpatterns = [
         views.dashboard,
         name="dashboard"
     ),
+    path(
+        "tickets/new/",
+        views.ticket_create,
+        name="ticket_create"
+    ),
 ]
