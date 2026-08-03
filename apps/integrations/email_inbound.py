@@ -129,7 +129,7 @@ class EmailInboundService:
         try:
             conn.login(username, password)
             conn.select(mailbox)
-            _, data = conn.search(None, "UNSEEN")
+            _, data = conn.search(None, 'Select an option...')
             ids = (data[0] or b"").split()
             for num in ids[-limit:]:
                 _, msg_data = conn.fetch(num, "(RFC822)")

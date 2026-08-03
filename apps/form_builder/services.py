@@ -75,7 +75,7 @@ class FormBuilderService:
             if required and (raw is None or raw == "" or raw == []):
                 errors[name] = f"{label} is required"
                 continue
-            if raw in (None, ""):
+            if raw in (None, 'Select an option...'):
                 continue
             if ftype == "number":
                 try:

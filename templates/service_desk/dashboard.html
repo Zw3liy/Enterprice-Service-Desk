@@ -1,17 +1,20 @@
-{% extends "base.html" %}
+{% extends "layouts/base.html" %}
 {% load static %}
 
 {% block title %}
 Enterprise Service Desk Dashboard
 {% endblock %}
 
+
 {% block content %}
 
 <div class="container-fluid py-4">
 
+
     <div class="row mb-4">
 
         <div class="col-md-8">
+
             <h2 class="fw-bold">
                 <i class="fas fa-headset"></i>
                 Enterprise Service Desk
@@ -20,52 +23,28 @@ Enterprise Service Desk Dashboard
             <p class="text-muted">
                 Real-time overview of your IT Service Management environment.
             </p>
+
         </div>
+
 
         <div class="col-md-4 text-end">
 
-            <a href="{% url 'ticket_create' %}" class="btn btn-primary">
+            <a href="{% url 'service_desk:ticket_create' %}"
+               class="btn btn-primary">
+
                 <i class="fas fa-plus"></i>
                 Create Ticket
+
             </a>
 
         </div>
 
     </div>
 
+
+
     <div class="row g-4">
 
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card shadow-sm border-0">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between">
-
-                        <div>
-
-                            <h6 class="text-muted">
-                                Total Tickets
-                            </h6>
-
-                            <h2 class="fw-bold">
-                                {{ total_tickets }}
-                            </h2>
-
-                        </div>
-
-                        <div class="display-6 text-primary">
-                            <i class="fas fa-ticket-alt"></i>
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
 
         <div class="col-lg-3 col-md-6">
 
@@ -73,31 +52,23 @@ Enterprise Service Desk Dashboard
 
                 <div class="card-body">
 
-                    <div class="d-flex justify-content-between">
+                    <h6 class="text-muted">
+                        Total Tickets
+                    </h6>
 
-                        <div>
+                    <h2 class="fw-bold">
+                        {{ total_tickets|default:0 }}
+                    </h2>
 
-                            <h6 class="text-muted">
-                                Open Tickets
-                            </h6>
-
-                            <h2 class="fw-bold text-warning">
-                                {{ open_tickets }}
-                            </h2>
-
-                        </div>
-
-                        <div class="display-6 text-warning">
-                            <i class="fas fa-folder-open"></i>
-                        </div>
-
-                    </div>
+                    <i class="fas fa-ticket-alt display-6 text-primary"></i>
 
                 </div>
 
             </div>
 
         </div>
+
+
 
         <div class="col-lg-3 col-md-6">
 
@@ -105,31 +76,23 @@ Enterprise Service Desk Dashboard
 
                 <div class="card-body">
 
-                    <div class="d-flex justify-content-between">
+                    <h6 class="text-muted">
+                        Open Tickets
+                    </h6>
 
-                        <div>
+                    <h2 class="fw-bold text-warning">
+                        {{ open_tickets|default:0 }}
+                    </h2>
 
-                            <h6 class="text-muted">
-                                Resolved
-                            </h6>
-
-                            <h2 class="fw-bold text-success">
-                                {{ resolved_tickets }}
-                            </h2>
-
-                        </div>
-
-                        <div class="display-6 text-success">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-
-                    </div>
+                    <i class="fas fa-folder-open display-6 text-warning"></i>
 
                 </div>
 
             </div>
 
         </div>
+
+
 
         <div class="col-lg-3 col-md-6">
 
@@ -137,68 +100,131 @@ Enterprise Service Desk Dashboard
 
                 <div class="card-body">
 
-                    <div class="d-flex justify-content-between">
+                    <h6 class="text-muted">
+                        Resolved Tickets
+                    </h6>
 
-                        <div>
+                    <h2 class="fw-bold text-success">
+                        {{ resolved_tickets|default:0 }}
+                    </h2>
 
-                            <h6 class="text-muted">
-                                System Status
-                            </h6>
-
-                            <h2 class="text-success">
-                                Healthy
-                            </h2>
-
-                        </div>
-
-                        <div class="display-6 text-success">
-                            <i class="fas fa-server"></i>
-                        </div>
-
-                    </div>
+                    <i class="fas fa-check-circle display-6 text-success"></i>
 
                 </div>
 
             </div>
 
         </div>
+
+
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        System Status
+                    </h6>
+
+                    <h2 class="text-success">
+                        Healthy
+                    </h2>
+
+                    <i class="fas fa-server display-6 text-success"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
 
     </div>
+
+
 
     <hr class="my-5">
 
-    <div class="row">
 
-        <div class="col-12">
 
-            <div class="card shadow-sm">
+    <div class="card shadow-sm">
 
-                <div class="card-header">
 
-                    <h5 class="mb-0">
-                        Dashboard Overview
-                    </h5>
+        <div class="card-header">
 
-                </div>
-
-                <div class="card-body">
-
-                    <p class="text-muted">
-
-                        Welcome to the Enterprise Service Desk dashboard.
-
-                        Use the navigation menu to create, manage and monitor support tickets.
-
-                    </p>
-
-                </div>
-
-            </div>
+            <h5 class="mb-0">
+                Recent Tickets
+            </h5>
 
         </div>
 
+
+
+        <div class="card-body">
+
+
+            {% if recent_tickets %}
+
+                <table class="table table-hover">
+
+                    <thead>
+
+                        <tr>
+                            <th>Ticket</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for ticket in recent_tickets %}
+
+                        <tr>
+
+                            <td>
+                                <a href="{% url 'service_desk:ticket_detail' ticket.pk %}">
+                                    {{ ticket.ticket_number }}
+                                </a>
+                            </td>
+
+                            <td>
+                                {{ ticket.status }}
+                            </td>
+
+                            <td>
+                                {{ ticket.priority }}
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+
+            {% else %}
+
+                <p class="text-muted">
+                    No tickets available.
+                </p>
+
+            {% endif %}
+
+
+        </div>
+
+
     </div>
 
+
 </div>
+
 
 {% endblock %}

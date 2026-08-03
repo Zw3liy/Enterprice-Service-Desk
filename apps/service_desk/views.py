@@ -1,173 +1,353 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
+"""
+Enterprise Service Desk
+Service Desk Views
 
-from .forms import TicketForm, TicketUpdateForm
+Handles:
+- Dashboard
+- Ticket management
+- Ticket updates
+- Ticket deletion
+- Knowledge base
+- Assets
+- Notifications
+- API dashboard
+
+"""
+
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.db.models import Count
+from django.http import JsonResponse
+from django.shortcuts import (
+    get_object_or_404,
+    redirect,
+    render,
+)
+
+from django.views.generic import TemplateView
+
+
+from .forms import TicketUpdateForm
 from .models import Ticket
 
 
-@login_required
-def dashboard(request):
-    tickets = Ticket.objects.all()
+# ==========================================================
+# Dashboard
+# ==========================================================
 
-    context = {
-        "title": "Enterprise Service Desk",
-        "total_tickets": tickets.count(),
-        "open_tickets": tickets.filter(status="OPEN").count(),
-        "resolved_tickets": tickets.filter(status="RESOLVED").count(),
-        "recent_tickets": tickets.order_by("-created_at")[:10],
-    }
+class DashboardView(TemplateView):
+    """
+    Main Service Desk dashboard.
+    """
 
-    return render(
-        request,
-        "service_desk/dashboard.html",
-        context,
-    )
+    template_name = "service_desk/dashboard.html"
 
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+
+        context["ticket_count"] = Ticket.objects.count()
+
+        context["recent_tickets"] = (
+            Ticket.objects
+            .order_by("-id")[:10]
+        )
+
+        return context
+
+
+
+# ==========================================================
+# Ticket List
+# ==========================================================
 
 @login_required
 def ticket_list(request):
+    """
+    Display all tickets.
+    """
 
-    tickets = Ticket.objects.all()
-
-    status = request.GET.get("status")
-    if status:
-        tickets = tickets.filter(status=status)
-
-    priority = request.GET.get("priority")
-    if priority:
-        tickets = tickets.filter(priority=priority)
-
-    category = request.GET.get("category")
-    if category:
-        tickets = tickets.filter(category=category)
-
-    search = request.GET.get("search")
-    if search:
-        tickets = tickets.filter(subject__icontains=search)
-
-    context = {
-        "title": "Ticket List",
-        "tickets": tickets.order_by("-created_at"),
-        "status": status,
-    }
+    tickets = (
+        Ticket.objects
+        .all()
+        .order_by("-id")
+    )
 
     return render(
         request,
         "service_desk/ticket_list.html",
-        context,
+        {
+            "tickets": tickets
+        }
     )
 
+
+
+# ==========================================================
+# Ticket Detail
+# ==========================================================
 
 @login_required
 def ticket_detail(request, pk):
 
     ticket = get_object_or_404(
         Ticket,
-        pk=pk,
+        pk=pk
     )
 
     return render(
         request,
         "service_desk/ticket_detail.html",
         {
-            "title": ticket.subject,
-            "ticket": ticket,
-        },
+            "ticket": ticket
+        }
     )
 
 
-@login_required
-def ticket_create(request):
 
-    if request.method == "POST":
-
-        form = TicketForm(request.POST)
-
-        if form.is_valid():
-
-            ticket = form.save(commit=False)
-            ticket.created_by = request.user
-            ticket.save()
-
-            return redirect(
-                "ticket_detail",
-                pk=ticket.pk,
-            )
-
-    else:
-
-        form = TicketForm()
-
-    return render(
-        request,
-        "service_desk/ticket_form.html",
-        {
-            "title": "Create Ticket",
-            "form": form,
-        },
-    )
-
+# ==========================================================
+# Ticket Update
+# ==========================================================
 
 @login_required
 def ticket_update(request, pk):
+    """
+    Update an existing ticket.
+    """
 
     ticket = get_object_or_404(
         Ticket,
-        pk=pk,
+        pk=pk
     )
+
 
     if request.method == "POST":
 
         form = TicketUpdateForm(
             request.POST,
-            instance=ticket,
+            request.FILES,
+            instance=ticket
         )
+
 
         if form.is_valid():
 
             form.save()
 
-            return redirect(
-                "ticket_detail",
-                pk=ticket.pk,
+            messages.success(
+                request,
+                "Ticket updated successfully."
             )
+
+            return redirect(
+                "service_desk:ticket_detail",
+                pk=ticket.pk
+            )
+
 
     else:
 
         form = TicketUpdateForm(
-            instance=ticket,
+            instance=ticket
         )
+
 
     return render(
         request,
         "service_desk/ticket_form.html",
         {
             "title": "Update Ticket",
-            "ticket": ticket,
             "form": form,
-        },
+            "ticket": ticket
+        }
     )
 
+
+
+# ==========================================================
+# Ticket Delete
+# ==========================================================
 
 @login_required
 def ticket_delete(request, pk):
 
     ticket = get_object_or_404(
         Ticket,
-        pk=pk,
+        pk=pk
     )
+
 
     if request.method == "POST":
 
         ticket.delete()
 
-        return redirect("ticket_list")
+        messages.success(
+            request,
+            "Ticket deleted successfully."
+        )
+
+        return redirect(
+            "service_desk:ticket_list"
+        )
+
 
     return render(
         request,
         "service_desk/ticket_confirm_delete.html",
         {
-            "title": "Delete Ticket",
-            "ticket": ticket,
-        },
+            "ticket": ticket
+        }
     )
+
+
+
+# ==========================================================
+# Knowledge Base
+# ==========================================================
+
+@login_required
+def knowledge_list(request):
+
+    return render(
+        request,
+        "service_desk/knowledge_list.html"
+    )
+
+
+
+@login_required
+def knowledge_create(request):
+
+    return render(
+        request,
+        "service_desk/knowledge_form.html"
+    )
+
+
+
+@login_required
+def knowledge_detail(request, slug):
+
+    return render(
+        request,
+        "service_desk/knowledge_detail.html",
+        {
+            "slug": slug
+        }
+    )
+
+
+
+@login_required
+def knowledge_feedback(request, slug):
+
+    return redirect(
+        "service_desk:knowledge_detail",
+        slug=slug
+    )
+
+
+
+# ==========================================================
+# Assets
+# ==========================================================
+
+@login_required
+def asset_list(request):
+
+    return render(
+        request,
+        "service_desk/asset_list.html"
+    )
+
+
+@login_required
+def asset_create(request):
+
+    return render(
+        request,
+        "service_desk/asset_form.html"
+    )
+
+
+@login_required
+def asset_detail(request, pk):
+
+    return render(
+        request,
+        "service_desk/asset_detail.html",
+        {
+            "pk": pk
+        }
+    )
+
+
+
+# ==========================================================
+# Reports
+# ==========================================================
+
+@login_required
+def reports_index(request):
+
+    return render(
+        request,
+        "service_desk/reports.html"
+    )
+
+
+
+# ==========================================================
+# Notifications
+# ==========================================================
+
+@login_required
+def notification_list(request):
+
+    return render(
+        request,
+        "service_desk/notifications.html"
+    )
+
+
+@login_required
+def notification_read(request, pk):
+
+    return redirect(
+        "service_desk:notifications"
+    )
+
+
+
+# ==========================================================
+# Ticket API Dashboard
+# ==========================================================
+
+@login_required
+def api_dashboard_json(request):
+
+    data = {
+
+        "tickets": Ticket.objects.count(),
+
+        "open_tickets":
+            Ticket.objects
+            .filter(status="OPEN")
+            .count(),
+
+    }
+
+
+    return JsonResponse(data)
+
+
+
+# ==========================================================
+# Compatibility aliases
+# ==========================================================
+
+# Older tests/modules may still reference these names
+
+update_ticket = ticket_update
+
+delete_ticket = ticket_delete

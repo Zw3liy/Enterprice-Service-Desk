@@ -36,7 +36,7 @@ def build_dynamic_form(request_type, data=None, files=None, initial=None):
                 widget=forms.NumberInput(attrs=widget_attrs),
             )
         elif custom.field_type == "dropdown":
-            choices = [("", "---------")] + [(str(o), str(o)) for o in (custom.options or [])]
+            choices = [("", "Select an option...")] + [(str(o), str(o)) for o in (custom.options or [])]
             field = forms.ChoiceField(
                 label=label, required=required, help_text=help_text, choices=choices,
                 widget=forms.Select(attrs={**widget_attrs, "class": "form-select"}),

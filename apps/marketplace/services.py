@@ -111,7 +111,7 @@ class MarketplaceService:
         config = config or {}
         # basic required key validation
         for key in (app.config_schema or {}).keys():
-            if key not in config or config.get(key) in (None, ""):
+            if key not in config or config.get(key) in (None, 'Select an option...'):
                 raise ValueError(f"Missing required config key: {key}")
         install, _ = InstalledApp.objects.update_or_create(
             company=company,
