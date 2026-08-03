@@ -1,0 +1,36 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<section class="panel">
+  <h1 class="h3">{{ asset.asset_tag }} — {{ asset.name }}</h1>
+  <div class="row g-3 mt-1">
+    <div class="col-md-6">
+      <dl class="row small">
+        <dt class="col-4">Type</dt><dd class="col-8">{{ asset.get_asset_type_display }}</dd>
+        <dt class="col-4">Lifecycle</dt><dd class="col-8">{{ asset.get_lifecycle_state_display }}</dd>
+        <dt class="col-4">Serial</dt><dd class="col-8">{{ asset.serial_number|default:"—" }}</dd>
+        <dt class="col-4">Manufacturer</dt><dd class="col-8">{{ asset.manufacturer|default:"—" }}</dd>
+        <dt class="col-4">Model</dt><dd class="col-8">{{ asset.model_name|default:"—" }}</dd>
+        <dt class="col-4">Location</dt><dd class="col-8">{{ asset.location|default:"—" }}</dd>
+        <dt class="col-4">Department</dt><dd class="col-8">{% if asset.department %}{{ asset.department.name }}{% else %}—{% endif %}</dd>
+        <dt class="col-4">Owner</dt><dd class="col-8">{% if asset.owner %}{{ asset.owner }}{% else %}—{% endif %}</dd>
+      </dl>
+      {% if asset.notes %}<p>{{ asset.notes|linebreaks }}</p>{% endif %}
+    </div>
+    <div class="col-md-6">
+      <h2 class="h6">Related tickets</h2>
+      <ul>
+        {% for t in related_tickets %}
+        <li><a href="{% url 'service_desk:ticket_detail' t.pk %}">{{ t.ticket_number }}</a> — {{ t.title|truncatechars:40 }}</li>
+        {% empty %}<li class="text-muted">None</li>{% endfor %}
+      </ul>
+      <h2 class="h6 mt-3">Relationships</h2>
+      <ul>
+        {% for r in relations %}
+        <li>{{ r.get_relation_type_display }} → {{ r.target }}</li>
+        {% empty %}<li class="text-muted">None</li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>
+{% endblock %}

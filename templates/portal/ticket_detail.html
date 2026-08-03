@@ -1,0 +1,25 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<section>
+  <div class="panel mb-3">
+    <div class="text-muted small">{{ ticket.ticket_number }}</div>
+    <h2 class="h3">{{ ticket.title }}</h2>
+    <p>{{ ticket.description|linebreaks }}</p>
+    <p class="small text-muted">Status: {% if ticket.status %}{{ ticket.status.name }}{% else %}—{% endif %}</p>
+  </div>
+  <div class="panel">
+    <h3 class="h6">Conversation</h3>
+    {% for c in comments %}
+    <div class="border rounded p-2 mb-2">
+      <strong>{% if c.author %}{{ c.author }}{% else %}Support{% endif %}</strong>
+      <span class="text-muted small">{{ c.created_at }}</span>
+      <div>{{ c.body|linebreaksbr }}</div>
+    </div>
+    {% empty %}<p class="text-muted">No public comments yet.</p>{% endfor %}
+    <form method="post" action="{% url 'portal:comment' ticket.pk %}">{% csrf_token %}
+      <textarea name="body" class="form-control mb-2" rows="3" required placeholder="Add a reply…"></textarea>
+      <button class="btn btn-primary btn-sm" type="submit">Send</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

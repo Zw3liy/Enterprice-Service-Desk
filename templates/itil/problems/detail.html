@@ -1,0 +1,47 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<section>
+  <div class="panel mb-3">
+    <div class="text-muted small">{{ ticket.ticket_number }} · Problem</div>
+    <h2 class="h3">{{ ticket.title }}</h2>
+    <p>{{ ticket.description|linebreaks }}</p>
+    {% if record %}
+    <div class="alert alert-secondary">
+      <strong>State:</strong> {{ record.get_state_display }}<br>
+      {% if record.root_cause %}<strong>Root cause:</strong> {{ record.root_cause }}<br>{% endif %}
+      {% if record.workaround %}<strong>Workaround:</strong> {{ record.workaround }}{% endif %}
+    </div>
+    {% endif %}
+  </div>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <div class="panel">
+        <h3 class="h6">Record root cause</h3>
+        <form method="post" action="{% url 'problems:root_cause' ticket.pk %}">
+          {% csrf_token %}
+          <textarea name="root_cause" class="form-control mb-2" rows="3" required placeholder="Root cause"></textarea>
+          <textarea name="workaround" class="form-control mb-2" rows="2" placeholder="Workaround"></textarea>
+          <button class="btn btn-primary btn-sm" type="submit">Save</button>
+        </form>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="panel">
+        <h3 class="h6">Link incident</h3>
+        <form method="post" action="{% url 'problems:link_incident' ticket.pk %}">
+          {% csrf_token %}
+          <input class="form-control mb-2" name="incident_id" placeholder="Incident ticket ID" required>
+          <button class="btn btn-outline-primary btn-sm" type="submit">Link</button>
+        </form>
+        {% if record %}
+        <ul class="mt-3 mb-0">
+          {% for i in record.related_incidents.all %}
+          <li><a href="{% url 'incidents:detail' i.pk %}">{{ i.ticket_number }}</a> — {{ i.title|truncatechars:40 }}</li>
+          {% empty %}<li class="text-muted">No linked incidents</li>{% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

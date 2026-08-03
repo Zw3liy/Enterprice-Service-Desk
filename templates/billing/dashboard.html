@@ -1,0 +1,69 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<section>
+  <div class="panel mb-3">
+    <h2 class="h4">Billing & licensing</h2>
+    {% if subscription %}
+    <p class="mb-1">Plan: <strong>{{ subscription.plan.name }}</strong> · Status: {{ subscription.get_status_display }} · Seats: {{ subscription.seats }}</p>
+    <p class="small text-muted mb-0">Period ends {{ subscription.current_period_end }}</p>
+    {% else %}
+    <p class="text-muted mb-0">No active subscription. Choose a plan below.</p>
+    {% endif %}
+  </div>
+  {% if limits.warnings %}
+  <div class="alert alert-warning">{% for w in limits.warnings %}{{ w }}{% if not forloop.last %}; {% endif %}{% endfor %}</div>
+  {% endif %}
+  <div class="row g-3 mb-3">
+    {% for p in plans %}
+    <div class="col-md-3">
+      <div class="panel h-100">
+        <h3 class="h5">{{ p.name }}</h3>
+        <p class="display-6">{{ p.price_monthly }} <small class="fs-6 text-muted">{{ p.currency }}/mo</small></p>
+        <ul class="small">
+          <li>{{ p.max_agents }} agents</li>
+          <li>{{ p.max_tickets_per_month }} tickets/mo</li>
+          <li>{{ p.max_assets }} assets</li>
+        </ul>
+        <form method="post" action="{% url 'billing:subscribe' %}">{% csrf_token %}
+          <input type="hidden" name="plan_code" value="{{ p.code }}">
+          <input type="number" name="seats" class="form-control form-control-sm mb-2" value="1" min="1">
+          <button class="btn btn-primary btn-sm w-100" type="submit">Select</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <div class="panel">
+        <div class="panel-header"><h3 class="h6 mb-0">Usage</h3></div>
+        <ul class="stat-list">
+          {% for k,v in limits.usage.items %}
+          <li><span>{{ k }}</span><strong>{{ v }}</strong></li>
+          {% empty %}<li class="text-muted">No usage data</li>{% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="panel">
+        <div class="panel-header">
+          <h3 class="h6 mb-0">Invoices</h3>
+          <form method="post" action="{% url 'billing:generate_invoice' %}">{% csrf_token %}
+            <button class="btn btn-sm btn-outline-primary" type="submit">Generate</button>
+          </form>
+        </div>
+        <ul class="mb-3">
+          {% for inv in invoices %}
+          <li><code>{{ inv.number }}</code> — {{ inv.total }} {{ inv.currency }} · {{ inv.get_status_display }}</li>
+          {% empty %}<li class="text-muted">No invoices</li>{% endfor %}
+        </ul>
+        {% if subscription %}
+        <form method="post" action="{% url 'billing:cancel' %}">{% csrf_token %}
+          <button class="btn btn-outline-danger btn-sm" type="submit" data-confirm="Cancel subscription at period end?">Cancel subscription</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

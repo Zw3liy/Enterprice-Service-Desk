@@ -1,6 +1,30 @@
+<<<<<<< HEAD
 asgiref==3.12.1
 Django==6.0.7
 djangorestframework==3.17.1
 sqlparse==0.5.5
 tzdata==2026.3
 watchdog==6.0.0
+=======
+# Enterprise Service Desk — production dependencies
+Django>=5.0,<6
+djangorestframework>=3.15
+django-filter>=24.0
+django-cors-headers>=4.3
+Pillow>=10.0
+python-dateutil>=2.9
+gunicorn>=22.0
+whitenoise>=6.6
+psycopg[binary]>=3.1; platform_system != "Windows"
+redis>=5.0
+celery>=5.3
+django-celery-beat>=2.6
+cryptography>=42.0
+PyJWT>=2.8
+requests>=2.31
+openpyxl>=3.1
+reportlab>=4.0
+Markdown>=3.5
+bleach>=6.1
+python-dotenv>=1.0
+>>>>>>> 43f299f104a26a02e672f1ae2b81774211179472

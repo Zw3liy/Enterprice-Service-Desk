@@ -1,0 +1,18 @@
+<header class="app-header">
+  <div class="header-left">
+    <button type="button" class="btn btn-sm btn-outline-secondary d-lg-none" id="sidebarToggle" aria-label="Toggle menu">
+      <i class="fa fa-bars"></i>
+    </button>
+    <h1 class="page-title">{% block page_title %}{{ title|default:"Enterprise Service Desk" }}{% endblock %}</h1>
+  </div>
+  <div class="header-right">
+    <form class="header-search" action="{% url 'service_desk:ticket_list' %}" method="get" role="search">
+      <input type="search" name="q" class="form-control form-control-sm" placeholder="Search tickets…" value="{{ request.GET.q }}">
+      <input type="hidden" name="open_only" value="0">
+    </form>
+    <a class="btn btn-primary btn-sm" href="{% url 'service_desk:ticket_create' %}">
+      <i class="fa fa-plus"></i> New ticket
+    </a>
+    <a class="btn btn-outline-secondary btn-sm" href="{% url 'logout' %}">Logout</a>
+  </div>
+</header>

@@ -1,0 +1,48 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<section class="panel" style="max-width:720px">
+  <div class="panel-header"><h2>Multi-factor authentication</h2></div>
+  {% if enabled %}
+  <div class="alert alert-success">MFA is enabled on your account.</div>
+  {% else %}
+  <div class="alert alert-warning">MFA is not enabled.</div>
+  {% endif %}
+  {% if backup_codes %}
+  <div class="alert alert-info">
+    <strong>Save these backup codes now:</strong>
+    <ul class="mb-0">{% for c in backup_codes %}<li><code>{{ c }}</code></li>{% endfor %}</ul>
+  </div>
+  {% endif %}
+  {% if pending %}
+  <div class="border rounded p-3 mb-3">
+    <p>Scan this URI in your authenticator app (or enter the secret manually):</p>
+    <code class="d-block mb-2" style="word-break:break-all">{{ pending.provisioning_uri }}</code>
+    <p class="small text-muted">Secret: <code>{{ pending.secret }}</code></p>
+    <form method="post">{% csrf_token %}
+      <input type="hidden" name="action" value="confirm">
+      <input type="hidden" name="device_id" value="{{ pending.pk }}">
+      <div class="input-group mb-2">
+        <input class="form-control" name="token" placeholder="6-digit code" required>
+        <button class="btn btn-primary" type="submit">Confirm</button>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+  <form method="post" class="mb-3">{% csrf_token %}
+    <input type="hidden" name="action" value="enroll">
+    <input class="form-control mb-2" name="name" value="Authenticator" placeholder="Device name">
+    <button class="btn btn-outline-primary" type="submit">Enroll new device</button>
+  </form>
+  <h3 class="h6">Devices</h3>
+  <ul>
+    {% for d in devices %}
+    <li>{{ d.name }} — {% if d.is_active %}active{% else %}pending{% endif %} {% if d.last_used_at %}· last used {{ d.last_used_at }}{% endif %}</li>
+    {% empty %}<li class="text-muted">No devices</li>{% endfor %}
+  </ul>
+  {% if enabled %}
+  <form method="post" action="{% url 'mfa:disable' %}">{% csrf_token %}
+    <button class="btn btn-outline-danger btn-sm" type="submit" data-confirm="Disable MFA?">Disable MFA</button>
+  </form>
+  {% endif %}
+</section>
+{% endblock %}

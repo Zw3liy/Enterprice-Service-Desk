@@ -1,0 +1,19 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<section class="panel">
+  <div class="panel-header"><h2>Service catalog</h2></div>
+  <div class="row g-3">
+    {% for c in catalog %}
+    <div class="col-md-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h3 class="h6 card-title">{{ c.name }}</h3>
+          <p class="card-text small text-muted">{{ c.description|default:"No description"|truncatechars:120 }}</p>
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'portal:new_request' %}?request_type={{ c.pk }}">Request</a>
+        </div>
+      </div>
+    </div>
+    {% empty %}<div class="col-12 text-muted">No catalog items.</div>{% endfor %}
+  </div>
+</section>
+{% endblock %}

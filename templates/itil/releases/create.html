@@ -1,0 +1,12 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<section class="panel" style="max-width:720px">
+  <div class="panel-header"><h2>New release</h2></div>
+  <form method="post">{% csrf_token %}
+    <div class="mb-3"><label class="form-label">Name</label><input class="form-control" name="name" required></div>
+    <div class="mb-3"><label class="form-label">Version</label><input class="form-control" name="version" required placeholder="2026.7.1"></div>
+    <div class="mb-3"><label class="form-label">Description</label><textarea class="form-control" name="description" rows="4"></textarea></div>
+    <button class="btn btn-primary" type="submit">Create</button>
+  </form>
+</section>
+{% endblock %}

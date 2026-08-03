@@ -1,0 +1,18 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<section class="panel">
+  <div class="panel-header"><h2>CAB meetings</h2></div>
+  <ul class="list-group">
+    {% for m in page %}
+    <li class="list-group-item d-flex justify-content-between">
+      <div>
+        <strong>{{ m.title }}</strong>
+        <div class="small text-muted">{{ m.scheduled_at }} {% if m.chair %}· Chair {{ m.chair }}{% endif %}</div>
+      </div>
+      {% if m.is_closed %}<span class="badge text-bg-secondary">Closed</span>{% else %}<span class="badge text-bg-success">Open</span>{% endif %}
+    </li>
+    {% empty %}<li class="list-group-item text-muted">No CAB meetings scheduled.</li>{% endfor %}
+  </ul>
+  {% include "components/pagination.html" with page=page %}
+</section>
+{% endblock %}

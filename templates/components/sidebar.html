@@ -1,21 +1,41 @@
-<aside class="sidebar">
-
-<div class="brand">
-<i class="fa-solid fa-headset"></i>
-<span>Enterprise Desk</span>
-</div>
-
-<ul class="menu">
-
-<li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-<li><a href="#"><i class="fa fa-ticket"></i> Tickets</a></li>
-<li><a href="#"><i class="fa fa-triangle-exclamation"></i> Incidents</a></li>
-<li><a href="#"><i class="fa fa-server"></i> CMDB</a></li>
-<li><a href="#"><i class="fa fa-book"></i> Knowledge Base</a></li>
-<li><a href="#"><i class="fa fa-chart-line"></i> Reports</a></li>
-<li><a href="#"><i class="fa fa-robot"></i> AI Assistant</a></li>
-<li><a href="#"><i class="fa fa-users"></i> Administration</a></li>
-
-</ul>
-
+<aside class="sidebar" id="appSidebar">
+  <div class="sidebar-brand">
+    <i class="fa-solid fa-headset"></i>
+    <div>
+      <strong>Enterprise Desk</strong>
+      <small>ITSM Platform</small>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="nav-item" href="{% url 'service_desk:dashboard' %}"><i class="fa fa-gauge-high"></i> Dashboard</a>
+    <a class="nav-item" href="{% url 'service_desk:ticket_list' %}"><i class="fa fa-ticket"></i> Tickets</a>
+    <a class="nav-item" href="{% url 'incidents:list' %}"><i class="fa fa-triangle-exclamation"></i> Incidents</a>
+    <a class="nav-item" href="{% url 'problems:list' %}"><i class="fa fa-bug"></i> Problems</a>
+    <a class="nav-item" href="{% url 'changes:list' %}"><i class="fa fa-code-branch"></i> Changes</a>
+    <a class="nav-item" href="{% url 'releases:list' %}"><i class="fa fa-rocket"></i> Releases</a>
+    <a class="nav-item" href="{% url 'cmdb_app:list' %}"><i class="fa fa-server"></i> CMDB</a>
+    <a class="nav-item" href="{% url 'vendors:list' %}"><i class="fa fa-handshake"></i> Vendors</a>
+    <a class="nav-item" href="{% url 'service_desk:knowledge_list' %}"><i class="fa fa-book"></i> Knowledge</a>
+    <a class="nav-item" href="{% url 'portal:home' %}"><i class="fa fa-store"></i> Portal</a>
+    <a class="nav-item" href="{% url 'service_desk:reports' %}"><i class="fa fa-chart-line"></i> Reports</a>
+    <a class="nav-item" href="{% url 'executive:home' %}"><i class="fa fa-briefcase"></i> Executive</a>
+    <a class="nav-item" href="{% url 'billing:dashboard' %}"><i class="fa fa-credit-card"></i> Billing</a>
+    <a class="nav-item" href="{% url 'service_desk:notifications' %}">
+      <i class="fa fa-bell"></i> Notifications
+      {% if ESD_UNREAD_NOTIFICATIONS %}<span class="badge text-bg-danger">{{ ESD_UNREAD_NOTIFICATIONS }}</span>{% endif %}
+    </a>
+    <a class="nav-item" href="{% url 'mfa:setup' %}"><i class="fa fa-shield-halved"></i> MFA</a>
+    <a class="nav-item" href="{% url 'identity:sso' %}"><i class="fa fa-key"></i> SSO</a>
+    <a class="nav-item" href="{% url 'ai_engine:assistant' %}"><i class="fa fa-robot"></i> AI Assistant</a>
+    <a class="nav-item" href="/api/v1/" target="_blank" rel="noopener"><i class="fa fa-code"></i> API</a>
+    {% if user.is_staff %}
+    <a class="nav-item" href="/admin/"><i class="fa fa-gear"></i> Admin</a>
+    {% endif %}
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <i class="fa fa-user-circle"></i>
+      <span>{{ user.get_username }}</span>
+    </div>
+  </div>
 </aside>

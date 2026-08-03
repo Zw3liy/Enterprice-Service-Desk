@@ -1,0 +1,72 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env.example
+    environment:
+      DJANGO_DEBUG: "True"
+      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,web"
+      DATABASE_ENGINE: django.db.backends.postgresql
+      DATABASE_NAME: esd
+      DATABASE_USER: esd
+      DATABASE_PASSWORD: esd
+      DATABASE_HOST: db
+      DATABASE_PORT: "5432"
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+      CELERY_TASK_ALWAYS_EAGER: "False"
+    volumes:
+      - .:/app
+      - media_data:/app/media
+    depends_on:
+      - db
+      - redis
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py bootstrap_esd --with-demo &&
+             python manage.py collectstatic --noinput &&
+             gunicorn ticketing.wsgi:application --bind 0.0.0.0:8000 --workers 3 --reload"
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: esd
+      POSTGRES_USER: esd
+      POSTGRES_PASSWORD: esd
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  worker:
+    build: .
+    env_file:
+      - .env.example
+    environment:
+      DATABASE_ENGINE: django.db.backends.postgresql
+      DATABASE_NAME: esd
+      DATABASE_USER: esd
+      DATABASE_PASSWORD: esd
+      DATABASE_HOST: db
+      DATABASE_PORT: "5432"
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+      CELERY_TASK_ALWAYS_EAGER: "False"
+    command: celery -A ticketing worker -l info
+    depends_on:
+      - db
+      - redis
+      - web
+
+volumes:
+  pg_data:
+  media_data:

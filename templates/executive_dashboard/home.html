@@ -1,0 +1,46 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<section class="dashboard">
+  <div class="panel mb-3">
+    <h2 class="h4 mb-1">Executive dashboard</h2>
+    <p class="text-muted mb-0">ITSM portfolio health, SLA, capacity and forecast</p>
+  </div>
+  <div class="kpi-grid">
+    <article class="kpi-card"><span class="kpi-label">Open</span><strong class="kpi-value">{{ kpis.open_tickets|default:0 }}</strong></article>
+    <article class="kpi-card"><span class="kpi-label">SLA compliance</span><strong class="kpi-value">{{ kpis.sla_compliance_pct|default:sla.sla_compliance_pct|default:"—" }}%</strong></article>
+    <article class="kpi-card danger"><span class="kpi-label">Breached</span><strong class="kpi-value">{{ kpis.breached_tickets|default:sla.breached_tickets|default:0 }}</strong></article>
+    <article class="kpi-card"><span class="kpi-label">Major incidents</span><strong class="kpi-value">{{ portfolio.open_major_incidents|default:0 }}</strong></article>
+    <article class="kpi-card"><span class="kpi-label">Open changes</span><strong class="kpi-value">{{ portfolio.open_changes|default:0 }}</strong></article>
+    <article class="kpi-card"><span class="kpi-label">Suggested agents</span><strong class="kpi-value">{{ staffing.suggested_agents|default:"—" }}</strong></article>
+  </div>
+  <div class="row g-3 mt-2">
+    <div class="col-md-6">
+      <div class="panel">
+        <div class="panel-header"><h3 class="h6 mb-0">Agent workload</h3></div>
+        <ul class="stat-list">
+          {% for a in agents %}
+          <li><span>{{ a.agent }}</span><strong>{{ a.open_count }}</strong></li>
+          {% empty %}<li class="text-muted">No data</li>{% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="panel">
+        <div class="panel-header"><h3 class="h6 mb-0">7-day volume forecast</h3></div>
+        <ul class="stat-list">
+          {% for f in forecast %}
+          <li><span>{{ f.day }}</span><strong>{{ f.predicted }}</strong></li>
+          {% empty %}<li class="text-muted">No forecast</li>{% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="panel mt-3">
+    <div class="panel-header"><h3 class="h6 mb-0">Portfolio</h3></div>
+    <p class="mb-0 small">
+      Assets {{ portfolio.assets }} · Knowledge {{ portfolio.knowledge_articles }} ·
+      Problems {{ portfolio.open_problems }} · CSAT {{ kpis.avg_csat|default:"—" }}
+    </p>
+  </div>
+</section>
+{% endblock %}

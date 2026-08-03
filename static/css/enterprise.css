@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 * {
     box-sizing: border-box;
 }
@@ -197,3 +198,58 @@ th, td {
     background:#b91c1c;
 
 }
+=======
+/* Enterprise theme overrides layered on Bootstrap + main tokens */
+:root {
+  --esd-accent: #3b82f6;
+}
+
+body.app-body {
+  background:
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.08), transparent 28%),
+    var(--esd-bg);
+}
+
+.badge[style*="background"] {
+  color: #fff !important;
+}
+
+.table thead th {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--esd-muted);
+  border-bottom-width: 1px;
+}
+
+.stat-list strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.panel .form-label {
+  font-weight: 600;
+}
+
+.kpi-card .kpi-value {
+  letter-spacing: -0.02em;
+}
+
+.ai-box pre {
+  margin: 0.5rem 0 0;
+}
+
+@media print {
+  .sidebar,
+  .app-header,
+  .app-footer,
+  .btn {
+    display: none !important;
+  }
+  .app-shell {
+    display: block;
+  }
+  .app-content {
+    padding: 0;
+  }
+}
+>>>>>>> 43f299f104a26a02e672f1ae2b81774211179472

@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: enterprise-service-desk
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-body-size: "25m"
+spec:
+  rules:
+    - host: servicedesk.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: enterprise-service-desk
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - servicedesk.example.com
+      secretName: esd-tls

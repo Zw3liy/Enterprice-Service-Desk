@@ -1,0 +1,56 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<section class="panel" style="max-width:900px">
+  <div class="panel-header"><h2>Create ticket</h2></div>
+  <form method="post" novalidate class="ticket-form">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+    <div class="row g-3">
+      <div class="col-12">
+        <label class="form-label">Title</label>
+        {{ form.title }}
+        {{ form.title.errors }}
+      </div>
+      <div class="col-12">
+        <label class="form-label">Description</label>
+        {{ form.description }}
+      </div>
+      <div class="col-md-4"><label class="form-label">Type</label>{{ form.ticket_type }}</div>
+      <div class="col-md-4"><label class="form-label">Channel</label>{{ form.channel }}</div>
+      <div class="col-md-4"><label class="form-label">Department</label>{{ form.department }}</div>
+      <div class="col-md-4"><label class="form-label">Request type</label>{{ form.request_type }}</div>
+      <div class="col-md-4"><label class="form-label">Category</label>{{ form.category }}</div>
+      <div class="col-md-4"><label class="form-label">Priority</label>{{ form.priority }}</div>
+      <div class="col-md-4"><label class="form-label">Queue</label>{{ form.queue }}</div>
+      <div class="col-md-4"><label class="form-label">Impact (1-5)</label>{{ form.impact }}</div>
+      <div class="col-md-4"><label class="form-label">Urgency (1-5)</label>{{ form.urgency }}</div>
+      <div class="col-md-12"><label class="form-label">Tags</label>{{ form.tags }}</div>
+    </div>
+
+    {% if dynamic_form and dynamic_form.fields %}
+    <hr>
+    <h3 class="h6">Request details</h3>
+    <div class="row g-3">
+      {% for field in dynamic_form %}
+      <div class="col-md-6">
+        <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+        {{ field }}
+        {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+        {{ field.errors }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="form-check mt-3">
+      <input class="form-check-input" type="checkbox" name="auto_assign" id="autoAssign" value="1">
+      <label class="form-check-label" for="autoAssign">Auto-assign least loaded agent</label>
+    </div>
+    <div class="mt-4 d-flex gap-2">
+      <button type="submit" class="btn btn-primary">Create ticket</button>
+      <a href="{% url 'service_desk:ticket_list' %}" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

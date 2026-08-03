@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: enterprise-service-desk
+  labels:
+    app: enterprise-service-desk
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: enterprise-service-desk
+  template:
+    metadata:
+      labels:
+        app: enterprise-service-desk
+    spec:
+      containers:
+        - name: web
+          image: enterprise-service-desk:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DJANGO_DEBUG
+              value: "False"
+            - name: DJANGO_ALLOWED_HOSTS
+              value: "*"
+            - name: DATABASE_ENGINE
+              value: django.db.backends.postgresql
+            - name: DATABASE_HOST
+              value: postgres
+            - name: DATABASE_NAME
+              value: esd
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: esd-db
+                  key: username
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: esd-db
+                  key: password
+            - name: REDIS_URL
+              value: redis://redis:6379/0
+            - name: CELERY_BROKER_URL
+              value: redis://redis:6379/0
+            - name: DJANGO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: esd-app
+                  key: secret-key
+          readinessProbe:
+            httpGet:
+              path: /ready/
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz/
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi

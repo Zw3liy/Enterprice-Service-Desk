@@ -1,0 +1,31 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<section class="panel">
+  <div class="panel-header">
+    <h2>Incidents</h2>
+    <a class="btn btn-primary btn-sm" href="{% url 'incidents:create' %}"><i class="fa fa-plus"></i> New incident</a>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr><th>Number</th><th>Title</th><th>Status</th><th>Priority</th><th>Major</th><th>Updated</th></tr>
+      </thead>
+      <tbody>
+        {% for t in incidents %}
+        <tr>
+          <td><a href="{% url 'incidents:detail' t.pk %}"><strong>{{ t.ticket_number }}</strong></a></td>
+          <td>{{ t.title|truncatechars:70 }}</td>
+          <td>{% if t.status %}{{ t.status.name }}{% else %}—{% endif %}</td>
+          <td>{% if t.priority %}{{ t.priority.name }}{% else %}—{% endif %}</td>
+          <td>{% if t.is_major_incident %}<span class="badge text-bg-danger">MAJOR</span>{% else %}—{% endif %}</td>
+          <td>{{ t.updated_at|timesince }} ago</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="text-center text-muted py-4">No open incidents.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "components/pagination.html" with page=page %}
+</section>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<section>
+  <div class="panel mb-3">
+    <div class="text-muted small">{{ ticket.ticket_number }} · Change</div>
+    <h2 class="h3">{{ ticket.title }}</h2>
+    {% if change %}
+    <div class="d-flex flex-wrap gap-2 mb-2">
+      <span class="badge text-bg-primary">{{ change.get_change_type_display }}</span>
+      <span class="badge text-bg-warning text-dark">{{ change.get_risk_display }} risk</span>
+      <span class="badge text-bg-secondary">{{ change.get_state_display }}</span>
+    </div>
+    <p><strong>Justification:</strong> {{ change.justification|default:"—" }}</p>
+    <p><strong>Implementation:</strong> {{ change.implementation_plan|default:"—" }}</p>
+    <p><strong>Rollback:</strong> {{ change.rollback_plan|default:"—" }}</p>
+    {% endif %}
+  </div>
+  <div class="row g-3">
+    <div class="col-md-4">
+      <div class="panel">
+        <form method="post" action="{% url 'changes:submit' ticket.pk %}">{% csrf_token %}
+          <button class="btn btn-primary btn-sm w-100 mb-2" type="submit">Submit change</button>
+        </form>
+        <form method="post" action="{% url 'changes:request_approval' ticket.pk %}">{% csrf_token %}
+          <label class="form-label small">Request CAB approval</label>
+          <select name="approver" class="form-select form-select-sm mb-2" required>
+            {% for a in agents %}<option value="{{ a.pk }}">{{ a.username }}</option>{% endfor %}
+          </select>
+          <input class="form-control form-control-sm mb-2" name="reason" placeholder="Reason">
+          <button class="btn btn-outline-primary btn-sm w-100" type="submit">Request</button>
+        </form>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="panel">
+        <h3 class="h6">Your decision</h3>
+        <form method="post" action="{% url 'changes:decide' ticket.pk %}">{% csrf_token %}
+          <textarea name="comment" class="form-control mb-2" rows="2" placeholder="Comment"></textarea>
+          <div class="d-flex gap-2">
+            <button class="btn btn-success btn-sm flex-fill" name="approved" value="1" type="submit">Approve</button>
+            <button class="btn btn-outline-danger btn-sm flex-fill" name="approved" value="0" type="submit">Reject</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="panel">
+        <h3 class="h6">Approvals</h3>
+        <ul class="mb-0 small">
+          {% for a in approvals %}
+          <li>{{ a.approver }} — {{ a.get_decision_display }} {% if a.comment %}· {{ a.comment }}{% endif %}</li>
+          {% empty %}<li class="text-muted">None yet</li>{% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

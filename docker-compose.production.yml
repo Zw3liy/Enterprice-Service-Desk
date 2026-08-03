@@ -1,0 +1,18 @@
+services:
+  web:
+    build: .
+    restart: always
+    env_file:
+      - .env
+    environment:
+      DJANGO_DEBUG: "False"
+      SECURE_SSL_REDIRECT: "True"
+      SESSION_COOKIE_SECURE: "True"
+      CSRF_COOKIE_SECURE: "True"
+    depends_on:
+      - db
+      - redis
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py collectstatic --noinput &&
+             gunicorn ticketing.wsgi:application --bind 0.0.0.0:8000 --workers 4 --timeout 120"
