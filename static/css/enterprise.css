@@ -501,6 +501,17 @@ body.esd-body {
     margin-top: 28px;
 }
 
+/* Action row: Cancel (ghost) + Create Ticket (primary).
+   Right-aligned on desktop, full-width stacked on mobile. */
+.esd-actions__row {
+    display: flex;
+    flex-direction: row-reverse; /* primary sits on the right */
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
 .esd-btn {
     display: inline-flex;
     align-items: center;
@@ -544,6 +555,24 @@ body.esd-body {
     box-shadow: var(--esd-shadow-btn);
 }
 
+/* Secondary / ghost - "Cancel" */
+.esd-btn--ghost {
+    background-color: transparent;
+    color: var(--esd-label);
+    border-color: var(--esd-border-strong);
+}
+
+.esd-btn--ghost:hover {
+    background-color: #f2f4f7;
+    border-color: #b4bdc6;
+    color: var(--esd-text);
+}
+
+.esd-btn--ghost:active {
+    background-color: #e9edf1;
+    transform: translateY(0);
+}
+
 .esd-btn:focus-visible {
     outline: none;
     box-shadow: 0 0 0 4px var(--esd-teal-ring);
@@ -580,6 +609,17 @@ body.esd-body {
 
     .esd-card__title {
         font-size: 1.5rem;
+    }
+
+    /* Stack actions, primary first (visually on top) */
+    .esd-actions__row {
+        flex-direction: column-reverse;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .esd-actions__row .esd-btn {
+        width: 100%;
     }
 }
 

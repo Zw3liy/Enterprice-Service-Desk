@@ -49,12 +49,26 @@
                 </div>
             {% endif %}
 
+            {# novalidate: we run our own accessible validation in ticket_form.js.
+               Server-side validation in forms.py remains the source of truth. #}
             <form method="post"
                   action=""
                   enctype="multipart/form-data"
                   novalidate
                   data-ticket-form
                   aria-labelledby="ticket-form-heading">
+
+                {# Announces client-side validation summaries to screen readers #}
+                <div class="esd-alert esd-alert--error"
+                     role="alert"
+                     data-client-error
+                     hidden>
+                    <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                    <div class="esd-alert__body">
+                        <p class="esd-alert__title">Please check the highlighted fields</p>
+                        <span data-client-error-text></span>
+                    </div>
+                </div>
 
                 {% csrf_token %}
 
@@ -155,14 +169,24 @@
                     {% endif %}
                 {% endfor %}
 
-                {# Row 6 - Submit #}
+                {# Row 6 - Actions #}
                 <div class="esd-actions">
-                    <button type="submit"
-                            class="esd-btn esd-btn--primary esd-btn--block"
-                            data-submit-button>
-                        <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
-                        <span data-submit-label>Submit ticket</span>
-                    </button>
+                    <div class="esd-actions__row">
+                        {# type="button" so it never submits or fires HTML5 validation #}
+                        <button type="button"
+                                class="esd-btn esd-btn--ghost"
+                                data-cancel-button
+                                data-cancel-url="{% url 'dashboard' %}">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="esd-btn esd-btn--primary"
+                                data-submit-button>
+                            <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+                            <span data-submit-label>Create Ticket</span>
+                        </button>
+                    </div>
 
                     <p class="esd-form__footnote">
                         You will get a confirmation with your ticket number
