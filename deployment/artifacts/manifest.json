@@ -1,0 +1,12 @@
+{
+    "Application": "Enterprise Service Desk",
+    "Version": "1.0.0",
+    "BuildDate": "2026-08-04",
+    "Files": [
+        {
+            "Name": "EnterpriseServiceDesk-v1.0.0.zip",
+            "SizeKB": 13212.74,
+            "SHA256": "53F4CB76BB7919B8E5A7D4D67DA5988C3DACD39A0374F5711CC2CE63FF7E0D1D"
+        }
+    ]
+}
