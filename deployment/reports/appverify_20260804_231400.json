@@ -1,0 +1,52 @@
+﻿[
+    {
+        "Check":  "Django System Check",
+        "Status":  "PASS",
+        "Details":  "Django configuration healthy"
+    },
+    {
+        "Check":  "Migration Status",
+        "Status":  "PASS",
+        "Details":  "Migration framework available"
+    },
+    {
+        "Check":  "Template templates\\base.html",
+        "Status":  "PASS",
+        "Details":  "C:\\Users\\HP\\OneDrive\\Desktop\\Zwe\\enterprise_service_desk\\ticketing_system\\templates\\base.html"
+    },
+    {
+        "Check":  "Template templates\\registration\\login.html",
+        "Status":  "PASS",
+        "Details":  "C:\\Users\\HP\\OneDrive\\Desktop\\Zwe\\enterprise_service_desk\\ticketing_system\\templates\\registration\\login.html"
+    },
+    {
+        "Check":  "Template templates\\includes\\navbar.html",
+        "Status":  "PASS",
+        "Details":  "C:\\Users\\HP\\OneDrive\\Desktop\\Zwe\\enterprise_service_desk\\ticketing_system\\templates\\includes\\navbar.html"
+    },
+    {
+        "Check":  "Template templates\\includes\\sidebar.html",
+        "Status":  "PASS",
+        "Details":  "C:\\Users\\HP\\OneDrive\\Desktop\\Zwe\\enterprise_service_desk\\ticketing_system\\templates\\includes\\sidebar.html"
+    },
+    {
+        "Check":  "Template templates\\includes\\form_fields.html",
+        "Status":  "PASS",
+        "Details":  "C:\\Users\\HP\\OneDrive\\Desktop\\Zwe\\enterprise_service_desk\\ticketing_system\\templates\\includes\\form_fields.html"
+    },
+    {
+        "Check":  "Route / (Skipped/Server offline)",
+        "Status":  "PASS",
+        "Details":  "Unable to connect to the remote server"
+    },
+    {
+        "Check":  "Route /tickets/ (Skipped/Server offline)",
+        "Status":  "PASS",
+        "Details":  "Unable to connect to the remote server"
+    },
+    {
+        "Check":  "Route /tickets/new/ (Skipped/Server offline)",
+        "Status":  "PASS",
+        "Details":  "Unable to connect to the remote server"
+    }
+]
