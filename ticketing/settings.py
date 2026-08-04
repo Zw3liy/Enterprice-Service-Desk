@@ -224,8 +224,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Phase 6 Authentication
 # -------------------------------------------------
 
-LOGIN_URL = "/login/"
+# Authentication redirects
 
-LOGIN_REDIRECT_URL = "/service-desk/"
-
-LOGOUT_REDIRECT_URL = "/login/"
+LOGIN_URL = "/accounts/login/"
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/accounts/login/"

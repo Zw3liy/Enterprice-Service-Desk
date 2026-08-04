@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Breadcrumb & Header Navigation -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a href="{% url 'service_desk:dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'service_desk:ticket_list' %}">Tickets</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">#{{ ticket.id }}</li>
+                </ol>
+            </nav>
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
+                <h2 class="h3 fw-bold mb-0">Ticket #{{ ticket.id }}: {{ ticket.title }}</h2>
+                <a href="{% url 'service_desk:ticket_list' %}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Main Column: Description and Timeline / Comments -->
+        <div class="col-12 col-lg-8">
+            <!-- Ticket Summary Card -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="card-title mb-0 fw-semibold text-primary">Description</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text text-break" style="white-space: pre-line;">{{ ticket.description }}</p>
+                </div>
+                {% if ticket.attachment %}
+                <div class="card-footer bg-light py-2 border-top">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-paperclip text-muted"></i>
+                        <span class="fw-medium small">Attachment:</span>
+                        <a href="{{ ticket.attachment.url }}" target="_blank" class="small text-decoration-none text-truncate">
+                            {{ ticket.attachment.name }}
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Activity / Updates Section -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="card-title mb-0 fw-semibold">Activity & Updates</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small mb-0">No updates or comments posted yet.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Column: Metadata & Status Details -->
+        <div class="col-12 col-lg-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="card-title mb-0 fw-semibold">Properties</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0">
+                            <span class="text-muted small">Status</span>
+                            <span class="badge {% if ticket.status == 'OPEN' %}bg-warning text-dark{% elif ticket.status == 'RESOLVED' %}bg-success{% else %}bg-secondary{% endif %}">
+                                {{ ticket.get_status_display|default:ticket.status }}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0">
+                            <span class="text-muted small">Priority</span>
+                            <span class="badge {% if ticket.priority == 'HIGH' or ticket.priority == 'URGENT' %}bg-danger{% elif ticket.priority == 'MEDIUM' %}bg-info text-dark{% else %}bg-light text-dark border{% endif %}">
+                                {{ ticket.get_priority_display|default:ticket.priority }}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0">
+                            <span class="text-muted small">Requester</span>
+                            <span class="fw-medium text-end text-truncate ms-2">{{ ticket.created_by.get_full_name|default:ticket.created_by.username }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0">
+                            <span class="text-muted small">Created</span>
+                            <span class="text-muted small">{{ ticket.created_at|date:"M d, Y H:i" }}</span>
+                        </li>
+                        {% if ticket.updated_at %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0">
+                            <span class="text-muted small">Last Updated</span>
+                            <span class="text-muted small">{{ ticket.updated_at|date:"M d, Y H:i" }}</span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

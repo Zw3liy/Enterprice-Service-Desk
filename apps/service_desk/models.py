@@ -1,259 +1,117 @@
-from django.db import models, transaction
-from django.contrib.auth.models import User
-from django.utils import timezone
+from django.conf import settings
+from django.db import models
 
-
-# =====================================================
-# DEPARTMENT
-# =====================================================
 
 class Department(models.Model):
-
-    name = models.CharField(
-        max_length=100
-    )
-
-    code = models.CharField(
-        max_length=10,
-        unique=True
-    )
-
-    ticket_counter = models.PositiveIntegerField(
-        default=0
-    )
-
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ["name"]
 
-
     def __str__(self):
         return self.name
 
-
-
-# =====================================================
-# REQUEST TYPE
-# =====================================================
 
 class RequestType(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    department = models.ForeignKey(
-        Department,
-        on_delete=models.CASCADE,
-        related_name="request_types"
-    )
-
-    name = models.CharField(
-        max_length=150
-    )
-
-
-    description = models.TextField(
-        blank=True
-    )
-
-
-    is_active = models.BooleanField(
-        default=True
-    )
-
+    class Meta:
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
 
-
-
-# =====================================================
-# CUSTOM FIELD
-# =====================================================
-
-class CustomField(models.Model):
-
-    FIELD_TYPES = [
-
-        ("text", "Text"),
-
-        ("number", "Number"),
-
-        ("dropdown", "Dropdown"),
-
-        ("date", "Date"),
-
-        ("boolean", "Boolean"),
-
-    ]
-
-
-    request_type = models.ForeignKey(
-
-        RequestType,
-
-        on_delete=models.CASCADE,
-
-        related_name="custom_fields"
-
-    )
-
-
-    name = models.CharField(
-        max_length=100
-    )
-
-
-    field_type = models.CharField(
-
-        max_length=20,
-
-        choices=FIELD_TYPES
-
-    )
-
-
-    options = models.JSONField(
-        default=list,
-        blank=True
-    )
-
-
-    is_required = models.BooleanField(
-        default=False
-    )
-
-
-    def __str__(self):
-
-        return self.name
-
-
-
-# =====================================================
-# TICKET
-# =====================================================
 
 class Ticket(models.Model):
+    PRIORITY_CHOICES = [
+        ("low", "Low"),
+        ("medium", "Medium"),
+        ("high", "High"),
+        ("urgent", "Urgent"),
+    ]
 
+    URGENCY_CHOICES = [
+        ("low", "Low"),
+        ("medium", "Medium"),
+        ("high", "High"),
+    ]
 
-    title = models.CharField(
-        max_length=200
-    )
+    STATUS_CHOICES = [
+        ("open", "Open"),
+        ("in_progress", "In Progress"),
+        ("pending", "Pending"),
+        ("resolved", "Resolved"),
+        ("closed", "Closed"),
+    ]
 
-
+    title = models.CharField(max_length=200)
     description = models.TextField()
 
-
-    requester = models.ForeignKey(
-
-        User,
-
-        on_delete=models.SET_NULL,
-
-        null=True,
-
-        related_name="tickets"
-
+    priority = models.CharField(
+        max_length=20,
+        choices=PRIORITY_CHOICES,
+        default="medium",
     )
 
+    urgency = models.CharField(
+        max_length=20,
+        choices=URGENCY_CHOICES,
+        default="medium",
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="open",
+    )
 
     department = models.ForeignKey(
-
         Department,
-
-        on_delete=models.PROTECT,
-
-        related_name="tickets"
-
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="tickets",
     )
-
 
     request_type = models.ForeignKey(
-    RequestType,
-    on_delete=models.PROTECT,
-    related_name="tickets",
-    null=True,
-    blank=True,
-)
-
-
-    ticket_number = models.CharField(
-
-        max_length=50,
-
-        unique=True,
-
-        blank=True
-
+        RequestType,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="tickets",
     )
 
-
-    custom_field_values = models.JSONField(
-
-        default=dict,
-
-        blank=True
-
+    assigned_to = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="assigned_tickets",
     )
 
-
-    created_at = models.DateTimeField(
-
-        auto_now_add=True
-
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="created_tickets",
+        null=True,
+        blank=True,
     )
 
+    tags = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+    )
 
-    def generate_ticket_number(self):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-        year = timezone.now().year
-
-
-        department = (
-            Department.objects
-            .select_for_update()
-            .get(pk=self.department.pk)
-        )
-
-
-        department.ticket_counter += 1
-
-        department.save(
-            update_fields=[
-                "ticket_counter"
-            ]
-        )
-
-
-        return (
-            f"{department.code}-"
-            f"{year}-"
-            f"{department.ticket_counter:04d}"
-        )
-
-
-
-    def save(self,*args,**kwargs):
-
-        if not self.ticket_number:
-
-            with transaction.atomic():
-
-                self.ticket_number = (
-                    self.generate_ticket_number()
-                )
-
-                super().save(
-                    *args,
-                    **kwargs
-                )
-
-        else:
-
-            super().save(
-                *args,
-                **kwargs
-            )
-
+    class Meta:
+        ordering = ["-created_at"]
 
     def __str__(self):
-
-        return self.ticket_number or self.title
+        return f"[{self.pk}] {self.title}"

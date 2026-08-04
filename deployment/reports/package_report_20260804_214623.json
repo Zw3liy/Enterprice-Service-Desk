@@ -1,0 +1,49 @@
+{
+    "Engine":  "Enterprise Service Desk Package Engine",
+    "Started":  "\/Date(1785872783925)\/",
+    "Finished":  "2026-08-04 21:46:24",
+    "Results":  [
+                    {
+                        "Timestamp":  "2026-08-04 21:46:23",
+                        "Task":  "Build Information",
+                        "Status":  "OK",
+                        "Details":  "build_info.json (0.29 KB)"
+                    },
+                    {
+                        "Timestamp":  "2026-08-04 21:46:23",
+                        "Task":  "Build Manifest",
+                        "Status":  "OK",
+                        "Details":  "manifest.json (0.77 KB)"
+                    },
+                    {
+                        "Timestamp":  "2026-08-04 21:46:23",
+                        "Task":  "SHA256 Checksums",
+                        "Status":  "OK",
+                        "Details":  "SHA256SUMS (0.10 KB)"
+                    },
+                    {
+                        "Timestamp":  "2026-08-04 21:46:23",
+                        "Task":  "Build Information",
+                        "Status":  "OK",
+                        "Details":  "Version 1.0.0"
+                    },
+                    {
+                        "Timestamp":  "2026-08-04 21:46:23",
+                        "Task":  "Deployment Package Archive",
+                        "Status":  "OK",
+                        "Details":  "EnterpriseServiceDesk-v1.0.0.zip (13,212.74 KB)"
+                    },
+                    {
+                        "Timestamp":  "2026-08-04 21:46:24",
+                        "Task":  "Build Metadata Schema",
+                        "Status":  "OK",
+                        "Details":  "Schema validated"
+                    },
+                    {
+                        "Timestamp":  "2026-08-04 21:46:24",
+                        "Task":  "Package Engine",
+                        "Status":  "FAILED",
+                        "Details":  "Manifest missing Application"
+                    }
+                ]
+}

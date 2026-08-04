@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Edit Ticket #{{ ticket.ticket_number|default:ticket.id }} - Enterprise Service Desk
+{% endblock %}
+
+{% block content %}
+
+<div class="esd-page-wrapper">
+
+    <div class="esd-card shadow-sm">
+
+        <header class="esd-card__header">
+
+            <div>
+
+                <h1 class="esd-card__title">
+                    Edit Ticket #{{ ticket.ticket_number|default:ticket.id }}
+                </h1>
+
+                <p class="esd-card__subtitle">
+                    Update your support request below.
+                </p>
+
+            </div>
+
+            <a href="{% url 'service_desk:ticket_detail' ticket.id %}"
+               class="esd-btn esd-btn--ghost">
+                Cancel
+            </a>
+
+        </header>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="esd-alert esd-alert--{% if message.tags == 'error' %}error{% else %}info{% endif %}">
+
+                    <div class="esd-alert__body">
+
+                        <p class="esd-alert__title">
+                            {{ message }}
+                        </p>
+
+                    </div>
+
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if form.non_field_errors %}
+            <div class="esd-alert esd-alert--error">
+
+                <div class="esd-alert__body">
+
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+
+                </div>
+
+            </div>
+        {% endif %}
+
+        <form method="post"
+              enctype="multipart/form-data"
+              novalidate>
+
+            {% csrf_token %}
+
+            <!-- Requester -->
+
+            <div class="esd-grid esd-grid--2 mb-3">
+
+                {% if form.requester_name %}
+                    {% include "includes/form_fields.html" with field=form.requester_name %}
+                {% endif %}
+
+                {% if form.work_email %}
+                    {% include "includes/form_fields.html" with field=form.work_email %}
+                {% endif %}
+
+            </div>
+
+            <!-- Department -->
+
+            <div class="esd-grid esd-grid--3 mb-3">
+
+                {% if form.department %}
+                    {% include "includes/form_fields.html" with field=form.department %}
+                {% endif %}
+
+                {% if form.request_type %}
+                    {% include "includes/form_fields.html" with field=form.request_type %}
+                {% endif %}
+
+                {% if form.priority %}
+                    {% include "includes/form_fields.html" with field=form.priority %}
+                {% endif %}
+
+            </div>
+
+            <!-- Title -->
+
+            {% if form.title %}
+                <div class="mb-3">
+                    {% include "includes/form_fields.html" with field=form.title %}
+                </div>
+            {% endif %}
+
+            <!-- Description -->
+
+            {% if form.description %}
+                <div class="mb-3">
+                    {% include "includes/form_fields.html" with field=form.description %}
+                </div>
+            {% endif %}
+
+            <!-- Attachment -->
+
+            {% if form.attachment %}
+
+                {% with upload=form.attachment %}
+
+                    <div class="esd-field-group mb-4{% if upload.errors %} esd-field-group--invalid{% endif %}">
+
+                        <label
+                            class="esd-label"
+                            for="{{ upload.id_for_label }}">
+
+                            {{ upload.label }}
+
+                            {% if not upload.field.required %}
+                                <span class="esd-label__optional">
+                                    (optional)
+                                </span>
+                            {% endif %}
+
+                        </label>
+
+                        <div class="esd-upload">
+
+                            <div class="esd-upload__icon">
+                                <i class="fa-solid fa-paperclip"></i>
+                            </div>
+
+                            <p class="esd-upload__text">
+
+                                <strong>
+                                    Click to upload
+                                </strong>
+
+                                or drag and drop
+
+                            </p>
+
+                            {{ upload }}
+
+                        </div>
+
+                        {% if upload.help_text %}
+                            <small class="esd-help">
+                                {{ upload.help_text|safe }}
+                            </small>
+                        {% endif %}
+
+                        {% for error in upload.errors %}
+                            <p class="esd-error">
+                                {{ error }}
+                            </p>
+                        {% endfor %}
+
+                    </div>
+
+                {% endwith %}
+
+            {% endif %}
+
+            <!-- Hidden / Extra Fields -->
+
+            {% for field in form %}
+
+                {% if field.name != "requester_name"
+                and field.name != "work_email"
+                and field.name != "department"
+                and field.name != "request_type"
+                and field.name != "priority"
+                and field.name != "title"
+                and field.name != "description"
+                and field.name != "attachment" %}
+
+                    {% if field.is_hidden %}
+
+                        {{ field }}
+
+                    {% else %}
+
+                        <div class="mb-3">
+
+                            {% include "includes/form_fields.html" with field=field %}
+
+                        </div>
+
+                    {% endif %}
+
+                {% endif %}
+
+            {% endfor %}
+
+            <div class="esd-actions mt-4">
+
+                <div class="esd-actions__row">
+
+                    <a href="{% url 'service_desk:ticket_detail' ticket.id %}"
+                       class="esd-btn esd-btn--ghost">
+                        Cancel
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="esd-btn esd-btn--primary">
+
+                        <i class="fa-solid fa-floppy-disk"></i>
+
+                        Save Changes
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/ticket_form.js' %}" defer></script>
+{% endblock %}

@@ -1,138 +1,179 @@
-from django.db import IntegrityError, transaction
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import (
-    Asset,
-    AuditLog,
-    Category,
-    Company,
-    Contact,
-    CustomerFeedback,
-    Department,
-    Escalation,
-    KnowledgeArticle,
-    Priority,
-    Queue,
-    SLA,
-    Status,
-    Ticket,
-    TicketAssignment,
-    TicketComment,
-    WorkLog,
-)
+from .models import Department, RequestType, Ticket
 
 
-class TicketingRouteTests(TestCase):
-    def test_ticket_list_uses_the_ticketing_namespace(self):
-        ticket = Ticket.objects.create(title="Network connectivity issue")
-
-        response = self.client.get(reverse("ticketing:ticket_list"))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, ticket.title)
-        self.assertContains(response, "Enterprise Service Desk")
+User = get_user_model()
 
 
-class EnterpriseDomainModelTests(TestCase):
+class DepartmentModelTests(TestCase):
+
+    def test_create_department(self):
+        department = Department.objects.create(
+            name="Information Technology",
+            description="IT Department"
+        )
+
+        self.assertEqual(str(department), "Information Technology")
+        self.assertEqual(Department.objects.count(), 1)
+
+
+class RequestTypeModelTests(TestCase):
+
+    def test_create_request_type(self):
+        request_type = RequestType.objects.create(
+            name="Incident",
+            description="Incident Request"
+        )
+
+        self.assertEqual(str(request_type), "Incident")
+        self.assertEqual(RequestType.objects.count(), 1)
+
+
+class TicketModelTests(TestCase):
+
     def setUp(self):
-        self.company = Company.objects.create(name="Acme Holdings", slug="acme-holdings")
+
+        self.user = User.objects.create_user(
+            username="tester",
+            password="password123"
+        )
+
         self.department = Department.objects.create(
-            company=self.company, name="Information Technology", code="it"
-        )
-        self.requester = Contact.objects.create(
-            company=self.company,
-            first_name="Ava",
-            last_name="Mokoena",
-            email="ava@example.com",
-        )
-        self.queue = Queue.objects.create(
-            company=self.company, department=self.department, name="Service Desk", code="service-desk"
-        )
-        self.category = Category.objects.create(
-            company=self.company, name="Connectivity", code="connectivity"
-        )
-        self.priority = Priority.objects.create(
-            company=self.company, name="High", code="high", rank=20
-        )
-        self.status = Status.objects.create(
-            company=self.company, name="Open", code="open", rank=10
-        )
-        self.sla = SLA.objects.create(
-            company=self.company,
-            name="High priority standard",
-            priority=self.priority,
-            response_minutes=30,
-            resolution_minutes=240,
+            name="IT"
         )
 
-    def test_ticket_preserves_legacy_fields_and_accepts_enterprise_relationships(self):
-        asset = Asset.objects.create(
-            company=self.company,
-            name="Branch router",
-            asset_tag="RTR-001",
-            asset_type=Asset.AssetType.NETWORK_DEVICE,
-            owner=self.requester,
+        self.request_type = RequestType.objects.create(
+            name="Incident"
         )
+
+    def test_create_ticket(self):
+
         ticket = Ticket.objects.create(
-            title="Branch cannot reach the internet",
-            description="WAN connection is unavailable.",
-            company=self.company,
-            requester=self.requester,
+
+            title="Cannot connect to VPN",
+
+            description="VPN authentication fails.",
+
             department=self.department,
-            queue=self.queue,
-            category=self.category,
-            priority_definition=self.priority,
-            status_definition=self.status,
-            sla=self.sla,
-        )
-        ticket.assets.add(asset)
 
-        self.assertEqual(ticket.status, "open")
+            request_type=self.request_type,
+
+            created_by=self.user,
+
+            assigned_to=self.user,
+
+        )
+
         self.assertEqual(ticket.priority, "medium")
-        self.assertEqual(ticket.ticket_number, f"ESD-{ticket.pk:07d}")
-        self.assertEqual(list(ticket.assets.all()), [asset])
-        self.assertEqual(ticket.requester.display_name, "Ava Mokoena")
+        self.assertEqual(ticket.urgency, "medium")
+        self.assertEqual(ticket.status, "open")
 
-    def test_company_scoped_codes_are_unique(self):
-        with self.assertRaises(IntegrityError), transaction.atomic():
-            Queue.objects.create(
-                company=self.company,
-                name="Duplicate service desk",
-                code="service-desk",
-            )
+        self.assertEqual(ticket.department, self.department)
+        self.assertEqual(ticket.request_type, self.request_type)
 
-        other_company = Company.objects.create(name="Other Holdings", slug="other-holdings")
-        Queue.objects.create(company=other_company, name="Service Desk", code="service-desk")
-
-    def test_operational_and_knowledge_records_attach_to_ticket_domain(self):
-        ticket = Ticket.objects.create(title="VPN access request", company=self.company, requester=self.requester)
-        assignment = TicketAssignment.objects.create(ticket=ticket, queue=self.queue)
-        comment = TicketComment.objects.create(ticket=ticket, body="Access request received.")
-        work_log = WorkLog.objects.create(ticket=ticket, description="Validated requester identity.", minutes_spent=15)
-        escalation = Escalation.objects.create(ticket=ticket, sla=self.sla, reason="Response target breached.")
-        audit = AuditLog.objects.create(company=self.company, ticket=ticket, action="ticket.created")
-        article = KnowledgeArticle.objects.create(
-            company=self.company,
-            category=self.category,
-            title="Connecting to the VPN",
-            slug="connecting-to-the-vpn",
-            body="Use the approved VPN client.",
+        self.assertEqual(
+            str(ticket),
+            f"[{ticket.pk}] Cannot connect to VPN"
         )
-        feedback = CustomerFeedback.objects.create(ticket=ticket, submitted_by=self.requester, rating=5)
 
-        self.assertEqual(ticket.assignments.get(), assignment)
-        self.assertEqual(ticket.comments.get(), comment)
-        self.assertEqual(ticket.work_logs.get(), work_log)
-        self.assertEqual(ticket.escalations.get(), escalation)
-        self.assertEqual(ticket.audit_logs.get(), audit)
-        self.assertEqual(article.company, self.company)
-        self.assertEqual(ticket.feedback, feedback)
+    def test_default_values(self):
 
-    def test_ticket_detail_uses_the_ticketing_namespace(self):
-        ticket = Ticket.objects.create(title="VPN access request")
+        ticket = Ticket.objects.create(
 
-        response = self.client.get(reverse("ticketing:ticket_detail", args=[ticket.pk]))
+            title="Printer Offline",
+
+            description="Printer not responding"
+
+        )
+
+        self.assertEqual(ticket.priority, "medium")
+        self.assertEqual(ticket.urgency, "medium")
+        self.assertEqual(ticket.status, "open")
+
+    def test_ticket_ordering(self):
+
+        Ticket.objects.create(
+            title="Old",
+            description="Old"
+        )
+
+        Ticket.objects.create(
+            title="New",
+            description="New"
+        )
+
+        tickets = Ticket.objects.all()
+
+        self.assertEqual(
+            tickets.first().title,
+            "New"
+        )
+
+
+class ServiceDeskViewTests(TestCase):
+
+    def setUp(self):
+
+        self.user = User.objects.create_user(
+            username="tester",
+            password="password123"
+        )
+
+        self.client.login(
+            username="tester",
+            password="password123"
+        )
+
+        self.ticket = Ticket.objects.create(
+            title="Example Ticket",
+            description="Example Description",
+            created_by=self.user
+        )
+
+    def test_dashboard(self):
+
+        response = self.client.get(
+            reverse("service_desk:dashboard")
+        )
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, ticket.title)
+
+    def test_ticket_list(self):
+
+        response = self.client.get(
+            reverse("service_desk:ticket_list")
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertContains(
+            response,
+            self.ticket.title
+        )
+
+    def test_ticket_detail(self):
+
+        response = self.client.get(
+            reverse(
+                "service_desk:ticket_detail",
+                args=[self.ticket.pk]
+            )
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertContains(
+            response,
+            self.ticket.title
+        )
+
+    def test_ticket_create_page(self):
+
+        response = self.client.get(
+            reverse("service_desk:ticket_create")
+        )
+
+        self.assertEqual(response.status_code, 200)

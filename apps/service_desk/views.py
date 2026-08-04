@@ -1,55 +1,39 @@
-from django.contrib import messages
-from django.shortcuts import redirect, render
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+from django.views.generic import (
+    TemplateView,
+    ListView,
+    CreateView,
+    DetailView,
+)
 
-from .forms import TicketCreateForm
-
-
-def dashboard(request):
-    context = {
-        "title": "Enterprise Service Desk",
-        "total_tickets": 0,
-        "open_tickets": 0,
-        "resolved_tickets": 0,
-    }
-
-    return render(
-        request,
-        "service_desk/dashboard.html",
-        context
-    )
+from .models import Ticket
+from .forms.ticket_forms import TicketCreateForm
 
 
-def ticket_create(request):
-    """Render and process the "New Support Ticket" form."""
+class DashboardView(LoginRequiredMixin, TemplateView):
+    template_name = "dashboard.html"
 
-    user = request.user if request.user.is_authenticated else None
 
-    if request.method == "POST":
-        form = TicketCreateForm(
-            request.POST,
-            request.FILES,
-            user=user,
-        )
+class TicketListView(LoginRequiredMixin, ListView):
+    model = Ticket
+    template_name = "tickets/ticket_list.html"  # Updated line per ChatGPT instruction
+    context_object_name = "tickets"
+    ordering = ["-created_at"]
 
-        if form.is_valid():
-            ticket = form.save()
 
-            messages.success(
-                request,
-                f"Ticket {ticket.ticket_number} was created successfully.",
-            )
+class TicketCreateView(LoginRequiredMixin, CreateView):
+    model = Ticket
+    form_class = TicketCreateForm
+    template_name = "tickets/create.html"
+    success_url = reverse_lazy("service_desk:ticket_list")
 
-            return redirect("ticket_create")
-    else:
-        form = TicketCreateForm(user=user)
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user
+        return super().form_valid(form)
 
-    context = {
-        "title": "New Support Ticket",
-        "form": form,
-    }
 
-    return render(
-        request,
-        "tickets/create.html",
-        context,
-    )
+class TicketDetailView(LoginRequiredMixin, DetailView):
+    model = Ticket
+    template_name = "tickets/detail.html"
+    context_object_name = "ticket"

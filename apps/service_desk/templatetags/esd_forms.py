@@ -1,41 +1,45 @@
-"""
-Presentation-only template filters for the Enterprise Service Desk UI.
-
-These helpers never touch field names, cleaned data or validation - they
-only add HTML/ARIA attributes at render time.
-"""
-
 from django import template
 
 register = template.Library()
 
-
-@register.filter(name="esd_field")
-def esd_field(bound_field):
-    """Render a bound field with accessibility attributes wired up.
-
-    Adds ``aria-invalid`` when the field has errors and ``aria-describedby``
-    pointing at the help-text / error elements emitted by
-    ``includes/form_fields.html``.
+@register.filter(name='add_aria_attrs')
+def add_aria_attrs(field):
     """
+    Dynamically injects Bootstrap classes and accessible ARIA attributes 
+    into Django form field widgets based on their state and validation errors.
+    """
+    if not hasattr(field, 'as_widget'):
+        return field
 
-    attrs = {}
-    described_by = []
+    existing_classes = field.field.widget.attrs.get('class', '')
+    
+    # Determine base form control class by widget type
+    widget_type = field.field.widget.__class__.__name__.lower()
+    if 'select' in widget_type:
+        base_class = 'form-select esd-select'
+    elif 'checkbox' in widget_type:
+        base_class = 'form-check-input esd-checkbox'
+    elif 'file' in widget_type:
+        base_class = 'form-control esd-file-input'
+    else:
+        base_class = 'form-control esd-input'
 
-    if bound_field.help_text:
-        described_by.append(f"{bound_field.auto_id}_help")
+    # Append validation error styling if field has errors
+    if field.errors:
+        base_class += ' is-invalid esd-input--invalid'
 
-    if bound_field.errors:
-        attrs["aria-invalid"] = "true"
-        described_by.extend(
-            f"{bound_field.auto_id}_error_{i}"
-            for i in range(1, len(bound_field.errors) + 1)
-        )
+    # Combine classes cleanly without duplication
+    classes = f"{base_class} {existing_classes}".strip()
 
-    if described_by:
-        attrs["aria-describedby"] = " ".join(described_by)
+    # Build accessibility attributes dict
+    attrs = {
+        'class': classes,
+    }
 
-    if bound_field.field.required:
-        attrs["aria-required"] = "true"
+    if field.errors:
+        attrs['aria-invalid'] = 'true'
+        attrs['aria-describedby'] = f"{field.id_for_label}_errors"
+    elif field.help_text:
+        attrs['aria-describedby'] = f"{field.id_for_label}_help"
 
-    return bound_field.as_widget(attrs=attrs)
+    return field.as_widget(attrs=attrs)

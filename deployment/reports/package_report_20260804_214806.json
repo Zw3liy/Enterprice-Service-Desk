@@ -1,0 +1,67 @@
+{
+    "Engine":  "Enterprise Service Desk Package Engine",
+    "Started":  "\/Date(1785872886766)\/",
+    "Finished":  "2026-08-04 21:48:08",
+    "Results":  [
+                    {
+                        "Timestamp":  "2026-08-04 21:48:06",
+                        "Task":  "Build Information",
+                        "Status":  "OK",
+                        "Details":  "build_info.json (0.29 KB)"
+                    },
+                    {
+                        "Timestamp":  "2026-08-04 21:48:06",
+                        "Task":  "Build Manifest",
+                        "Status":  "OK",
+                        "Details":  "manifest.json (0.33 KB)"
+                    },
+                    {
+                        "Timestamp":  "2026-08-04 21:48:06",
+                        "Task":  "SHA256 Checksums",
+                        "Status":  "OK",
+                        "Details":  "SHA256SUMS (0.10 KB)"
+                    },
+                    {
+                        "Timestamp":  "2026-08-04 21:48:06",
+                        "Task":  "Build Information",
+                        "Status":  "OK",
+                        "Details":  "Version 1.0.0"
+                    },
+                    {
+                        "Timestamp":  "2026-08-04 21:48:06",
+                        "Task":  "Deployment Package Archive",
+                        "Status":  "OK",
+                        "Details":  "EnterpriseServiceDesk-v1.0.0.zip (13,212.74 KB)"
+                    },
+                    {
+                        "Timestamp":  "2026-08-04 21:48:06",
+                        "Task":  "Build Metadata Schema",
+                        "Status":  "OK",
+                        "Details":  "Schema validated"
+                    },
+                    {
+                        "Timestamp":  "2026-08-04 21:48:06",
+                        "Task":  "Manifest Validation",
+                        "Status":  "OK",
+                        "Details":  "1 files validated"
+                    },
+                    {
+                        "Timestamp":  "2026-08-04 21:48:06",
+                        "Task":  "Package Size",
+                        "Status":  "OK",
+                        "Details":  "12.90 MB"
+                    },
+                    {
+                        "Timestamp":  "2026-08-04 21:48:06",
+                        "Task":  "SHA256 Validation",
+                        "Status":  "OK",
+                        "Details":  "53F4CB76BB7919B8E5A7D4D67DA5988C3DACD39A0374F5711CC2CE63FF7E0D1D"
+                    },
+                    {
+                        "Timestamp":  "2026-08-04 21:48:08",
+                        "Task":  "Package Engine",
+                        "Status":  "FAILED",
+                        "Details":  "The property \u0027Count\u0027 cannot be found on this object. Verify that the property exists."
+                    }
+                ]
+}

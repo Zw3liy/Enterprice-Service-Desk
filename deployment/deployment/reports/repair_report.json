@@ -1,0 +1,67 @@
+[
+    {
+        "Action":  "Directory Check",
+        "Status":  "OK",
+        "Details":  "deployment already exists"
+    },
+    {
+        "Action":  "Directory Check",
+        "Status":  "OK",
+        "Details":  "deployment\\modules already exists"
+    },
+    {
+        "Action":  "Directory Check",
+        "Status":  "OK",
+        "Details":  "deployment\\logs already exists"
+    },
+    {
+        "Action":  "Directory Check",
+        "Status":  "OK",
+        "Details":  "deployment\\reports already exists"
+    },
+    {
+        "Action":  "Directory Check",
+        "Status":  "OK",
+        "Details":  "deployment\\backups already exists"
+    },
+    {
+        "Action":  "Directory Check",
+        "Status":  "OK",
+        "Details":  "deployment\\artifacts already exists"
+    },
+    {
+        "Action":  "Directory Check",
+        "Status":  "OK",
+        "Details":  "deployment\\releases already exists"
+    },
+    {
+        "Action":  "Directory Check",
+        "Status":  "OK",
+        "Details":  "staticfiles already exists"
+    },
+    {
+        "Action":  "Directory Check",
+        "Status":  "OK",
+        "Details":  "media already exists"
+    },
+    {
+        "Action":  "Permissions",
+        "Status":  "OK",
+        "Details":  "Deployment directories writable"
+    },
+    {
+        "Action":  "Deployment File",
+        "Status":  "WARNING",
+        "Details":  "Deploy.ps1 missing"
+    },
+    {
+        "Action":  "Deployment File",
+        "Status":  "WARNING",
+        "Details":  "deployment\\modules\\Validate.ps1 missing"
+    },
+    {
+        "Action":  "Deployment File",
+        "Status":  "WARNING",
+        "Details":  "deployment\\modules\\Repair.ps1 missing"
+    }
+]

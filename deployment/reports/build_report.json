@@ -1,0 +1,42 @@
+[
+    {
+        "Task":  "Clean",
+        "Status":  "OK",
+        "Details":  "Artifacts cleaned"
+    },
+    {
+        "Task":  "Python",
+        "Status":  "OK",
+        "Details":  "Python available"
+    },
+    {
+        "Task":  "Django",
+        "Status":  "OK",
+        "Details":  "Django check passed"
+    },
+    {
+        "Task":  "Static",
+        "Status":  "OK",
+        "Details":  "Static files collected"
+    },
+    {
+        "Task":  "Version",
+        "Status":  "OK",
+        "Details":  "Version generated"
+    },
+    {
+        "Task":  "Artifact",
+        "Status":  "OK",
+        "Details":  "C:\\Users\\HP\\OneDrive\\Desktop\\Zwe\\enterprise_service_desk\\ticketing_system\\deployment\\artifacts\\EnterpriseServiceDesk-v1.0.0.zip"
+    },
+    {
+        "Task":  "Manifest",
+        "Status":  "OK",
+        "Details":  "manifest.json created"
+    },
+    {
+        "Task":  "Checksum",
+        "Status":  "OK",
+        "Details":  "SHA256 generated"
+    }
+]

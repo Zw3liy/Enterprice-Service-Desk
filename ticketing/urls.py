@@ -3,25 +3,17 @@ from django.urls import path, include
 
 
 urlpatterns = [
+    path("admin/", admin.site.urls),
 
-    # Enterprise Service Desk Homepage
+    # Authentication
+    path(
+        "accounts/",
+        include("django.contrib.auth.urls")
+    ),
+
+    # Enterprise Service Desk
     path(
         "",
         include("apps.service_desk.urls")
     ),
-
-
-    # Admin Console
-    path(
-        "admin/",
-        admin.site.urls
-    ),
-
-
-    # Service Desk Module API/UI namespace
-    path(
-        "service-desk/",
-        include("apps.service_desk.urls")
-    ),
-
 ]

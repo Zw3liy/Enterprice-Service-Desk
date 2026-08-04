@@ -1,208 +1,129 @@
 {% extends "base.html" %}
-{% load static %}
 
-{% block title %}New Support Ticket · Enterprise Service Desk{% endblock %}
-
-{% block body %}
-
-<div class="esd-page">
-    <div class="esd-shell">
-
-        <div class="esd-brand">
-            <span class="esd-brand__mark" aria-hidden="true">
-                <i class="fa-solid fa-headset"></i>
-            </span>
-            <span>Internal Helpdesk</span>
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header / Breadcrumbs -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a href="{% url 'service_desk:dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'service_desk:ticket_list' %}">Tickets</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">New Ticket</li>
+                </ol>
+            </nav>
+            <h2 class="h3 fw-bold mb-0">Create New Support Ticket</h2>
         </div>
+    </div>
 
-        <main id="main-content" class="esd-card">
-
-            <header class="esd-card__header">
-                <h1 class="esd-card__title">New Support Ticket</h1>
-                <p class="esd-card__subtitle">
-                    The more detail you give, the faster this gets fixed.
-                </p>
-            </header>
-
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="esd-alert esd-alert--{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% elif message.tags == 'warning' %}warning{% else %}info{% endif %}"
-                         role="alert">
-                        <i class="fa-solid {% if message.tags == 'success' %}fa-circle-check{% elif message.tags == 'error' %}fa-circle-exclamation{% else %}fa-circle-info{% endif %}"
-                           aria-hidden="true"></i>
-                        <div class="esd-alert__body">{{ message }}</div>
-                    </div>
-                {% endfor %}
-            {% endif %}
-
-            {% if form.non_field_errors %}
-                <div class="esd-alert esd-alert--error" role="alert">
-                    <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
-                    <div class="esd-alert__body">
-                        <p class="esd-alert__title">We could not submit this ticket</p>
-                        <ul>
-                            {% for error in form.non_field_errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
+    <!-- Main Card Container -->
+    <div class="row">
+        <div class="col-12 col-xl-10 col-xxl-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="card-title mb-0 fw-semibold text-primary">Ticket Details</h5>
                 </div>
-            {% endif %}
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
 
-            {# novalidate: we run our own accessible validation in ticket_form.js.
-               Server-side validation in forms.py remains the source of truth. #}
-            <form method="post"
-                  action=""
-                  enctype="multipart/form-data"
-                  novalidate
-                  data-ticket-form
-                  aria-labelledby="ticket-form-heading">
+                        <!-- Display Non-Field / Global Errors -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger mb-4" role="alert">
+                                {% for error in form.non_field_errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
 
-                {# Announces client-side validation summaries to screen readers #}
-                <div class="esd-alert esd-alert--error"
-                     role="alert"
-                     data-client-error
-                     hidden>
-                    <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
-                    <div class="esd-alert__body">
-                        <p class="esd-alert__title">Please check the highlighted fields</p>
-                        <span data-client-error-text></span>
-                    </div>
-                </div>
-
-                {% csrf_token %}
-
-                <h2 id="ticket-form-heading" class="visually-hidden">
-                    Support ticket details
-                </h2>
-
-                {% comment %}
-                Named-field layout. Any field the backend adds that is not
-                listed below still renders, via the fallback loop at the end,
-                so no form field is ever silently dropped.
-                {% endcomment %}
-
-                {# Row 1 - Your Name | Work Email #}
-                <div class="esd-grid esd-grid--2">
-                    {% if form.requester_name %}
-                        {% include "includes/form_fields.html" with field=form.requester_name %}
-                    {% endif %}
-                    {% if form.work_email %}
-                        {% include "includes/form_fields.html" with field=form.work_email %}
-                    {% endif %}
-                </div>
-
-                {# Row 2 - Department | Category | Priority #}
-                <div class="esd-grid esd-grid--3">
-                    {% if form.department %}
-                        {% include "includes/form_fields.html" with field=form.department %}
-                    {% endif %}
-                    {% if form.request_type %}
-                        {% include "includes/form_fields.html" with field=form.request_type %}
-                    {% endif %}
-                    {% if form.priority %}
-                        {% include "includes/form_fields.html" with field=form.priority %}
-                    {% endif %}
-                </div>
-
-                {# Row 3 - Issue Title #}
-                {% if form.title %}
-                    {% include "includes/form_fields.html" with field=form.title %}
-                {% endif %}
-
-                {# Row 4 - Description #}
-                {% if form.description %}
-                    {% include "includes/form_fields.html" with field=form.description %}
-                {% endif %}
-
-                {# Row 5 - Attachment upload (only if the backend form exposes it) #}
-                {% if form.attachment or form.attachments or form.file %}
-                    {% with upload=form.attachment|default:form.attachments|default:form.file %}
-                        <div class="esd-field-group{% if upload.errors %} esd-field-group--invalid{% endif %}">
-
-                            <label class="esd-label" for="{{ upload.id_for_label }}">
-                                {{ upload.label }}{% if not upload.field.required %}<span class="esd-label__optional">(optional)</span>{% endif %}
-                            </label>
-
-                            <div class="esd-upload" data-upload-zone>
-                                <div class="esd-upload__icon" aria-hidden="true">
-                                    <i class="fa-solid fa-paperclip"></i>
-                                </div>
-                                <p class="esd-upload__text">
-                                    <strong>Click to upload</strong> or drag and drop
-                                </p>
-                                <p class="esd-upload__hint">
-                                    Screenshots and logs help us resolve issues faster.
-                                </p>
-
-                                {{ upload }}
-
-                                <ul class="esd-upload__files" data-upload-list hidden></ul>
+                        <div class="row g-3">
+                            <!-- Title Field (Full Width) -->
+                            <div class="col-12">
+                                <label for="{{ form.title.id_for_label }}" class="form-label fw-medium">Title <span class="text-danger">*</span></label>
+                                {{ form.title }}
+                                {% if form.title.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.title.errors.0 }}</div>
+                                {% endif %}
+                                {% if form.title.help_text %}
+                                    <div class="form-text">{{ form.title.help_text }}</div>
+                                {% endif %}
                             </div>
 
-                            {% if upload.help_text %}
-                                <small class="esd-help">{{ upload.help_text|safe }}</small>
+                            <!-- Category (Column 1 on Desktop, Full Width on Mobile) -->
+                            <div class="col-12 col-md-6">
+                                <label for="{{ form.category.id_for_label }}" class="form-label fw-medium">Category <span class="text-danger">*</span></label>
+                                {{ form.category }}
+                                {% if form.category.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.category.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Priority (Column 2 on Desktop, Full Width on Mobile) -->
+                            <div class="col-12 col-md-6">
+                                <label for="{{ form.priority.id_for_label }}" class="form-label fw-medium">Priority <span class="text-danger">*</span></label>
+                                {{ form.priority }}
+                                {% if form.priority.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.priority.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Requester / Contact Email (Column 1 on Desktop) -->
+                            {% if form.requester_email %}
+                            <div class="col-12 col-md-6">
+                                <label for="{{ form.requester_email.id_for_label }}" class="form-label fw-medium">Requester Email</label>
+                                {{ form.requester_email }}
+                                {% if form.requester_email.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.requester_email.errors.0 }}</div>
+                                {% endif %}
+                            </div>
                             {% endif %}
 
-                            {% for error in upload.errors %}
-                                <p class="esd-error">
-                                    <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
-                                    <span>{{ error }}</span>
-                                </p>
-                            {% endfor %}
+                            <!-- Assigned Department / Impact (Column 2 on Desktop) -->
+                            {% if form.department %}
+                            <div class="col-12 col-md-6">
+                                <label for="{{ form.department.id_for_label }}" class="form-label fw-medium">Department</label>
+                                {{ form.department }}
+                                {% if form.department.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.department.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
 
+                            <!-- Description (Full Width) -->
+                            <div class="col-12">
+                                <label for="{{ form.description.id_for_label }}" class="form-label fw-medium">Description <span class="text-danger">*</span></label>
+                                {{ form.description }}
+                                {% if form.description.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.description.errors.0 }}</div>
+                                {% endif %}
+                                {% if form.description.help_text %}
+                                    <div class="form-text">{{ form.description.help_text }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- File Attachments (Full Width) -->
+                            {% if form.attachment %}
+                            <div class="col-12">
+                                <label for="{{ form.attachment.id_for_label }}" class="form-label fw-medium">Attachments</label>
+                                {{ form.attachment }}
+                                {% if form.attachment.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.attachment.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
                         </div>
-                    {% endwith %}
-                {% endif %}
 
-                {% comment %}
-                Fallback: render any remaining backend fields (dynamic custom
-                fields, new fields added later) so validation is never bypassed.
-                {% endcomment %}
-                {% for field in form %}
-                    {% if field.name != "requester_name" and field.name != "work_email" and field.name != "department" and field.name != "request_type" and field.name != "priority" and field.name != "title" and field.name != "description" and field.name != "attachment" and field.name != "attachments" and field.name != "file" %}
-                        {% if field.is_hidden %}
-                            {{ field }}
-                        {% else %}
-                            {% include "includes/form_fields.html" with field=field %}
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-
-                {# Row 6 - Actions #}
-                <div class="esd-actions">
-                    <div class="esd-actions__row">
-                        {# type="button" so it never submits or fires HTML5 validation #}
-                        <button type="button"
-                                class="esd-btn esd-btn--ghost"
-                                data-cancel-button
-                                data-cancel-url="{% url 'dashboard' %}">
-                            Cancel
-                        </button>
-
-                        <button type="submit"
-                                class="esd-btn esd-btn--primary"
-                                data-submit-button>
-                            <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
-                            <span data-submit-label>Create Ticket</span>
-                        </button>
-                    </div>
-
-                    <p class="esd-form__footnote">
-                        You will get a confirmation with your ticket number
-                        right after submitting.
-                    </p>
+                        <!-- Action Buttons Row -->
+                        <div class="d-flex flex-column flex-sm-row justify-content-end gap-2 mt-4 pt-3 border-top">
+                            <a href="{% url 'service_desk:ticket_list' %}" class="btn btn-outline-secondary px-4 order-2 order-sm-1">Cancel</a>
+                            <button type="submit" class="btn btn-primary px-4 order-1 order-sm-2">
+                                <i class="bi bi-plus-lg me-1"></i> Submit Ticket
+                            </button>
+                        </div>
+                    </form>
                 </div>
-
-            </form>
-
-        </main>
-
+            </div>
+        </div>
     </div>
 </div>
-
-{% endblock %}
-
-{% block extra_js %}
-<script src="{% static 'js/ticket_form.js' %}" defer></script>
 {% endblock %}

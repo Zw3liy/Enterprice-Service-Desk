@@ -1,0 +1,82 @@
+[
+    {
+        "Action":  "Directory",
+        "Status":  "OK",
+        "Details":  "deployment exists"
+    },
+    {
+        "Action":  "Directory",
+        "Status":  "OK",
+        "Details":  "deployment\\modules exists"
+    },
+    {
+        "Action":  "Directory",
+        "Status":  "OK",
+        "Details":  "deployment\\logs exists"
+    },
+    {
+        "Action":  "Directory",
+        "Status":  "OK",
+        "Details":  "deployment\\reports exists"
+    },
+    {
+        "Action":  "Directory",
+        "Status":  "OK",
+        "Details":  "deployment\\backups exists"
+    },
+    {
+        "Action":  "Directory",
+        "Status":  "OK",
+        "Details":  "deployment\\artifacts exists"
+    },
+    {
+        "Action":  "Directory",
+        "Status":  "OK",
+        "Details":  "deployment\\releases exists"
+    },
+    {
+        "Action":  "Directory",
+        "Status":  "OK",
+        "Details":  "staticfiles exists"
+    },
+    {
+        "Action":  "Directory",
+        "Status":  "OK",
+        "Details":  "media exists"
+    },
+    {
+        "Action":  "Environment",
+        "Status":  "OK",
+        "Details":  ".env exists"
+    },
+    {
+        "Action":  "STATIC_ROOT",
+        "Status":  "OK",
+        "Details":  "staticfiles exists"
+    },
+    {
+        "Action":  "Django Migration",
+        "Status":  "FIXED",
+        "Details":  "Migrations completed"
+    },
+    {
+        "Action":  "Collect Static",
+        "Status":  "FIXED",
+        "Details":  "Static collection completed"
+    },
+    {
+        "Action":  "Permissions",
+        "Status":  "OK",
+        "Details":  "Write access confirmed"
+    },
+    {
+        "Action":  "Deployment File",
+        "Status":  "OK",
+        "Details":  "Deploy.ps1 exists"
+    },
+    {
+        "Action":  "Deployment File",
+        "Status":  "OK",
+        "Details":  "deployment\\modules\\Repair.ps1 exists"
+    }
+]
