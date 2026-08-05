@@ -1,14 +1,27 @@
 """
 Enterprise Service Desk
-Authorization Tests
 
-Validates object-level security rules.
+Phase 2.2 Authorization Policy Tests
 
-Phase 2.2.3
+Validates:
+
+Administrator:
+    Full system visibility
+
+Manager:
+    Department scoped visibility
+
+Technician:
+    Assigned ticket visibility
+
+Requester:
+    Created ticket visibility
+
 """
 
 from django.test import TestCase
-from django.contrib.auth.models import User
+
+from django.contrib.auth.models import User, Group
 
 from apps.service_desk.models import (
     Ticket,
@@ -22,20 +35,16 @@ from apps.service_desk.security.policies import (
 
 
 class AuthorizationPolicyTests(TestCase):
-    
+
 
     def setUp(self):
 
-        # Users
+        # =====================================================
+        # USERS
+        # =====================================================
 
-        self.requester_one = User.objects.create_user(
-            username="requester_one",
-            password="password123"
-        )
-
-
-        self.requester_two = User.objects.create_user(
-            username="requester_two",
+        self.requester = User.objects.create_user(
+            username="requester",
             password="password123"
         )
 
@@ -59,68 +68,111 @@ class AuthorizationPolicyTests(TestCase):
         )
 
 
-        # Departments
+        # =====================================================
+        # GROUPS
+        # =====================================================
+
+        requester_group = Group.objects.get_or_create(
+            name="Requester"
+        )[0]
+
+
+        technician_group = Group.objects.get_or_create(
+            name="Technician"
+        )[0]
+
+
+        manager_group = Group.objects.get_or_create(
+            name="Manager"
+        )[0]
+
+
+        self.requester.groups.add(
+            requester_group
+        )
+
+        self.technician.groups.add(
+            technician_group
+        )
+
+        self.manager.groups.add(
+            manager_group
+        )
+
+
+        # =====================================================
+        # DEPARTMENTS
+        # =====================================================
+
 
         self.it_department = Department.objects.create(
-            name="IT"
+            name="IT",
+            description="Information Technology"
         )
 
 
-        self.hr_department = Department.objects.create(
-            name="HR"
+        self.finance_department = Department.objects.create(
+            name="Finance",
+            description="Finance Department"
         )
 
 
-        self.it_department.managers.add(
+        self.finance_department.managers.add(
             self.manager
         )
 
 
-        # Tickets
+        # =====================================================
+        # TICKETS
+        # =====================================================
 
+
+        # Requester owns this
         self.requester_ticket = Ticket.objects.create(
             title="Requester Ticket",
             description="Created by requester",
-            created_by=self.requester_one,
-            department=self.hr_department,
+            created_by=self.requester,
+            department=self.it_department
         )
 
 
-        self.other_requester_ticket = Ticket.objects.create(
-            title="Other Requester Ticket",
-            description="Created by another requester",
-            created_by=self.requester_two,
-            department=self.hr_department,
-        )
-
-
+        # Technician assigned ticket
         self.assigned_ticket = Ticket.objects.create(
-            title="Technician Ticket",
-            description="Assigned ticket",
-            assigned_to=self.technician,
-            department=self.it_department,
-        )
+    title="Technician Ticket",
+    description="Assigned technician ticket",
+    created_by=self.manager,
+    assigned_to=self.technician,
+    department=self.it_department
+)
 
 
+        # Manager department ticket
         self.manager_ticket = Ticket.objects.create(
-            title="Manager Department Ticket",
-            description="Department ticket",
-            department=self.it_department,
+    title="Manager Department Ticket",
+    description="Finance department ticket",
+    created_by=self.manager,
+    department=self.finance_department
+)
+
+
+        # unrelated ticket
+        self.private_ticket = Ticket.objects.create(
+            title="Private Ticket",
+            description="Another department",
+            created_by=self.technician,
+            department=self.it_department
         )
 
 
-        self.other_department_ticket = Ticket.objects.create(
-            title="HR Ticket",
-            description="Other department",
-            department=self.hr_department,
-        )
 
-
+    # =====================================================
+    # REQUESTER
+    # =====================================================
 
     def test_requester_only_sees_owned_tickets(self):
 
         tickets = get_ticket_queryset(
-            self.requester_one
+            self.requester
         )
 
 
@@ -131,11 +183,15 @@ class AuthorizationPolicyTests(TestCase):
 
 
         self.assertNotIn(
-            self.other_requester_ticket,
+            self.manager_ticket,
             tickets
         )
 
 
+
+    # =====================================================
+    # TECHNICIAN
+    # =====================================================
 
     def test_technician_only_sees_assigned_tickets(self):
 
@@ -151,11 +207,15 @@ class AuthorizationPolicyTests(TestCase):
 
 
         self.assertNotIn(
-            self.requester_ticket,
+            self.manager_ticket,
             tickets
         )
 
 
+
+    # =====================================================
+    # MANAGER
+    # =====================================================
 
     def test_manager_sees_department_tickets(self):
 
@@ -171,13 +231,17 @@ class AuthorizationPolicyTests(TestCase):
 
 
         self.assertNotIn(
-            self.other_department_ticket,
+            self.private_ticket,
             tickets
         )
 
 
 
-    def test_administrator_sees_all_tickets(self):
+    # =====================================================
+    # ADMIN
+    # =====================================================
+
+    def test_admin_sees_all_tickets(self):
 
         tickets = get_ticket_queryset(
             self.admin
@@ -186,5 +250,5 @@ class AuthorizationPolicyTests(TestCase):
 
         self.assertEqual(
             tickets.count(),
-            Ticket.objects.count()
+            4
         )
