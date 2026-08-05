@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Enterprise Service Desk{% endblock %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 450px;">
+  <div class="card shadow-sm">
+    <div class="card-body p-4">
+      <h3 class="card-title text-center mb-4">Enterprise Service Desk</h3>
+      <h5 class="text-secondary text-center mb-4">Sign In to Your Account</h5>
+
+      {% if form.errors %}
+        <div class="alert alert-danger mb-3">
+          Your username and password didn't match. Please try again.
+        </div>
+      {% endif %}
+
+      <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="id_username" class="form-label">Username</label>
+          <input type="text" name="username" id="id_username" class="form-control" required autofocus>
+        </div>
+        <div class="mb-3">
+          <label for="id_password" class="form-label">Password</label>
+          <input type="password" name="password" id="id_password" class="form-control" required>
+        </div>
+        
+        <input type="hidden" name="next" value="{{ next }}">
+        
+        <button type="submit" class="btn btn-primary w-100 py-2">Log In</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
