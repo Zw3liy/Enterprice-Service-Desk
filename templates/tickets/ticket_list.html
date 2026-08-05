@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}
+Ticket Queue
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold">
+                Ticket Queue
+            </h2>
+
+            <p class="text-muted">
+                Authorized tickets visible to your role
+            </p>
+        </div>
+
+
+        <a href="{% url 'service_desk:ticket_create' %}"
+           class="btn btn-primary">
+
+            Create Ticket
+
+        </a>
+
+    </div>
+
+
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+
+            {% if tickets %}
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Created By</th>
+                            <th>Assigned To</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                    {% for ticket in tickets %}
+
+                        <tr>
+
+
+                            <td>
+                                #{{ ticket.id }}
+                            </td>
+
+
+                            <td>
+
+                                <a href="{% url 'service_desk:ticket_detail' ticket.pk %}"
+                                   class="fw-semibold text-decoration-none">
+
+                                    {{ ticket.title }}
+
+                                </a>
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="badge bg-secondary">
+
+                                    {{ ticket.get_status_display }}
+
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                {{ ticket.get_priority_display }}
+
+                            </td>
+
+
+                            <td>
+
+                                {% if ticket.created_by %}
+
+                                    {{ ticket.created_by.username }}
+
+                                {% else %}
+
+                                    System
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                {% if ticket.assigned_to %}
+
+                                    {{ ticket.assigned_to.username }}
+
+                                {% else %}
+
+                                    Unassigned
+
+                                {% endif %}
+
+                            </td>
+
+
+                        </tr>
+
+
+                    {% endfor %}
+
+
+                    </tbody>
+
+
+                </table>
+
+            </div>
+
+
+            {% else %}
+
+
+            <div class="alert alert-info">
+
+                No tickets are available for your authorization scope.
+
+            </div>
+
+
+            {% endif %}
+
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+{% endblock %}
