@@ -42,7 +42,7 @@ class DashboardView(
     Authentication required.
     """
 
-    template_name = "dashboard.html"
+    template_name = "service_desk/dashboard.html"
 
     permission_required = (
         "service_desk.view_ticket"

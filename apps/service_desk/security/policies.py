@@ -3,32 +3,67 @@ Enterprise Service Desk
 Authorization Policies
 
 Central authorization decisions.
+
+Phase 2.2 Authorization Hardening
 """
 
+
+from django.contrib.auth.models import Group
 
 from apps.service_desk.models import Ticket
 
 
 
+ROLE_ADMINISTRATOR = "Administrator"
+ROLE_MANAGER = "Manager"
+ROLE_TECHNICIAN = "Technician"
+ROLE_REQUESTER = "Requester"
+
+
+
+def has_role(user, role):
+    """
+    Check Django Group membership.
+    """
+
+    if not user.is_authenticated:
+        return False
+
+    return user.groups.filter(
+        name=role
+    ).exists()
+
+
+
 def is_administrator(user):
     """
-    Platform administrators bypass object restrictions.
+    Platform administrator access.
     """
 
     return (
         user.is_authenticated
-        and user.is_superuser
+        and (
+            user.is_superuser
+            or has_role(
+                user,
+                ROLE_ADMINISTRATOR
+            )
+        )
     )
 
 
 
 def is_manager(user):
     """
-    User manages one or more departments.
+    Department manager access.
     """
 
     return (
         user.is_authenticated
+        and has_role(
+            user,
+            ROLE_MANAGER
+        )
         and user.managed_departments.exists()
     )
 
@@ -36,19 +71,37 @@ def is_manager(user):
 
 def is_technician(user):
     """
-    User has assigned tickets.
+    Technician access.
     """
 
     return (
         user.is_authenticated
-        and user.assigned_tickets.exists()
+        and has_role(
+            user,
+            ROLE_TECHNICIAN
+        )
+    )
+
+
+
+def is_requester(user):
+    """
+    Default requester access.
+    """
+
+    return (
+        user.is_authenticated
+        and has_role(
+            user,
+            ROLE_REQUESTER
+        )
     )
 
 
 
 def get_ticket_queryset(user):
     """
-    Returns tickets visible to the user.
+    Object level ticket visibility.
 
     Rules:
 
@@ -62,7 +115,7 @@ def get_ticket_queryset(user):
         assigned tickets
 
     Requester:
-        created tickets
+        own tickets
     """
 
 
@@ -89,6 +142,11 @@ def get_ticket_queryset(user):
         )
 
 
-    return Ticket.objects.filter(
-        created_by=user
-    )
+    if is_requester(user):
+
+        return Ticket.objects.filter(
+            created_by=user
+        )
+
+
+    return Ticket.objects.none()

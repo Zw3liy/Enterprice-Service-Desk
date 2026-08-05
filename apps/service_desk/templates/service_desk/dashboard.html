@@ -1,48 +1,104 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Enterprise Service Desk</title>
-</head>
+{% extends "base.html" %}
 
-<body>
-
-<h1>
+{% block title %}
 Enterprise Service Desk Dashboard
-</h1>
+{% endblock %}
 
+{% block content %}
 
-<h2>
-IT Support Overview
-</h2>
+<div class="container-fluid mt-4">
 
+    <h2 class="mb-4">
+        Enterprise Service Desk Dashboard
+    </h2>
 
-<table border="1">
+    <div class="row">
 
-<tr>
-<th>Total Tickets</th>
-<th>Open</th>
-<th>Resolved</th>
-</tr>
+        <div class="col-md-4">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6>Total Tickets</h6>
+                    <h2>{{ total_tickets|default:"0" }}</h2>
+                </div>
+            </div>
+        </div>
 
+        <div class="col-md-4">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6>Open Tickets</h6>
+                    <h2>{{ open_tickets|default:"0" }}</h2>
+                </div>
+            </div>
+        </div>
 
-<tr>
+        <div class="col-md-4">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h6>Resolved Tickets</h6>
+                    <h2>{{ resolved_tickets|default:"0" }}</h2>
+                </div>
+            </div>
+        </div>
 
-<td>
-{{ total_tickets }}
-</td>
+    </div>
 
-<td>
-{{ open_tickets }}
-</td>
+    <div class="card mt-4 shadow-sm">
 
-<td>
-{{ resolved_tickets }}
-</td>
+        <div class="card-header">
+            Recent Tickets
+        </div>
 
-</tr>
+        <div class="card-body">
 
-</table>
+            {% if recent_tickets %}
 
+                <table class="table table-striped">
 
-</body>
-</html>
+                    <thead>
+
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    {% for ticket in recent_tickets %}
+
+                        <tr>
+
+                            <td>{{ ticket.id }}</td>
+
+                            <td>{{ ticket.title }}</td>
+
+                            <td>{{ ticket.status }}</td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            {% else %}
+
+                <div class="alert alert-info mb-0">
+
+                    No tickets found.
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
