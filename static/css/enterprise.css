@@ -65,3 +65,28 @@ html, body {
     max-width: 100%;
     overflow-x: hidden;
 }
+
+/* =========================================================
+   FE-01 Enterprise Sidebar Layout Fix
+   ========================================================= */
+
+@media (min-width: 768px) {
+
+    .container-fluid > .row {
+        display: flex;
+        flex-wrap: nowrap;
+    }
+
+    .sidebar.col-md-2 {
+        flex: 0 0 16.666667%;
+        max-width: 16.666667%;
+        min-height: calc(100vh - 56px);
+        overflow-y: auto;
+    }
+
+    main.col-md-10 {
+        flex: 0 0 83.333333%;
+        max-width: 83.333333%;
+    }
+
+}
