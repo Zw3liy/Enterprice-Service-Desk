@@ -1,182 +1,58 @@
-"""
-apps/service_desk/views.py
-
-Enterprise Service Desk
-Phase 2.2.4 — Authorization Hardening
-
-Responsibilities:
-- Authentication enforcement
-- RBAC permission enforcement
-- Object-level ticket visibility
-- Ticket ownership assignment
-"""
-
-
-from django.urls import reverse_lazy
-from django.views.generic import (
-    TemplateView,
-    ListView,
-    CreateView,
-    DetailView,
-)
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.views.generic import TemplateView
 
 from .models import Ticket
-from .forms.ticket_forms import TicketCreateForm
-
-from .security.policies import get_ticket_queryset
-from .security.mixins import TicketPermissionMixin
 
 
+class IncidentDashboardView(PermissionRequiredMixin, TemplateView):
+    template_name = "service_desk/incidents.html"
 
-# --------------------------------------------------
-# Dashboard
-# --------------------------------------------------
+    permission_required = "service_desk.view_ticket"
 
-class DashboardView(
-    TicketPermissionMixin,
-    TemplateView
-):
-    """
-    Main dashboard.
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-    Authentication required.
-    """
-
-    template_name = "service_desk/dashboard.html"
-
-    permission_required = (
-        "service_desk.view_ticket"
-    )
-
-
-
-# --------------------------------------------------
-# Ticket List
-# --------------------------------------------------
-
-class TicketListView(
-    TicketPermissionMixin,
-    ListView
-):
-    """
-    Ticket listing.
-
-    Visibility controlled by:
-        security.policies.get_ticket_queryset()
-
-    Rules:
-        Requester:
-            own tickets
-
-        Technician:
-            assigned tickets
-
-        Manager:
-            department tickets
-
-        Administrator:
-            all tickets
-    """
-
-    model = Ticket
-
-    template_name = (
-        "tickets/ticket_list.html"
-    )
-
-    context_object_name = "tickets"
-
-    permission_required = (
-        "service_desk.view_ticket"
-    )
-
-
-    def get_queryset(self):
-
-        return get_ticket_queryset(
-            self.request.user
+        incidents = (
+            Ticket.objects
+            .select_related(
+                "department",
+                "assigned_to",
+            )
+            .order_by("-created_at")
         )
 
+        context.update({
 
+            "incidents": incidents,
 
-# --------------------------------------------------
-# Ticket Create
-# --------------------------------------------------
+            "total_incidents":
+                incidents.count(),
 
-class TicketCreateView(
-    TicketPermissionMixin,
-    CreateView
-):
-    """
-    Ticket creation.
+            "pending_incidents":
+                incidents.filter(
+                    status__in=[
+                        "OPEN",
+                        "IN_PROGRESS",
+                        "UNASSIGNED",
+                    ]
+                ),
 
-    Requires:
-        service_desk.add_ticket
+            "resolved_incidents":
+                incidents.filter(
+                    status__in=[
+                        "RESOLVED",
+                        "CLOSED",
+                    ]
+                ),
 
-    Automatically assigns:
-        created_by = logged in user
-    """
+            "critical_incidents":
+                incidents.filter(
+                    priority__in=[
+                        "HIGH",
+                        "CRITICAL",
+                    ]
+                ),
 
-    model = Ticket
+        })
 
-    form_class = TicketCreateForm
-
-    template_name = (
-        "tickets/create.html"
-    )
-
-    permission_required = (
-        "service_desk.add_ticket"
-    )
-
-
-    success_url = reverse_lazy(
-        "service_desk:ticket_list"
-    )
-
-
-    def form_valid(self, form):
-
-        form.instance.created_by = (
-            self.request.user
-        )
-
-        return super().form_valid(form)
-
-
-
-# --------------------------------------------------
-# Ticket Detail
-# --------------------------------------------------
-
-class TicketDetailView(
-    TicketPermissionMixin,
-    DetailView
-):
-    """
-    Ticket detail view.
-
-    Object visibility is enforced
-    through queryset filtering.
-    """
-
-    model = Ticket
-
-    template_name = (
-        "tickets/detail.html"
-    )
-
-    context_object_name = (
-        "ticket"
-    )
-
-    permission_required = (
-        "service_desk.view_ticket"
-    )
-
-
-    def get_queryset(self):
-
-        return get_ticket_queryset(
-            self.request.user
-        )
+        return context
