@@ -1,0 +1,123 @@
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m22[m[36m:[mmkdir apps\[1;31mworkflow[m_engine 2>nul
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m23[m[36m:[mmkdir apps\[1;31mworkflow[m_engine\models 2>nul
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m24[m[36m:[mmkdir apps\[1;31mworkflow[m_engine\services 2>nul
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m25[m[36m:[mmkdir apps\[1;31mworkflow[m_engine\rules 2>nul
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m26[m[36m:[mmkdir apps\[1;31mworkflow[m_engine\events 2>nul
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m29[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\__init__.py
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m36[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\models\[1;31mworkflow[m.py
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m37[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\models\rule.py
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m38[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\models\approval.py
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m39[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\models\automation_log.py
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m46[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\services\[1;31mworkflow[m_runner.py
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m47[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\services\rule_engine.py
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m48[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\services\approval_service.py
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m55[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\events\ticket_events.py
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m56[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\events\event_dispatcher.py
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m120[m[36m:[mmkdir api\[1;31mworkflow[m 2>nul
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m122[m[36m:[mtype nul > api\[1;31mworkflow[m\serializers.py
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m123[m[36m:[mtype nul > api\[1;31mworkflow[m\views.py
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m124[m[36m:[mtype nul > api\[1;31mworkflow[m\urls.py
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m131[m[36m:[mmkdir templates\[1;31mworkflow[m 2>nul
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m133[m[36m:[mtype nul > templates\[1;31mworkflow[m\designer.html
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\[1;31mworkflow[m\rules.html
+[35mPHASE22_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\[1;31mworkflow[m\logs.html
+[35mPHASE27_KNOWLEDGE_SELF_SERVICE_PORTAL.cmd[m[36m:[m[32m46[m[36m:[mtype nul > apps\knowledge\approval\[1;31mworkflow[m.py
+[35mPHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m71[m[36m:[mtype nul > apps\ai_engine\agents\[1;31mworkflow[m_agent.py
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m22[m[36m:[mmkdir apps\[1;31mworkflow[m_engine 2>nul
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m23[m[36m:[mmkdir apps\[1;31mworkflow[m_engine\models 2>nul
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m24[m[36m:[mmkdir apps\[1;31mworkflow[m_engine\services 2>nul
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m25[m[36m:[mmkdir apps\[1;31mworkflow[m_engine\rules 2>nul
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m26[m[36m:[mmkdir apps\[1;31mworkflow[m_engine\executors 2>nul
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m29[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\__init__.py
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m36[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\models\[1;31mworkflow[m.py
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m37[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\models\step.py
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m38[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\models\condition.py
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m39[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\models\execution.py
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m46[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\services\designer.py
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m47[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\services\builder.py
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m54[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\rules\engine.py
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m55[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\rules\conditions.py
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m56[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\rules\actions.py
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m85[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\executors\executor.py
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m86[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\executors\email_action.py
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m87[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\executors\ticket_action.py
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m105[m[36m:[mmkdir templates\[1;31mworkflow[m 2>nul
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m107[m[36m:[mtype nul > templates\[1;31mworkflow[m\designer.html
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m108[m[36m:[mtype nul > templates\[1;31mworkflow[m\list.html
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\[1;31mworkflow[m\history.html
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m116[m[36m:[mmkdir api\[1;31mworkflow[m 2>nul
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m118[m[36m:[mtype nul > api\[1;31mworkflow[m\views.py
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m119[m[36m:[mtype nul > api\[1;31mworkflow[m\serializers.py
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m120[m[36m:[mtype nul > api\[1;31mworkflow[m\urls.py
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m127[m[36m:[mmkdir apps\[1;31mworkflow[m_versioning 2>nul
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m129[m[36m:[mtype nul > apps\[1;31mworkflow[m_versioning\__init__.py
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m130[m[36m:[mtype nul > apps\[1;31mworkflow[m_versioning\models.py
+[35mPHASE29_WORKFLOW_AUTOMATION_STUDIO.cmd[m[36m:[m[32m131[m[36m:[mtype nul > apps\[1;31mworkflow[m_versioning\manager.py
+[35mPHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m25[m[36m:[mmkdir apps\itil_core\[1;31mworkflow[ms 2>nul
+[35mPHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m106[m[36m:[mtype nul > apps\itil_core\[1;31mworkflow[ms\approval_flow.py
+[35mPHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m107[m[36m:[mtype nul > apps\itil_core\[1;31mworkflow[ms\escalation_flow.py
+[35mPHASE37_KNOWLEDGE_AI_SERVICE_ASSISTANT.cmd[m[36m:[m[32m48[m[36m:[mtype nul > apps\knowledge_management\services\[1;31mworkflow[m.py
+[35mPHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m22[m[36m:[mmkdir apps\[1;31mworkflow[m_engine 2>nul
+[35mPHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m23[m[36m:[mmkdir apps\[1;31mworkflow[m_engine\models 2>nul
+[35mPHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m24[m[36m:[mmkdir apps\[1;31mworkflow[m_engine\services 2>nul
+[35mPHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m25[m[36m:[mmkdir apps\[1;31mworkflow[m_engine\rules 2>nul
+[35mPHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m26[m[36m:[mmkdir apps\[1;31mworkflow[m_engine\actions 2>nul
+[35mPHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m29[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\__init__.py
+[35mPHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m36[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\models\[1;31mworkflow[m.py
+[35mPHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m37[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\models\step.py
+[35mPHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m38[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\models\execution.py
+[35mPHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m39[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\models\condition.py
+[35mPHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m59[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\actions\email.py
+[35mPHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m60[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\actions\assignment.py
+[35mPHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m61[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\actions\notification.py
+[35mPHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m62[m[36m:[mtype nul > apps\[1;31mworkflow[m_engine\actions\webhook.py
+[35mPHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m131[m[36m:[mmkdir templates\[1;31mworkflow[m 2>nul
+[35mPHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\[1;31mworkflow[m\dashboard.html
+[35mPHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\[1;31mworkflow[m\builder.html
+[35mPHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m136[m[36m:[mtype nul > templates\[1;31mworkflow[m\runs.html
+[35mPHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m143[m[36m:[mmkdir api\[1;31mworkflow[m 2>nul
+[35mPHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m146[m[36m:[mtype nul > api\[1;31mworkflow[m\views.py
+[35mPHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m147[m[36m:[mtype nul > api\[1;31mworkflow[m\serializers.py
+[35mPHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m148[m[36m:[mtype nul > api\[1;31mworkflow[m\urls.py
+[35mPHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m75[m[36m:[mtype nul > apps\request_fulfillment\[1;31mworkflow[m.py
+[35mPHASE55_60_FINAL_ENTERPRISE_PRODUCTION_MASTER.cmd[m[36m:[m[32m44[m[36m:[mmkdir apps\[1;31mworkflow[m_designer 2>nul
+[35mPHASE55_60_FINAL_ENTERPRISE_PRODUCTION_MASTER.cmd[m[36m:[m[32m45[m[36m:[mmkdir apps\[1;31mworkflow[m_designer\builder 2>nul
+[35mPHASE55_60_FINAL_ENTERPRISE_PRODUCTION_MASTER.cmd[m[36m:[m[32m48[m[36m:[mtype nul > apps\[1;31mworkflow[m_designer\__init__.py
+[35mPHASE55_60_FINAL_ENTERPRISE_PRODUCTION_MASTER.cmd[m[36m:[m[32m49[m[36m:[mtype nul > apps\[1;31mworkflow[m_designer\models.py
+[35mPHASE55_60_FINAL_ENTERPRISE_PRODUCTION_MASTER.cmd[m[36m:[m[32m50[m[36m:[mtype nul > apps\[1;31mworkflow[m_designer\builder\nodes.py
+[35mPHASE55_60_FINAL_ENTERPRISE_PRODUCTION_MASTER.cmd[m[36m:[m[32m51[m[36m:[mtype nul > apps\[1;31mworkflow[m_designer\builder\canvas.py
+[35mPHASE55_60_FINAL_ENTERPRISE_PRODUCTION_MASTER.cmd[m[36m:[m[32m52[m[36m:[mtype nul > apps\[1;31mworkflow[m_designer\builder\connections.py
+[35mPHASE55_60_FINAL_ENTERPRISE_PRODUCTION_MASTER.cmd[m[36m:[m[32m53[m[36m:[mtype nul > apps\[1;31mworkflow[m_designer\builder\execution.py
+[35mPHASE61_ENTERPRISE_UI_COMPLETION_MASTER.cmd[m[36m:[m[32m125[m[36m:[m[1;31mworkflow[m
+[35mPHASE63_ENTERPRISE_MODULES_IMPLEMENTATION.cmd[m[36m:[m[32m28[m[36m:[mecho Status [1;31mworkflow[m
+[35mapps/service_desk/workflow/engine.py[m[36m:[m[32m7[m[36m:[m- Executes ticket [1;31mworkflow[m transitions.
+[35mapps/service_desk/workflow/engine.py[m[36m:[m[32m25[m[36m:[m    """Raised when a [1;31mworkflow[m transition is invalid."""
+[35mapps/service_desk/workflow/engine.py[m[36m:[m[32m30[m[36m:[m    Enterprise [1;31mworkflow[m engine.
+[35mapps/service_desk/workflow/engine.py[m[36m:[m[32m77[m[36m:[m                "[1;31mworkflow[m": "default",
+[35mapps/service_desk/workflow/rules.py[m[36m:[m[32m8[m[36m:[m- Centralizes [1;31mworkflow[m validation.
+[35mapps/service_desk/workflow/rules.py[m[36m:[m[32m71[m[36m:[m    Validate a [1;31mworkflow[m transition.
+[35mphase14_ai_automation.cmd[m[36m:[m[32m80[m[36m:[mtype nul > ai\automation\[1;31mworkflow[ms.py
+[35mphase14_ai_automation.cmd beside manage.py[m[36m:[m[32m80[m[36m:[mtype nul > ai\automation\[1;31mworkflow[ms.py
+[35mphase17_devops_deployment.cmd[m[36m:[m[32m35[m[36m:[mmkdir .github\[1;31mworkflow[ms 2>nul
+[35mphase17_devops_deployment.cmd[m[36m:[m[32m112[m[36m:[mtype nul > .github\[1;31mworkflow[ms\django-tests.yml
+[35mphase17_devops_deployment.cmd[m[36m:[m[32m113[m[36m:[mtype nul > .github\[1;31mworkflow[ms\deployment.yml
+[35mphase17_devops_deployment.cmd[m[36m:[m[32m114[m[36m:[mtype nul > .github\[1;31mworkflow[ms\security-scan.yml
+[35mphase5_workflow_engine.cmd[m[36m:[m[32m17[m[36m:[mecho [1/9] Creating [1;31mworkflow[m directories...
+[35mphase5_workflow_engine.cmd[m[36m:[m[32m19[m[36m:[mmkdir apps\service_desk\[1;31mworkflow[m 2>nul
+[35mphase5_workflow_engine.cmd[m[36m:[m[32m20[m[36m:[mmkdir apps\service_desk\[1;31mworkflow[m\rules 2>nul
+[35mphase5_workflow_engine.cmd[m[36m:[m[32m21[m[36m:[mmkdir apps\service_desk\[1;31mworkflow[m\services 2>nul
+[35mphase5_workflow_engine.cmd[m[36m:[m[32m22[m[36m:[mmkdir apps\service_desk\[1;31mworkflow[m\signals 2>nul
+[35mphase5_workflow_engine.cmd[m[36m:[m[32m23[m[36m:[mmkdir apps\service_desk\[1;31mworkflow[m\tests 2>nul
+[35mphase5_workflow_engine.cmd[m[36m:[m[32m25[m[36m:[mmkdir templates\[1;31mworkflow[m 2>nul
+[35mphase5_workflow_engine.cmd[m[36m:[m[32m29[m[36m:[mecho [2/9] Creating [1;31mworkflow[m files...
+[35mphase5_workflow_engine.cmd[m[36m:[m[32m31[m[36m:[mtype nul > apps\service_desk\[1;31mworkflow[m\__init__.py
+[35mphase5_workflow_engine.cmd[m[36m:[m[32m32[m[36m:[mtype nul > apps\service_desk\[1;31mworkflow[m\rules.py
+[35mphase5_workflow_engine.cmd[m[36m:[m[32m33[m[36m:[mtype nul > apps\service_desk\[1;31mworkflow[m\engine.py
+[35mphase5_workflow_engine.cmd[m[36m:[m[32m34[m[36m:[mtype nul > apps\service_desk\[1;31mworkflow[m\approvals.py
+[35mphase5_workflow_engine.cmd[m[36m:[m[32m35[m[36m:[mtype nul > apps\service_desk\[1;31mworkflow[m\notifications.py
+[35mphase5_workflow_engine.cmd[m[36m:[m[32m36[m[36m:[mtype nul > apps\service_desk\[1;31mworkflow[m\signals.py
+[35mphase5_workflow_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\[1;31mworkflow[m\designer.html
+[35mphase5_workflow_engine.cmd[m[36m:[m[32m39[m[36m:[mtype nul > templates\[1;31mworkflow[m\approval_queue.html
+[35mphase5_workflow_engine.cmd[m[36m:[m[32m40[m[36m:[mtype nul > templates\[1;31mworkflow[m\history.html
+[35mphase5_workflow_engine.cmd[m[36m:[m[32m42[m[36m:[mtype nul > static\css\[1;31mworkflow[m.css
+[35mphase5_workflow_engine.cmd[m[36m:[m[32m43[m[36m:[mtype nul > static\js\[1;31mworkflow[m.js

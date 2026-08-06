@@ -1,0 +1,825 @@
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:PHASE23_COMMUNICATION_INTEGRATION_HUB.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:PHASE24_ANALYTICS_BUSINESS_INTELLIGENCE.cmd[m[36m:[m[32m67[m[36m:[mtype nul > templates\analytics\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:PHASE25_SECURITY_IAM_ENGINE.cmd[m[36m:[m[32m121[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:PHASE26_CMDB_ASSET_MANAGEMENT.cmd[m[36m:[m[32m103[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:PHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m111[m[36m:[mtype nul > templates\ai\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:PHASE30_MOBILE_PWA_PLATFORM.cmd[m[36m:[m[32m79[m[36m:[mtype nul > templates\mobile\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:PHASE31_OPERATIONS_MONITORING_CENTER.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\noc\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:PHASE32_ENTERPRISE_API_INTEGRATION_GATEWAY.cmd[m[36m:[m[32m130[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:PHASE33_NETWORK_DISCOVERY_INTELLIGENCE.cmd[m[36m:[m[32m127[m[36m:[mtype nul > templates\network\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:PHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m117[m[36m:[mtype nul > templates\itil\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:PHASE35_ENTERPRISE_CMDB_PLATFORM.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:PHASE36_IDENTITY_ACCESS_SECURITY_CENTER.cmd[m[36m:[m[32m126[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:PHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\workflow\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:PHASE39_ENTERPRISE_ANALYTICS_REPORTING.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\executive_dashboard\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:PHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m86[m[36m:[mtype nul > templates\customer_portal\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:PHASE41_47_ENTERPRISE_OPERATIONS_MASTER.cmd[m[36m:[m[32m153[m[36m:[mtype nul > templates\enterprise_operations\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:PHASE48_54_AI_DATA_ENTERPRISE_MASTER.cmd[m[36m:[m[32m162[m[36m:[mtype nul > templates\ai_operations\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:apps/service_desk/views.py[m[36m:[m[32m45[m[36m:[m    template_name = "service_desk/[1;31mdashboard.html[m"
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:create_ui_framework.cmd[m[36m:[m[32m76[m[36m:[mtype nul > templates\dashboard\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:create_ui_framework.cmd[m[36m:[m[32m82[m[36m:[mtype nul > templates\reports\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:phase10_notifications.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\notifications\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:phase11_reporting.cmd[m[36m:[m[32m46[m[36m:[mtype nul > templates\reporting\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:phase11_reporting.cmd[m[36m:[m[32m47[m[36m:[mtype nul > templates\reporting\executive_[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:phase11_reporting.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\reporting\agent_[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:phase12_identity_security.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\identity\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:phase4_ticket_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\tickets\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:phase6_cmdb.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:phase7_knowledge_base[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:phase7_knowledge_base.cmd[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:phase8_sla_engine.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\sla\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:phase9_automation_engine.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\automation\[1;31mdashboard.html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:setup_phase6_service_desk.py[m[36m:[m[32m51[m[36m:[m    [1;31mdashboard_html[m = """
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:setup_phase6_service_desk.py[m[36m:[m[32m155[m[36m:[m        "[1;31mdashboard.html[m",
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:setup_phase6_service_desk.py[m[36m:[m[32m156[m[36m:[m        [1;31mdashboard_html[m
+[35m659f0550d2e8baaf01cbfe5c41ac632c90109ecb:setup_phase6_service_desk.py[m[36m:[m[32m174[m[36m:[m        "service_desk/[1;31mdashboard.html[m"
+[35m9ae5f143325624367d39487aeaad67edb0856593:PHASE23_COMMUNICATION_INTEGRATION_HUB.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:PHASE24_ANALYTICS_BUSINESS_INTELLIGENCE.cmd[m[36m:[m[32m67[m[36m:[mtype nul > templates\analytics\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:PHASE25_SECURITY_IAM_ENGINE.cmd[m[36m:[m[32m121[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:PHASE26_CMDB_ASSET_MANAGEMENT.cmd[m[36m:[m[32m103[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:PHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m111[m[36m:[mtype nul > templates\ai\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:PHASE30_MOBILE_PWA_PLATFORM.cmd[m[36m:[m[32m79[m[36m:[mtype nul > templates\mobile\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:PHASE31_OPERATIONS_MONITORING_CENTER.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\noc\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:PHASE32_ENTERPRISE_API_INTEGRATION_GATEWAY.cmd[m[36m:[m[32m130[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:PHASE33_NETWORK_DISCOVERY_INTELLIGENCE.cmd[m[36m:[m[32m127[m[36m:[mtype nul > templates\network\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:PHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m117[m[36m:[mtype nul > templates\itil\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:PHASE35_ENTERPRISE_CMDB_PLATFORM.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:PHASE36_IDENTITY_ACCESS_SECURITY_CENTER.cmd[m[36m:[m[32m126[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:PHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\workflow\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:PHASE39_ENTERPRISE_ANALYTICS_REPORTING.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\executive_dashboard\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:PHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m86[m[36m:[mtype nul > templates\customer_portal\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:PHASE41_47_ENTERPRISE_OPERATIONS_MASTER.cmd[m[36m:[m[32m153[m[36m:[mtype nul > templates\enterprise_operations\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:PHASE48_54_AI_DATA_ENTERPRISE_MASTER.cmd[m[36m:[m[32m162[m[36m:[mtype nul > templates\ai_operations\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:apps/service_desk/views.py[m[36m:[m[32m45[m[36m:[m    template_name = "[1;31mdashboard.html[m"
+[35m9ae5f143325624367d39487aeaad67edb0856593:create_ui_framework.cmd[m[36m:[m[32m76[m[36m:[mtype nul > templates\dashboard\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:create_ui_framework.cmd[m[36m:[m[32m82[m[36m:[mtype nul > templates\reports\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:phase10_notifications.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\notifications\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:phase11_reporting.cmd[m[36m:[m[32m46[m[36m:[mtype nul > templates\reporting\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:phase11_reporting.cmd[m[36m:[m[32m47[m[36m:[mtype nul > templates\reporting\executive_[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:phase11_reporting.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\reporting\agent_[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:phase12_identity_security.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\identity\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:phase4_ticket_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\tickets\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:phase6_cmdb.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:phase7_knowledge_base[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:phase7_knowledge_base.cmd[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:phase8_sla_engine.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\sla\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:phase9_automation_engine.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\automation\[1;31mdashboard.html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:setup_phase6_service_desk.py[m[36m:[m[32m51[m[36m:[m    [1;31mdashboard_html[m = """
+[35m9ae5f143325624367d39487aeaad67edb0856593:setup_phase6_service_desk.py[m[36m:[m[32m155[m[36m:[m        "[1;31mdashboard.html[m",
+[35m9ae5f143325624367d39487aeaad67edb0856593:setup_phase6_service_desk.py[m[36m:[m[32m156[m[36m:[m        [1;31mdashboard_html[m
+[35m9ae5f143325624367d39487aeaad67edb0856593:setup_phase6_service_desk.py[m[36m:[m[32m174[m[36m:[m        "service_desk/[1;31mdashboard.html[m"
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:PHASE23_COMMUNICATION_INTEGRATION_HUB.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:PHASE24_ANALYTICS_BUSINESS_INTELLIGENCE.cmd[m[36m:[m[32m67[m[36m:[mtype nul > templates\analytics\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:PHASE25_SECURITY_IAM_ENGINE.cmd[m[36m:[m[32m121[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:PHASE26_CMDB_ASSET_MANAGEMENT.cmd[m[36m:[m[32m103[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:PHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m111[m[36m:[mtype nul > templates\ai\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:PHASE30_MOBILE_PWA_PLATFORM.cmd[m[36m:[m[32m79[m[36m:[mtype nul > templates\mobile\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:PHASE31_OPERATIONS_MONITORING_CENTER.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\noc\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:PHASE32_ENTERPRISE_API_INTEGRATION_GATEWAY.cmd[m[36m:[m[32m130[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:PHASE33_NETWORK_DISCOVERY_INTELLIGENCE.cmd[m[36m:[m[32m127[m[36m:[mtype nul > templates\network\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:PHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m117[m[36m:[mtype nul > templates\itil\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:PHASE35_ENTERPRISE_CMDB_PLATFORM.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:PHASE36_IDENTITY_ACCESS_SECURITY_CENTER.cmd[m[36m:[m[32m126[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:PHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\workflow\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:PHASE39_ENTERPRISE_ANALYTICS_REPORTING.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\executive_dashboard\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:PHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m86[m[36m:[mtype nul > templates\customer_portal\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:PHASE41_47_ENTERPRISE_OPERATIONS_MASTER.cmd[m[36m:[m[32m153[m[36m:[mtype nul > templates\enterprise_operations\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:PHASE48_54_AI_DATA_ENTERPRISE_MASTER.cmd[m[36m:[m[32m162[m[36m:[mtype nul > templates\ai_operations\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:apps/service_desk/views.py[m[36m:[m[32m45[m[36m:[m    template_name = "[1;31mdashboard.html[m"
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:create_ui_framework.cmd[m[36m:[m[32m76[m[36m:[mtype nul > templates\dashboard\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:create_ui_framework.cmd[m[36m:[m[32m82[m[36m:[mtype nul > templates\reports\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:phase10_notifications.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\notifications\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:phase11_reporting.cmd[m[36m:[m[32m46[m[36m:[mtype nul > templates\reporting\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:phase11_reporting.cmd[m[36m:[m[32m47[m[36m:[mtype nul > templates\reporting\executive_[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:phase11_reporting.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\reporting\agent_[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:phase12_identity_security.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\identity\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:phase4_ticket_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\tickets\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:phase6_cmdb.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:phase7_knowledge_base[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:phase7_knowledge_base.cmd[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:phase8_sla_engine.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\sla\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:phase9_automation_engine.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\automation\[1;31mdashboard.html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:setup_phase6_service_desk.py[m[36m:[m[32m51[m[36m:[m    [1;31mdashboard_html[m = """
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:setup_phase6_service_desk.py[m[36m:[m[32m155[m[36m:[m        "[1;31mdashboard.html[m",
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:setup_phase6_service_desk.py[m[36m:[m[32m156[m[36m:[m        [1;31mdashboard_html[m
+[35m728a5449e5a5803984de1d306b3f358c00600fa9:setup_phase6_service_desk.py[m[36m:[m[32m174[m[36m:[m        "service_desk/[1;31mdashboard.html[m"
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:PHASE23_COMMUNICATION_INTEGRATION_HUB.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:PHASE24_ANALYTICS_BUSINESS_INTELLIGENCE.cmd[m[36m:[m[32m67[m[36m:[mtype nul > templates\analytics\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:PHASE25_SECURITY_IAM_ENGINE.cmd[m[36m:[m[32m121[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:PHASE26_CMDB_ASSET_MANAGEMENT.cmd[m[36m:[m[32m103[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:PHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m111[m[36m:[mtype nul > templates\ai\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:PHASE30_MOBILE_PWA_PLATFORM.cmd[m[36m:[m[32m79[m[36m:[mtype nul > templates\mobile\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:PHASE31_OPERATIONS_MONITORING_CENTER.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\noc\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:PHASE32_ENTERPRISE_API_INTEGRATION_GATEWAY.cmd[m[36m:[m[32m130[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:PHASE33_NETWORK_DISCOVERY_INTELLIGENCE.cmd[m[36m:[m[32m127[m[36m:[mtype nul > templates\network\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:PHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m117[m[36m:[mtype nul > templates\itil\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:PHASE35_ENTERPRISE_CMDB_PLATFORM.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:PHASE36_IDENTITY_ACCESS_SECURITY_CENTER.cmd[m[36m:[m[32m126[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:PHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\workflow\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:PHASE39_ENTERPRISE_ANALYTICS_REPORTING.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\executive_dashboard\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:PHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m86[m[36m:[mtype nul > templates\customer_portal\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:PHASE41_47_ENTERPRISE_OPERATIONS_MASTER.cmd[m[36m:[m[32m153[m[36m:[mtype nul > templates\enterprise_operations\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:PHASE48_54_AI_DATA_ENTERPRISE_MASTER.cmd[m[36m:[m[32m162[m[36m:[mtype nul > templates\ai_operations\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:apps/service_desk/views.py[m[36m:[m[32m45[m[36m:[m    template_name = "[1;31mdashboard.html[m"
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:create_ui_framework.cmd[m[36m:[m[32m76[m[36m:[mtype nul > templates\dashboard\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:create_ui_framework.cmd[m[36m:[m[32m82[m[36m:[mtype nul > templates\reports\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:phase10_notifications.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\notifications\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:phase11_reporting.cmd[m[36m:[m[32m46[m[36m:[mtype nul > templates\reporting\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:phase11_reporting.cmd[m[36m:[m[32m47[m[36m:[mtype nul > templates\reporting\executive_[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:phase11_reporting.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\reporting\agent_[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:phase12_identity_security.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\identity\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:phase4_ticket_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\tickets\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:phase6_cmdb.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:phase7_knowledge_base[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:phase7_knowledge_base.cmd[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:phase8_sla_engine.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\sla\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:phase9_automation_engine.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\automation\[1;31mdashboard.html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:setup_phase6_service_desk.py[m[36m:[m[32m51[m[36m:[m    [1;31mdashboard_html[m = """
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:setup_phase6_service_desk.py[m[36m:[m[32m155[m[36m:[m        "[1;31mdashboard.html[m",
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:setup_phase6_service_desk.py[m[36m:[m[32m156[m[36m:[m        [1;31mdashboard_html[m
+[35ma7182b34dbe3eeae3f01fbf7d35ef71a9a34b900:setup_phase6_service_desk.py[m[36m:[m[32m174[m[36m:[m        "service_desk/[1;31mdashboard.html[m"
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:PHASE23_COMMUNICATION_INTEGRATION_HUB.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:PHASE24_ANALYTICS_BUSINESS_INTELLIGENCE.cmd[m[36m:[m[32m67[m[36m:[mtype nul > templates\analytics\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:PHASE25_SECURITY_IAM_ENGINE.cmd[m[36m:[m[32m121[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:PHASE26_CMDB_ASSET_MANAGEMENT.cmd[m[36m:[m[32m103[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:PHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m111[m[36m:[mtype nul > templates\ai\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:PHASE30_MOBILE_PWA_PLATFORM.cmd[m[36m:[m[32m79[m[36m:[mtype nul > templates\mobile\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:PHASE31_OPERATIONS_MONITORING_CENTER.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\noc\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:PHASE32_ENTERPRISE_API_INTEGRATION_GATEWAY.cmd[m[36m:[m[32m130[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:PHASE33_NETWORK_DISCOVERY_INTELLIGENCE.cmd[m[36m:[m[32m127[m[36m:[mtype nul > templates\network\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:PHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m117[m[36m:[mtype nul > templates\itil\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:PHASE35_ENTERPRISE_CMDB_PLATFORM.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:PHASE36_IDENTITY_ACCESS_SECURITY_CENTER.cmd[m[36m:[m[32m126[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:PHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\workflow\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:PHASE39_ENTERPRISE_ANALYTICS_REPORTING.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\executive_dashboard\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:PHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m86[m[36m:[mtype nul > templates\customer_portal\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:PHASE41_47_ENTERPRISE_OPERATIONS_MASTER.cmd[m[36m:[m[32m153[m[36m:[mtype nul > templates\enterprise_operations\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:PHASE48_54_AI_DATA_ENTERPRISE_MASTER.cmd[m[36m:[m[32m162[m[36m:[mtype nul > templates\ai_operations\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:apps/service_desk/views.py[m[36m:[m[32m15[m[36m:[m    template_name = "[1;31mdashboard.html[m"
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:create_ui_framework.cmd[m[36m:[m[32m76[m[36m:[mtype nul > templates\dashboard\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:create_ui_framework.cmd[m[36m:[m[32m82[m[36m:[mtype nul > templates\reports\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:phase10_notifications.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\notifications\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:phase11_reporting.cmd[m[36m:[m[32m46[m[36m:[mtype nul > templates\reporting\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:phase11_reporting.cmd[m[36m:[m[32m47[m[36m:[mtype nul > templates\reporting\executive_[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:phase11_reporting.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\reporting\agent_[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:phase12_identity_security.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\identity\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:phase4_ticket_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\tickets\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:phase6_cmdb.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:phase7_knowledge_base[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:phase7_knowledge_base.cmd[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:phase8_sla_engine.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\sla\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:phase9_automation_engine.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\automation\[1;31mdashboard.html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:setup_phase6_service_desk.py[m[36m:[m[32m51[m[36m:[m    [1;31mdashboard_html[m = """
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:setup_phase6_service_desk.py[m[36m:[m[32m155[m[36m:[m        "[1;31mdashboard.html[m",
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:setup_phase6_service_desk.py[m[36m:[m[32m156[m[36m:[m        [1;31mdashboard_html[m
+[35mb20f8e3819b73d4b371559b4595b061f58aed8bc:setup_phase6_service_desk.py[m[36m:[m[32m174[m[36m:[m        "service_desk/[1;31mdashboard.html[m"
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:PHASE23_COMMUNICATION_INTEGRATION_HUB.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:PHASE24_ANALYTICS_BUSINESS_INTELLIGENCE.cmd[m[36m:[m[32m67[m[36m:[mtype nul > templates\analytics\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:PHASE25_SECURITY_IAM_ENGINE.cmd[m[36m:[m[32m121[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:PHASE26_CMDB_ASSET_MANAGEMENT.cmd[m[36m:[m[32m103[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:PHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m111[m[36m:[mtype nul > templates\ai\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:PHASE30_MOBILE_PWA_PLATFORM.cmd[m[36m:[m[32m79[m[36m:[mtype nul > templates\mobile\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:PHASE31_OPERATIONS_MONITORING_CENTER.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\noc\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:PHASE32_ENTERPRISE_API_INTEGRATION_GATEWAY.cmd[m[36m:[m[32m130[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:PHASE33_NETWORK_DISCOVERY_INTELLIGENCE.cmd[m[36m:[m[32m127[m[36m:[mtype nul > templates\network\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:PHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m117[m[36m:[mtype nul > templates\itil\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:PHASE35_ENTERPRISE_CMDB_PLATFORM.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:PHASE36_IDENTITY_ACCESS_SECURITY_CENTER.cmd[m[36m:[m[32m126[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:PHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\workflow\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:PHASE39_ENTERPRISE_ANALYTICS_REPORTING.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\executive_dashboard\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:PHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m86[m[36m:[mtype nul > templates\customer_portal\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:PHASE41_47_ENTERPRISE_OPERATIONS_MASTER.cmd[m[36m:[m[32m153[m[36m:[mtype nul > templates\enterprise_operations\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:PHASE48_54_AI_DATA_ENTERPRISE_MASTER.cmd[m[36m:[m[32m162[m[36m:[mtype nul > templates\ai_operations\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:apps/service_desk/views.py[m[36m:[m[32m15[m[36m:[m    template_name = "[1;31mdashboard.html[m"
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:create_ui_framework.cmd[m[36m:[m[32m76[m[36m:[mtype nul > templates\dashboard\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:create_ui_framework.cmd[m[36m:[m[32m82[m[36m:[mtype nul > templates\reports\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:phase10_notifications.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\notifications\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:phase11_reporting.cmd[m[36m:[m[32m46[m[36m:[mtype nul > templates\reporting\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:phase11_reporting.cmd[m[36m:[m[32m47[m[36m:[mtype nul > templates\reporting\executive_[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:phase11_reporting.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\reporting\agent_[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:phase12_identity_security.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\identity\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:phase4_ticket_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\tickets\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:phase6_cmdb.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:phase7_knowledge_base[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:phase7_knowledge_base.cmd[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:phase8_sla_engine.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\sla\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:phase9_automation_engine.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\automation\[1;31mdashboard.html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:setup_phase6_service_desk.py[m[36m:[m[32m51[m[36m:[m    [1;31mdashboard_html[m = """
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:setup_phase6_service_desk.py[m[36m:[m[32m155[m[36m:[m        "[1;31mdashboard.html[m",
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:setup_phase6_service_desk.py[m[36m:[m[32m156[m[36m:[m        [1;31mdashboard_html[m
+[35m71a80740c55f6bb4e500f916384b7f9b3baf27c4:setup_phase6_service_desk.py[m[36m:[m[32m174[m[36m:[m        "service_desk/[1;31mdashboard.html[m"
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:PHASE23_COMMUNICATION_INTEGRATION_HUB.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:PHASE24_ANALYTICS_BUSINESS_INTELLIGENCE.cmd[m[36m:[m[32m67[m[36m:[mtype nul > templates\analytics\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:PHASE25_SECURITY_IAM_ENGINE.cmd[m[36m:[m[32m121[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:PHASE26_CMDB_ASSET_MANAGEMENT.cmd[m[36m:[m[32m103[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:PHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m111[m[36m:[mtype nul > templates\ai\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:PHASE30_MOBILE_PWA_PLATFORM.cmd[m[36m:[m[32m79[m[36m:[mtype nul > templates\mobile\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:PHASE31_OPERATIONS_MONITORING_CENTER.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\noc\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:PHASE32_ENTERPRISE_API_INTEGRATION_GATEWAY.cmd[m[36m:[m[32m130[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:PHASE33_NETWORK_DISCOVERY_INTELLIGENCE.cmd[m[36m:[m[32m127[m[36m:[mtype nul > templates\network\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:PHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m117[m[36m:[mtype nul > templates\itil\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:PHASE35_ENTERPRISE_CMDB_PLATFORM.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:PHASE36_IDENTITY_ACCESS_SECURITY_CENTER.cmd[m[36m:[m[32m126[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:PHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\workflow\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:PHASE39_ENTERPRISE_ANALYTICS_REPORTING.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\executive_dashboard\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:PHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m86[m[36m:[mtype nul > templates\customer_portal\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:PHASE41_47_ENTERPRISE_OPERATIONS_MASTER.cmd[m[36m:[m[32m153[m[36m:[mtype nul > templates\enterprise_operations\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:PHASE48_54_AI_DATA_ENTERPRISE_MASTER.cmd[m[36m:[m[32m162[m[36m:[mtype nul > templates\ai_operations\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:apps/service_desk/views.py[m[36m:[m[32m15[m[36m:[m    template_name = "[1;31mdashboard.html[m"
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:create_ui_framework.cmd[m[36m:[m[32m76[m[36m:[mtype nul > templates\dashboard\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:create_ui_framework.cmd[m[36m:[m[32m82[m[36m:[mtype nul > templates\reports\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:phase10_notifications.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\notifications\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:phase11_reporting.cmd[m[36m:[m[32m46[m[36m:[mtype nul > templates\reporting\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:phase11_reporting.cmd[m[36m:[m[32m47[m[36m:[mtype nul > templates\reporting\executive_[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:phase11_reporting.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\reporting\agent_[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:phase12_identity_security.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\identity\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:phase4_ticket_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\tickets\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:phase6_cmdb.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:phase7_knowledge_base[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:phase7_knowledge_base.cmd[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:phase8_sla_engine.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\sla\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:phase9_automation_engine.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\automation\[1;31mdashboard.html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:setup_phase6_service_desk.py[m[36m:[m[32m51[m[36m:[m    [1;31mdashboard_html[m = """
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:setup_phase6_service_desk.py[m[36m:[m[32m155[m[36m:[m        "[1;31mdashboard.html[m",
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:setup_phase6_service_desk.py[m[36m:[m[32m156[m[36m:[m        [1;31mdashboard_html[m
+[35m20d9890339b471638a6ead1ff7b36e2531ee02f1:setup_phase6_service_desk.py[m[36m:[m[32m174[m[36m:[m        "service_desk/[1;31mdashboard.html[m"
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:PHASE23_COMMUNICATION_INTEGRATION_HUB.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:PHASE24_ANALYTICS_BUSINESS_INTELLIGENCE.cmd[m[36m:[m[32m67[m[36m:[mtype nul > templates\analytics\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:PHASE25_SECURITY_IAM_ENGINE.cmd[m[36m:[m[32m121[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:PHASE26_CMDB_ASSET_MANAGEMENT.cmd[m[36m:[m[32m103[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:PHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m111[m[36m:[mtype nul > templates\ai\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:PHASE30_MOBILE_PWA_PLATFORM.cmd[m[36m:[m[32m79[m[36m:[mtype nul > templates\mobile\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:PHASE31_OPERATIONS_MONITORING_CENTER.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\noc\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:PHASE32_ENTERPRISE_API_INTEGRATION_GATEWAY.cmd[m[36m:[m[32m130[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:PHASE33_NETWORK_DISCOVERY_INTELLIGENCE.cmd[m[36m:[m[32m127[m[36m:[mtype nul > templates\network\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:PHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m117[m[36m:[mtype nul > templates\itil\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:PHASE35_ENTERPRISE_CMDB_PLATFORM.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:PHASE36_IDENTITY_ACCESS_SECURITY_CENTER.cmd[m[36m:[m[32m126[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:PHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\workflow\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:PHASE39_ENTERPRISE_ANALYTICS_REPORTING.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\executive_dashboard\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:PHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m86[m[36m:[mtype nul > templates\customer_portal\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:PHASE41_47_ENTERPRISE_OPERATIONS_MASTER.cmd[m[36m:[m[32m153[m[36m:[mtype nul > templates\enterprise_operations\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:PHASE48_54_AI_DATA_ENTERPRISE_MASTER.cmd[m[36m:[m[32m162[m[36m:[mtype nul > templates\ai_operations\[1;31mdashboard.html[m
+Binary file [35m69c4a2fc124155ade52d3583d4a80aac0350513e:apps/billing/__pycache__/views.cpython-314.pyc[m matches
+Binary file [35m69c4a2fc124155ade52d3583d4a80aac0350513e:apps/service_desk/__pycache__/views.cpython-313.pyc[m matches
+Binary file [35m69c4a2fc124155ade52d3583d4a80aac0350513e:apps/service_desk/__pycache__/views.cpython-314.pyc[m matches
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:apps/service_desk/views.py[m[36m:[m[32m17[m[36m:[m        "service_desk/[1;31mdashboard.html[m",
+Binary file [35m69c4a2fc124155ade52d3583d4a80aac0350513e:apps/service_desk/views/__pycache__/__init__.cpython-314.pyc[m matches
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:create_ui_framework.cmd[m[36m:[m[32m76[m[36m:[mtype nul > templates\dashboard\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:create_ui_framework.cmd[m[36m:[m[32m82[m[36m:[mtype nul > templates\reports\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:phase10_notifications.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\notifications\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:phase11_reporting.cmd[m[36m:[m[32m46[m[36m:[mtype nul > templates\reporting\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:phase11_reporting.cmd[m[36m:[m[32m47[m[36m:[mtype nul > templates\reporting\executive_[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:phase11_reporting.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\reporting\agent_[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:phase12_identity_security.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\identity\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:phase4_ticket_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\tickets\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:phase6_cmdb.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:phase7_knowledge_base[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:phase7_knowledge_base.cmd[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:phase8_sla_engine.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\sla\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:phase9_automation_engine.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\automation\[1;31mdashboard.html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:setup_phase6_service_desk.py[m[36m:[m[32m51[m[36m:[m    [1;31mdashboard_html[m = """
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:setup_phase6_service_desk.py[m[36m:[m[32m155[m[36m:[m        "[1;31mdashboard.html[m",
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:setup_phase6_service_desk.py[m[36m:[m[32m156[m[36m:[m        [1;31mdashboard_html[m
+[35m69c4a2fc124155ade52d3583d4a80aac0350513e:setup_phase6_service_desk.py[m[36m:[m[32m174[m[36m:[m        "service_desk/[1;31mdashboard.html[m"
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:PHASE23_COMMUNICATION_INTEGRATION_HUB.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:PHASE24_ANALYTICS_BUSINESS_INTELLIGENCE.cmd[m[36m:[m[32m67[m[36m:[mtype nul > templates\analytics\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:PHASE25_SECURITY_IAM_ENGINE.cmd[m[36m:[m[32m121[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:PHASE26_CMDB_ASSET_MANAGEMENT.cmd[m[36m:[m[32m103[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:PHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m111[m[36m:[mtype nul > templates\ai\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:PHASE30_MOBILE_PWA_PLATFORM.cmd[m[36m:[m[32m79[m[36m:[mtype nul > templates\mobile\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:PHASE31_OPERATIONS_MONITORING_CENTER.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\noc\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:PHASE32_ENTERPRISE_API_INTEGRATION_GATEWAY.cmd[m[36m:[m[32m130[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:PHASE33_NETWORK_DISCOVERY_INTELLIGENCE.cmd[m[36m:[m[32m127[m[36m:[mtype nul > templates\network\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:PHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m117[m[36m:[mtype nul > templates\itil\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:PHASE35_ENTERPRISE_CMDB_PLATFORM.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:PHASE36_IDENTITY_ACCESS_SECURITY_CENTER.cmd[m[36m:[m[32m126[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:PHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\workflow\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:PHASE39_ENTERPRISE_ANALYTICS_REPORTING.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\executive_dashboard\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:PHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m86[m[36m:[mtype nul > templates\customer_portal\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:PHASE41_47_ENTERPRISE_OPERATIONS_MASTER.cmd[m[36m:[m[32m153[m[36m:[mtype nul > templates\enterprise_operations\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:PHASE48_54_AI_DATA_ENTERPRISE_MASTER.cmd[m[36m:[m[32m162[m[36m:[mtype nul > templates\ai_operations\[1;31mdashboard.html[m
+Binary file [35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:apps/billing/__pycache__/views.cpython-314.pyc[m matches
+Binary file [35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:apps/service_desk/__pycache__/views.cpython-313.pyc[m matches
+Binary file [35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:apps/service_desk/__pycache__/views.cpython-314.pyc[m matches
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:apps/service_desk/views.py[m[36m:[m[32m17[m[36m:[m        "service_desk/[1;31mdashboard.html[m",
+Binary file [35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:apps/service_desk/views/__pycache__/__init__.cpython-314.pyc[m matches
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:create_ui_framework.cmd[m[36m:[m[32m76[m[36m:[mtype nul > templates\dashboard\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:create_ui_framework.cmd[m[36m:[m[32m82[m[36m:[mtype nul > templates\reports\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:phase10_notifications.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\notifications\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:phase11_reporting.cmd[m[36m:[m[32m46[m[36m:[mtype nul > templates\reporting\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:phase11_reporting.cmd[m[36m:[m[32m47[m[36m:[mtype nul > templates\reporting\executive_[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:phase11_reporting.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\reporting\agent_[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:phase12_identity_security.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\identity\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:phase4_ticket_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\tickets\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:phase6_cmdb.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:phase7_knowledge_base[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:phase7_knowledge_base.cmd[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:phase8_sla_engine.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\sla\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:phase9_automation_engine.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\automation\[1;31mdashboard.html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:setup_phase6_service_desk.py[m[36m:[m[32m51[m[36m:[m    [1;31mdashboard_html[m = """
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:setup_phase6_service_desk.py[m[36m:[m[32m155[m[36m:[m        "[1;31mdashboard.html[m",
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:setup_phase6_service_desk.py[m[36m:[m[32m156[m[36m:[m        [1;31mdashboard_html[m
+[35ma1bc89d0e234ca0045de5c04a8fa5943fe97d9f2:setup_phase6_service_desk.py[m[36m:[m[32m174[m[36m:[m        "service_desk/[1;31mdashboard.html[m"
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:PHASE23_COMMUNICATION_INTEGRATION_HUB.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:PHASE24_ANALYTICS_BUSINESS_INTELLIGENCE.cmd[m[36m:[m[32m67[m[36m:[mtype nul > templates\analytics\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:PHASE25_SECURITY_IAM_ENGINE.cmd[m[36m:[m[32m121[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:PHASE26_CMDB_ASSET_MANAGEMENT.cmd[m[36m:[m[32m103[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:PHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m111[m[36m:[mtype nul > templates\ai\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:PHASE30_MOBILE_PWA_PLATFORM.cmd[m[36m:[m[32m79[m[36m:[mtype nul > templates\mobile\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:PHASE31_OPERATIONS_MONITORING_CENTER.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\noc\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:PHASE32_ENTERPRISE_API_INTEGRATION_GATEWAY.cmd[m[36m:[m[32m130[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:PHASE33_NETWORK_DISCOVERY_INTELLIGENCE.cmd[m[36m:[m[32m127[m[36m:[mtype nul > templates\network\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:PHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m117[m[36m:[mtype nul > templates\itil\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:PHASE35_ENTERPRISE_CMDB_PLATFORM.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:PHASE36_IDENTITY_ACCESS_SECURITY_CENTER.cmd[m[36m:[m[32m126[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:PHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\workflow\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:PHASE39_ENTERPRISE_ANALYTICS_REPORTING.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\executive_dashboard\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:PHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m86[m[36m:[mtype nul > templates\customer_portal\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:PHASE41_47_ENTERPRISE_OPERATIONS_MASTER.cmd[m[36m:[m[32m153[m[36m:[mtype nul > templates\enterprise_operations\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:PHASE48_54_AI_DATA_ENTERPRISE_MASTER.cmd[m[36m:[m[32m162[m[36m:[mtype nul > templates\ai_operations\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:apps/billing/views.py[m[36m:[m[32m40[m[36m:[m        "billing/[1;31mdashboard.html[m",
+Binary file [35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:apps/service_desk/__pycache__/views.cpython-313.pyc[m matches
+Binary file [35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:apps/service_desk/__pycache__/views.cpython-314.pyc[m matches
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:apps/service_desk/views.py[m[36m:[m[32m43[m[36m:[m    template_name = "service_desk/[1;31mdashboard.html[m"
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:apps/service_desk/views/__init__.py[m[36m:[m[32m94[m[36m:[m    template_name = "service_desk/[1;31mdashboard.html[m"
+Binary file [35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:apps/ui/__pycache__/views.cpython-314.pyc[m matches
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:apps/ui/views.py[m[36m:[m[32m22[m[36m:[m        "dashboard/[1;31mdashboard.html[m",
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:create_ui_framework.cmd[m[36m:[m[32m76[m[36m:[mtype nul > templates\dashboard\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:create_ui_framework.cmd[m[36m:[m[32m82[m[36m:[mtype nul > templates\reports\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:phase10_notifications.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\notifications\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:phase11_reporting.cmd[m[36m:[m[32m46[m[36m:[mtype nul > templates\reporting\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:phase11_reporting.cmd[m[36m:[m[32m47[m[36m:[mtype nul > templates\reporting\executive_[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:phase11_reporting.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\reporting\agent_[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:phase12_identity_security.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\identity\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:phase4_ticket_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\tickets\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:phase6_cmdb.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:phase7_knowledge_base[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:phase7_knowledge_base.cmd[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:phase8_sla_engine.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\sla\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:phase9_automation_engine.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\automation\[1;31mdashboard.html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:setup_phase6_service_desk.py[m[36m:[m[32m51[m[36m:[m    [1;31mdashboard_html[m = """
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:setup_phase6_service_desk.py[m[36m:[m[32m155[m[36m:[m        "[1;31mdashboard.html[m",
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:setup_phase6_service_desk.py[m[36m:[m[32m156[m[36m:[m        [1;31mdashboard_html[m
+[35m90c4527ed4c8be7cea0e81b82a6b79e4edbefc43:setup_phase6_service_desk.py[m[36m:[m[32m174[m[36m:[m        "service_desk/[1;31mdashboard.html[m"
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:PHASE23_COMMUNICATION_INTEGRATION_HUB.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:PHASE24_ANALYTICS_BUSINESS_INTELLIGENCE.cmd[m[36m:[m[32m67[m[36m:[mtype nul > templates\analytics\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:PHASE25_SECURITY_IAM_ENGINE.cmd[m[36m:[m[32m121[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:PHASE26_CMDB_ASSET_MANAGEMENT.cmd[m[36m:[m[32m103[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:PHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m111[m[36m:[mtype nul > templates\ai\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:PHASE30_MOBILE_PWA_PLATFORM.cmd[m[36m:[m[32m79[m[36m:[mtype nul > templates\mobile\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:PHASE31_OPERATIONS_MONITORING_CENTER.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\noc\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:PHASE32_ENTERPRISE_API_INTEGRATION_GATEWAY.cmd[m[36m:[m[32m130[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:PHASE33_NETWORK_DISCOVERY_INTELLIGENCE.cmd[m[36m:[m[32m127[m[36m:[mtype nul > templates\network\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:PHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m117[m[36m:[mtype nul > templates\itil\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:PHASE35_ENTERPRISE_CMDB_PLATFORM.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:PHASE36_IDENTITY_ACCESS_SECURITY_CENTER.cmd[m[36m:[m[32m126[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:PHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\workflow\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:PHASE39_ENTERPRISE_ANALYTICS_REPORTING.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\executive_dashboard\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:PHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m86[m[36m:[mtype nul > templates\customer_portal\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:PHASE41_47_ENTERPRISE_OPERATIONS_MASTER.cmd[m[36m:[m[32m153[m[36m:[mtype nul > templates\enterprise_operations\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:PHASE48_54_AI_DATA_ENTERPRISE_MASTER.cmd[m[36m:[m[32m162[m[36m:[mtype nul > templates\ai_operations\[1;31mdashboard.html[m
+Binary file [35me1c939b1a0db1c88775882a09997f6cc355820a8:apps/service_desk/__pycache__/views.cpython-313.pyc[m matches
+Binary file [35me1c939b1a0db1c88775882a09997f6cc355820a8:apps/service_desk/__pycache__/views.cpython-314.pyc[m matches
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:apps/service_desk/views.py[m[36m:[m[32m17[m[36m:[m        "service_desk/[1;31mdashboard.html[m",
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:create_ui_framework.cmd[m[36m:[m[32m76[m[36m:[mtype nul > templates\dashboard\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:create_ui_framework.cmd[m[36m:[m[32m82[m[36m:[mtype nul > templates\reports\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:phase10_notifications.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\notifications\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:phase11_reporting.cmd[m[36m:[m[32m46[m[36m:[mtype nul > templates\reporting\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:phase11_reporting.cmd[m[36m:[m[32m47[m[36m:[mtype nul > templates\reporting\executive_[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:phase11_reporting.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\reporting\agent_[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:phase12_identity_security.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\identity\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:phase4_ticket_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\tickets\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:phase6_cmdb.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:phase7_knowledge_base[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:phase7_knowledge_base.cmd[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:phase8_sla_engine.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\sla\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:phase9_automation_engine.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\automation\[1;31mdashboard.html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:setup_phase6_service_desk.py[m[36m:[m[32m51[m[36m:[m    [1;31mdashboard_html[m = """
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:setup_phase6_service_desk.py[m[36m:[m[32m155[m[36m:[m        "[1;31mdashboard.html[m",
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:setup_phase6_service_desk.py[m[36m:[m[32m156[m[36m:[m        [1;31mdashboard_html[m
+[35me1c939b1a0db1c88775882a09997f6cc355820a8:setup_phase6_service_desk.py[m[36m:[m[32m174[m[36m:[m        "service_desk/[1;31mdashboard.html[m"
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:PHASE23_COMMUNICATION_INTEGRATION_HUB.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:PHASE24_ANALYTICS_BUSINESS_INTELLIGENCE.cmd[m[36m:[m[32m67[m[36m:[mtype nul > templates\analytics\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:PHASE25_SECURITY_IAM_ENGINE.cmd[m[36m:[m[32m121[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:PHASE26_CMDB_ASSET_MANAGEMENT.cmd[m[36m:[m[32m103[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:PHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m111[m[36m:[mtype nul > templates\ai\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:PHASE30_MOBILE_PWA_PLATFORM.cmd[m[36m:[m[32m79[m[36m:[mtype nul > templates\mobile\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:PHASE31_OPERATIONS_MONITORING_CENTER.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\noc\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:PHASE32_ENTERPRISE_API_INTEGRATION_GATEWAY.cmd[m[36m:[m[32m130[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:PHASE33_NETWORK_DISCOVERY_INTELLIGENCE.cmd[m[36m:[m[32m127[m[36m:[mtype nul > templates\network\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:PHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m117[m[36m:[mtype nul > templates\itil\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:PHASE35_ENTERPRISE_CMDB_PLATFORM.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:PHASE36_IDENTITY_ACCESS_SECURITY_CENTER.cmd[m[36m:[m[32m126[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:PHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\workflow\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:PHASE39_ENTERPRISE_ANALYTICS_REPORTING.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\executive_dashboard\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:PHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m86[m[36m:[mtype nul > templates\customer_portal\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:PHASE41_47_ENTERPRISE_OPERATIONS_MASTER.cmd[m[36m:[m[32m153[m[36m:[mtype nul > templates\enterprise_operations\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:PHASE48_54_AI_DATA_ENTERPRISE_MASTER.cmd[m[36m:[m[32m162[m[36m:[mtype nul > templates\ai_operations\[1;31mdashboard.html[m
+Binary file [35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:apps/service_desk/__pycache__/views.cpython-313.pyc[m matches
+Binary file [35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:apps/service_desk/__pycache__/views.cpython-314.pyc[m matches
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:apps/service_desk/views.py[m[36m:[m[32m17[m[36m:[m        "service_desk/[1;31mdashboard.html[m",
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:create_ui_framework.cmd[m[36m:[m[32m76[m[36m:[mtype nul > templates\dashboard\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:create_ui_framework.cmd[m[36m:[m[32m82[m[36m:[mtype nul > templates\reports\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:phase10_notifications.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\notifications\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:phase11_reporting.cmd[m[36m:[m[32m46[m[36m:[mtype nul > templates\reporting\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:phase11_reporting.cmd[m[36m:[m[32m47[m[36m:[mtype nul > templates\reporting\executive_[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:phase11_reporting.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\reporting\agent_[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:phase12_identity_security.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\identity\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:phase4_ticket_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\tickets\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:phase6_cmdb.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:phase7_knowledge_base[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:phase7_knowledge_base.cmd[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:phase8_sla_engine.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\sla\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:phase9_automation_engine.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\automation\[1;31mdashboard.html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:setup_phase6_service_desk.py[m[36m:[m[32m51[m[36m:[m    [1;31mdashboard_html[m = """
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:setup_phase6_service_desk.py[m[36m:[m[32m155[m[36m:[m        "[1;31mdashboard.html[m",
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:setup_phase6_service_desk.py[m[36m:[m[32m156[m[36m:[m        [1;31mdashboard_html[m
+[35mf8ea0b4ae8cf98f607bbcb85e985d9608ece7266:setup_phase6_service_desk.py[m[36m:[m[32m174[m[36m:[m        "service_desk/[1;31mdashboard.html[m"
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:PHASE23_COMMUNICATION_INTEGRATION_HUB.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:PHASE24_ANALYTICS_BUSINESS_INTELLIGENCE.cmd[m[36m:[m[32m67[m[36m:[mtype nul > templates\analytics\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:PHASE25_SECURITY_IAM_ENGINE.cmd[m[36m:[m[32m121[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:PHASE26_CMDB_ASSET_MANAGEMENT.cmd[m[36m:[m[32m103[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:PHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m111[m[36m:[mtype nul > templates\ai\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:PHASE30_MOBILE_PWA_PLATFORM.cmd[m[36m:[m[32m79[m[36m:[mtype nul > templates\mobile\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:PHASE31_OPERATIONS_MONITORING_CENTER.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\noc\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:PHASE32_ENTERPRISE_API_INTEGRATION_GATEWAY.cmd[m[36m:[m[32m130[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:PHASE33_NETWORK_DISCOVERY_INTELLIGENCE.cmd[m[36m:[m[32m127[m[36m:[mtype nul > templates\network\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:PHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m117[m[36m:[mtype nul > templates\itil\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:PHASE35_ENTERPRISE_CMDB_PLATFORM.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:PHASE36_IDENTITY_ACCESS_SECURITY_CENTER.cmd[m[36m:[m[32m126[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:PHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\workflow\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:PHASE39_ENTERPRISE_ANALYTICS_REPORTING.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\executive_dashboard\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:PHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m86[m[36m:[mtype nul > templates\customer_portal\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:PHASE41_47_ENTERPRISE_OPERATIONS_MASTER.cmd[m[36m:[m[32m153[m[36m:[mtype nul > templates\enterprise_operations\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:PHASE48_54_AI_DATA_ENTERPRISE_MASTER.cmd[m[36m:[m[32m162[m[36m:[mtype nul > templates\ai_operations\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:apps/billing/views.py[m[36m:[m[32m40[m[36m:[m        "billing/[1;31mdashboard.html[m",
+Binary file [35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:apps/service_desk/__pycache__/views.cpython-313.pyc[m matches
+Binary file [35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:apps/service_desk/__pycache__/views.cpython-314.pyc[m matches
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:apps/service_desk/views.py[m[36m:[m[32m22[m[36m:[m        "service_desk/[1;31mdashboard.html[m",
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:apps/service_desk/views/__init__.py[m[36m:[m[32m94[m[36m:[m    template_name = "service_desk/[1;31mdashboard.html[m"
+Binary file [35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:apps/ui/__pycache__/views.cpython-314.pyc[m matches
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:apps/ui/views.py[m[36m:[m[32m22[m[36m:[m        "dashboard/[1;31mdashboard.html[m",
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:create_ui_framework.cmd[m[36m:[m[32m76[m[36m:[mtype nul > templates\dashboard\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:create_ui_framework.cmd[m[36m:[m[32m82[m[36m:[mtype nul > templates\reports\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:phase10_notifications.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\notifications\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:phase11_reporting.cmd[m[36m:[m[32m46[m[36m:[mtype nul > templates\reporting\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:phase11_reporting.cmd[m[36m:[m[32m47[m[36m:[mtype nul > templates\reporting\executive_[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:phase11_reporting.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\reporting\agent_[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:phase12_identity_security.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\identity\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:phase4_ticket_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\tickets\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:phase6_cmdb.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:phase7_knowledge_base[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:phase7_knowledge_base.cmd[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:phase8_sla_engine.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\sla\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:phase9_automation_engine.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\automation\[1;31mdashboard.html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:setup_phase6_service_desk.py[m[36m:[m[32m51[m[36m:[m    [1;31mdashboard_html[m = """
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:setup_phase6_service_desk.py[m[36m:[m[32m155[m[36m:[m        "[1;31mdashboard.html[m",
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:setup_phase6_service_desk.py[m[36m:[m[32m156[m[36m:[m        [1;31mdashboard_html[m
+[35m7f5ba28e09b23dc08d8f29a2106831d8dc37a393:setup_phase6_service_desk.py[m[36m:[m[32m174[m[36m:[m        "service_desk/[1;31mdashboard.html[m"
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:PHASE23_COMMUNICATION_INTEGRATION_HUB.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:PHASE24_ANALYTICS_BUSINESS_INTELLIGENCE.cmd[m[36m:[m[32m67[m[36m:[mtype nul > templates\analytics\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:PHASE25_SECURITY_IAM_ENGINE.cmd[m[36m:[m[32m121[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:PHASE26_CMDB_ASSET_MANAGEMENT.cmd[m[36m:[m[32m103[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:PHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m111[m[36m:[mtype nul > templates\ai\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:PHASE30_MOBILE_PWA_PLATFORM.cmd[m[36m:[m[32m79[m[36m:[mtype nul > templates\mobile\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:PHASE31_OPERATIONS_MONITORING_CENTER.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\noc\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:PHASE32_ENTERPRISE_API_INTEGRATION_GATEWAY.cmd[m[36m:[m[32m130[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:PHASE33_NETWORK_DISCOVERY_INTELLIGENCE.cmd[m[36m:[m[32m127[m[36m:[mtype nul > templates\network\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:PHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m117[m[36m:[mtype nul > templates\itil\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:PHASE35_ENTERPRISE_CMDB_PLATFORM.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:PHASE36_IDENTITY_ACCESS_SECURITY_CENTER.cmd[m[36m:[m[32m126[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:PHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\workflow\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:PHASE39_ENTERPRISE_ANALYTICS_REPORTING.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\executive_dashboard\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:PHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m86[m[36m:[mtype nul > templates\customer_portal\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:PHASE41_47_ENTERPRISE_OPERATIONS_MASTER.cmd[m[36m:[m[32m153[m[36m:[mtype nul > templates\enterprise_operations\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:PHASE48_54_AI_DATA_ENTERPRISE_MASTER.cmd[m[36m:[m[32m162[m[36m:[mtype nul > templates\ai_operations\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:apps/billing/views.py[m[36m:[m[32m40[m[36m:[m        "billing/[1;31mdashboard.html[m",
+Binary file [35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:apps/service_desk/__pycache__/views.cpython-313.pyc[m matches
+Binary file [35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:apps/service_desk/__pycache__/views.cpython-314.pyc[m matches
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:apps/service_desk/views.py[m[36m:[m[32m22[m[36m:[m        "service_desk/[1;31mdashboard.html[m",
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:apps/service_desk/views/__init__.py[m[36m:[m[32m94[m[36m:[m    template_name = "service_desk/[1;31mdashboard.html[m"
+Binary file [35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:apps/ui/__pycache__/views.cpython-314.pyc[m matches
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:apps/ui/views.py[m[36m:[m[32m22[m[36m:[m        "dashboard/[1;31mdashboard.html[m",
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:create_ui_framework.cmd[m[36m:[m[32m76[m[36m:[mtype nul > templates\dashboard\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:create_ui_framework.cmd[m[36m:[m[32m82[m[36m:[mtype nul > templates\reports\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:phase10_notifications.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\notifications\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:phase11_reporting.cmd[m[36m:[m[32m46[m[36m:[mtype nul > templates\reporting\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:phase11_reporting.cmd[m[36m:[m[32m47[m[36m:[mtype nul > templates\reporting\executive_[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:phase11_reporting.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\reporting\agent_[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:phase12_identity_security.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\identity\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:phase4_ticket_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\tickets\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:phase6_cmdb.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:phase7_knowledge_base[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:phase7_knowledge_base.cmd[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:phase8_sla_engine.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\sla\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:phase9_automation_engine.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\automation\[1;31mdashboard.html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:setup_phase6_service_desk.py[m[36m:[m[32m51[m[36m:[m    [1;31mdashboard_html[m = """
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:setup_phase6_service_desk.py[m[36m:[m[32m155[m[36m:[m        "[1;31mdashboard.html[m",
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:setup_phase6_service_desk.py[m[36m:[m[32m156[m[36m:[m        [1;31mdashboard_html[m
+[35m33d246ffcb1b239d3c05ef703bd7967ec22cbeb9:setup_phase6_service_desk.py[m[36m:[m[32m174[m[36m:[m        "service_desk/[1;31mdashboard.html[m"
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:PHASE23_COMMUNICATION_INTEGRATION_HUB.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:PHASE24_ANALYTICS_BUSINESS_INTELLIGENCE.cmd[m[36m:[m[32m67[m[36m:[mtype nul > templates\analytics\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:PHASE25_SECURITY_IAM_ENGINE.cmd[m[36m:[m[32m121[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:PHASE26_CMDB_ASSET_MANAGEMENT.cmd[m[36m:[m[32m103[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:PHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m111[m[36m:[mtype nul > templates\ai\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:PHASE30_MOBILE_PWA_PLATFORM.cmd[m[36m:[m[32m79[m[36m:[mtype nul > templates\mobile\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:PHASE31_OPERATIONS_MONITORING_CENTER.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\noc\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:PHASE32_ENTERPRISE_API_INTEGRATION_GATEWAY.cmd[m[36m:[m[32m130[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:PHASE33_NETWORK_DISCOVERY_INTELLIGENCE.cmd[m[36m:[m[32m127[m[36m:[mtype nul > templates\network\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:PHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m117[m[36m:[mtype nul > templates\itil\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:PHASE35_ENTERPRISE_CMDB_PLATFORM.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:PHASE36_IDENTITY_ACCESS_SECURITY_CENTER.cmd[m[36m:[m[32m126[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:PHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\workflow\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:PHASE39_ENTERPRISE_ANALYTICS_REPORTING.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\executive_dashboard\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:PHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m86[m[36m:[mtype nul > templates\customer_portal\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:PHASE41_47_ENTERPRISE_OPERATIONS_MASTER.cmd[m[36m:[m[32m153[m[36m:[mtype nul > templates\enterprise_operations\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:PHASE48_54_AI_DATA_ENTERPRISE_MASTER.cmd[m[36m:[m[32m162[m[36m:[mtype nul > templates\ai_operations\[1;31mdashboard.html[m
+Binary file [35m4557f7859d8de237f271285774fec3b91eeb2ef4:apps/service_desk/__pycache__/views.cpython-313.pyc[m matches
+Binary file [35m4557f7859d8de237f271285774fec3b91eeb2ef4:apps/service_desk/__pycache__/views.cpython-314.pyc[m matches
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:apps/service_desk/views.py[m[36m:[m[32m17[m[36m:[m        "service_desk/[1;31mdashboard.html[m",
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:create_ui_framework.cmd[m[36m:[m[32m76[m[36m:[mtype nul > templates\dashboard\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:create_ui_framework.cmd[m[36m:[m[32m82[m[36m:[mtype nul > templates\reports\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:phase10_notifications.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\notifications\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:phase11_reporting.cmd[m[36m:[m[32m46[m[36m:[mtype nul > templates\reporting\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:phase11_reporting.cmd[m[36m:[m[32m47[m[36m:[mtype nul > templates\reporting\executive_[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:phase11_reporting.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\reporting\agent_[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:phase12_identity_security.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\identity\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:phase4_ticket_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\tickets\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:phase6_cmdb.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:phase7_knowledge_base[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:phase7_knowledge_base.cmd[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:phase8_sla_engine.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\sla\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:phase9_automation_engine.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\automation\[1;31mdashboard.html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:setup_phase6_service_desk.py[m[36m:[m[32m51[m[36m:[m    [1;31mdashboard_html[m = """
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:setup_phase6_service_desk.py[m[36m:[m[32m155[m[36m:[m        "[1;31mdashboard.html[m",
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:setup_phase6_service_desk.py[m[36m:[m[32m156[m[36m:[m        [1;31mdashboard_html[m
+[35m4557f7859d8de237f271285774fec3b91eeb2ef4:setup_phase6_service_desk.py[m[36m:[m[32m174[m[36m:[m        "service_desk/[1;31mdashboard.html[m"
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:PHASE23_COMMUNICATION_INTEGRATION_HUB.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:PHASE24_ANALYTICS_BUSINESS_INTELLIGENCE.cmd[m[36m:[m[32m67[m[36m:[mtype nul > templates\analytics\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:PHASE25_SECURITY_IAM_ENGINE.cmd[m[36m:[m[32m121[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:PHASE26_CMDB_ASSET_MANAGEMENT.cmd[m[36m:[m[32m103[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:PHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m111[m[36m:[mtype nul > templates\ai\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:PHASE30_MOBILE_PWA_PLATFORM.cmd[m[36m:[m[32m79[m[36m:[mtype nul > templates\mobile\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:PHASE31_OPERATIONS_MONITORING_CENTER.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\noc\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:PHASE32_ENTERPRISE_API_INTEGRATION_GATEWAY.cmd[m[36m:[m[32m130[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:PHASE33_NETWORK_DISCOVERY_INTELLIGENCE.cmd[m[36m:[m[32m127[m[36m:[mtype nul > templates\network\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:PHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m117[m[36m:[mtype nul > templates\itil\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:PHASE35_ENTERPRISE_CMDB_PLATFORM.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:PHASE36_IDENTITY_ACCESS_SECURITY_CENTER.cmd[m[36m:[m[32m126[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:PHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\workflow\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:PHASE39_ENTERPRISE_ANALYTICS_REPORTING.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\executive_dashboard\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:PHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m86[m[36m:[mtype nul > templates\customer_portal\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:PHASE41_47_ENTERPRISE_OPERATIONS_MASTER.cmd[m[36m:[m[32m153[m[36m:[mtype nul > templates\enterprise_operations\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:PHASE48_54_AI_DATA_ENTERPRISE_MASTER.cmd[m[36m:[m[32m162[m[36m:[mtype nul > templates\ai_operations\[1;31mdashboard.html[m
+Binary file [35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:apps/service_desk/__pycache__/views.cpython-313.pyc[m matches
+Binary file [35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:apps/service_desk/__pycache__/views.cpython-314.pyc[m matches
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:apps/service_desk/views.py[m[36m:[m[32m22[m[36m:[m        "service_desk/[1;31mdashboard.html[m",
+Binary file [35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:apps/ui/__pycache__/views.cpython-314.pyc[m matches
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:apps/ui/views.py[m[36m:[m[32m22[m[36m:[m        "dashboard/[1;31mdashboard.html[m",
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:create_ui_framework.cmd[m[36m:[m[32m76[m[36m:[mtype nul > templates\dashboard\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:create_ui_framework.cmd[m[36m:[m[32m82[m[36m:[mtype nul > templates\reports\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:phase10_notifications.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\notifications\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:phase11_reporting.cmd[m[36m:[m[32m46[m[36m:[mtype nul > templates\reporting\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:phase11_reporting.cmd[m[36m:[m[32m47[m[36m:[mtype nul > templates\reporting\executive_[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:phase11_reporting.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\reporting\agent_[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:phase12_identity_security.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\identity\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:phase4_ticket_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\tickets\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:phase6_cmdb.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:phase7_knowledge_base[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:phase7_knowledge_base.cmd[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:phase8_sla_engine.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\sla\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:phase9_automation_engine.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\automation\[1;31mdashboard.html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:setup_phase6_service_desk.py[m[36m:[m[32m51[m[36m:[m    [1;31mdashboard_html[m = """
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:setup_phase6_service_desk.py[m[36m:[m[32m155[m[36m:[m        "[1;31mdashboard.html[m",
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:setup_phase6_service_desk.py[m[36m:[m[32m156[m[36m:[m        [1;31mdashboard_html[m
+[35m5050cbc8cec987fb911a561e35608ef7a0a10f2c:setup_phase6_service_desk.py[m[36m:[m[32m174[m[36m:[m        "service_desk/[1;31mdashboard.html[m"
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:PHASE23_COMMUNICATION_INTEGRATION_HUB.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:PHASE24_ANALYTICS_BUSINESS_INTELLIGENCE.cmd[m[36m:[m[32m67[m[36m:[mtype nul > templates\analytics\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:PHASE25_SECURITY_IAM_ENGINE.cmd[m[36m:[m[32m121[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:PHASE26_CMDB_ASSET_MANAGEMENT.cmd[m[36m:[m[32m103[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:PHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m111[m[36m:[mtype nul > templates\ai\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:PHASE30_MOBILE_PWA_PLATFORM.cmd[m[36m:[m[32m79[m[36m:[mtype nul > templates\mobile\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:PHASE31_OPERATIONS_MONITORING_CENTER.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\noc\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:PHASE32_ENTERPRISE_API_INTEGRATION_GATEWAY.cmd[m[36m:[m[32m130[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:PHASE33_NETWORK_DISCOVERY_INTELLIGENCE.cmd[m[36m:[m[32m127[m[36m:[mtype nul > templates\network\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:PHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m117[m[36m:[mtype nul > templates\itil\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:PHASE35_ENTERPRISE_CMDB_PLATFORM.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:PHASE36_IDENTITY_ACCESS_SECURITY_CENTER.cmd[m[36m:[m[32m126[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:PHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\workflow\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:PHASE39_ENTERPRISE_ANALYTICS_REPORTING.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\executive_dashboard\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:PHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m86[m[36m:[mtype nul > templates\customer_portal\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:PHASE41_47_ENTERPRISE_OPERATIONS_MASTER.cmd[m[36m:[m[32m153[m[36m:[mtype nul > templates\enterprise_operations\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:PHASE48_54_AI_DATA_ENTERPRISE_MASTER.cmd[m[36m:[m[32m162[m[36m:[mtype nul > templates\ai_operations\[1;31mdashboard.html[m
+Binary file [35m84bf0ab9790ce26e29444d57930ec645496643b0:apps/service_desk/__pycache__/views.cpython-313.pyc[m matches
+Binary file [35m84bf0ab9790ce26e29444d57930ec645496643b0:apps/service_desk/__pycache__/views.cpython-314.pyc[m matches
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:apps/service_desk/views.py[m[36m:[m[32m22[m[36m:[m        "service_desk/[1;31mdashboard.html[m",
+Binary file [35m84bf0ab9790ce26e29444d57930ec645496643b0:apps/ui/__pycache__/views.cpython-314.pyc[m matches
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:apps/ui/views.py[m[36m:[m[32m22[m[36m:[m        "dashboard/[1;31mdashboard.html[m",
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:create_ui_framework.cmd[m[36m:[m[32m76[m[36m:[mtype nul > templates\dashboard\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:create_ui_framework.cmd[m[36m:[m[32m82[m[36m:[mtype nul > templates\reports\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:phase10_notifications.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\notifications\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:phase11_reporting.cmd[m[36m:[m[32m46[m[36m:[mtype nul > templates\reporting\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:phase11_reporting.cmd[m[36m:[m[32m47[m[36m:[mtype nul > templates\reporting\executive_[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:phase11_reporting.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\reporting\agent_[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:phase12_identity_security.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\identity\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:phase4_ticket_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\tickets\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:phase6_cmdb.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:phase7_knowledge_base[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:phase7_knowledge_base.cmd[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:phase8_sla_engine.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\sla\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:phase9_automation_engine.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\automation\[1;31mdashboard.html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:setup_phase6_service_desk.py[m[36m:[m[32m51[m[36m:[m    [1;31mdashboard_html[m = """
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:setup_phase6_service_desk.py[m[36m:[m[32m155[m[36m:[m        "[1;31mdashboard.html[m",
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:setup_phase6_service_desk.py[m[36m:[m[32m156[m[36m:[m        [1;31mdashboard_html[m
+[35m84bf0ab9790ce26e29444d57930ec645496643b0:setup_phase6_service_desk.py[m[36m:[m[32m174[m[36m:[m        "service_desk/[1;31mdashboard.html[m"
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:PHASE23_COMMUNICATION_INTEGRATION_HUB.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:PHASE24_ANALYTICS_BUSINESS_INTELLIGENCE.cmd[m[36m:[m[32m67[m[36m:[mtype nul > templates\analytics\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:PHASE25_SECURITY_IAM_ENGINE.cmd[m[36m:[m[32m121[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:PHASE26_CMDB_ASSET_MANAGEMENT.cmd[m[36m:[m[32m103[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:PHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m111[m[36m:[mtype nul > templates\ai\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:PHASE30_MOBILE_PWA_PLATFORM.cmd[m[36m:[m[32m79[m[36m:[mtype nul > templates\mobile\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:PHASE31_OPERATIONS_MONITORING_CENTER.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\noc\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:PHASE32_ENTERPRISE_API_INTEGRATION_GATEWAY.cmd[m[36m:[m[32m130[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:PHASE33_NETWORK_DISCOVERY_INTELLIGENCE.cmd[m[36m:[m[32m127[m[36m:[mtype nul > templates\network\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:PHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m117[m[36m:[mtype nul > templates\itil\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:PHASE35_ENTERPRISE_CMDB_PLATFORM.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:PHASE36_IDENTITY_ACCESS_SECURITY_CENTER.cmd[m[36m:[m[32m126[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:PHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\workflow\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:PHASE39_ENTERPRISE_ANALYTICS_REPORTING.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\executive_dashboard\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:PHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m86[m[36m:[mtype nul > templates\customer_portal\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:PHASE41_47_ENTERPRISE_OPERATIONS_MASTER.cmd[m[36m:[m[32m153[m[36m:[mtype nul > templates\enterprise_operations\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:PHASE48_54_AI_DATA_ENTERPRISE_MASTER.cmd[m[36m:[m[32m162[m[36m:[mtype nul > templates\ai_operations\[1;31mdashboard.html[m
+Binary file [35m6c235284151fc935165ecd970d067095b3a4bd3c:apps/service_desk/__pycache__/views.cpython-313.pyc[m matches
+Binary file [35m6c235284151fc935165ecd970d067095b3a4bd3c:apps/service_desk/__pycache__/views.cpython-314.pyc[m matches
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:apps/service_desk/views.py[m[36m:[m[32m22[m[36m:[m        "service_desk/[1;31mdashboard.html[m",
+Binary file [35m6c235284151fc935165ecd970d067095b3a4bd3c:apps/ui/__pycache__/views.cpython-314.pyc[m matches
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:apps/ui/views.py[m[36m:[m[32m22[m[36m:[m        "dashboard/[1;31mdashboard.html[m",
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:create_ui_framework.cmd[m[36m:[m[32m76[m[36m:[mtype nul > templates\dashboard\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:create_ui_framework.cmd[m[36m:[m[32m82[m[36m:[mtype nul > templates\reports\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:phase10_notifications.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\notifications\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:phase11_reporting.cmd[m[36m:[m[32m46[m[36m:[mtype nul > templates\reporting\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:phase11_reporting.cmd[m[36m:[m[32m47[m[36m:[mtype nul > templates\reporting\executive_[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:phase11_reporting.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\reporting\agent_[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:phase12_identity_security.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\identity\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:phase4_ticket_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\tickets\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:phase6_cmdb.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:phase7_knowledge_base[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:phase7_knowledge_base.cmd[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:phase8_sla_engine.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\sla\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:phase9_automation_engine.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\automation\[1;31mdashboard.html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:setup_phase6_service_desk.py[m[36m:[m[32m51[m[36m:[m    [1;31mdashboard_html[m = """
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:setup_phase6_service_desk.py[m[36m:[m[32m155[m[36m:[m        "[1;31mdashboard.html[m",
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:setup_phase6_service_desk.py[m[36m:[m[32m156[m[36m:[m        [1;31mdashboard_html[m
+[35m6c235284151fc935165ecd970d067095b3a4bd3c:setup_phase6_service_desk.py[m[36m:[m[32m174[m[36m:[m        "service_desk/[1;31mdashboard.html[m"
+[35m43f299f104a26a02e672f1ae2b81774211179472:PHASE23_COMMUNICATION_INTEGRATION_HUB.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:PHASE24_ANALYTICS_BUSINESS_INTELLIGENCE.cmd[m[36m:[m[32m67[m[36m:[mtype nul > templates\analytics\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:PHASE25_SECURITY_IAM_ENGINE.cmd[m[36m:[m[32m121[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:PHASE26_CMDB_ASSET_MANAGEMENT.cmd[m[36m:[m[32m103[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:PHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m111[m[36m:[mtype nul > templates\ai\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:PHASE30_MOBILE_PWA_PLATFORM.cmd[m[36m:[m[32m79[m[36m:[mtype nul > templates\mobile\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:PHASE31_OPERATIONS_MONITORING_CENTER.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\noc\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:PHASE32_ENTERPRISE_API_INTEGRATION_GATEWAY.cmd[m[36m:[m[32m130[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:PHASE33_NETWORK_DISCOVERY_INTELLIGENCE.cmd[m[36m:[m[32m127[m[36m:[mtype nul > templates\network\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:PHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m117[m[36m:[mtype nul > templates\itil\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:PHASE35_ENTERPRISE_CMDB_PLATFORM.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:PHASE36_IDENTITY_ACCESS_SECURITY_CENTER.cmd[m[36m:[m[32m126[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:PHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\workflow\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:PHASE39_ENTERPRISE_ANALYTICS_REPORTING.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\executive_dashboard\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:PHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m86[m[36m:[mtype nul > templates\customer_portal\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:PHASE41_47_ENTERPRISE_OPERATIONS_MASTER.cmd[m[36m:[m[32m153[m[36m:[mtype nul > templates\enterprise_operations\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:PHASE48_54_AI_DATA_ENTERPRISE_MASTER.cmd[m[36m:[m[32m162[m[36m:[mtype nul > templates\ai_operations\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:apps/billing/views.py[m[36m:[m[32m40[m[36m:[m        "billing/[1;31mdashboard.html[m",
+Binary file [35m43f299f104a26a02e672f1ae2b81774211179472:apps/service_desk/__pycache__/views.cpython-313.pyc[m matches
+Binary file [35m43f299f104a26a02e672f1ae2b81774211179472:apps/service_desk/__pycache__/views.cpython-314.pyc[m matches
+[35m43f299f104a26a02e672f1ae2b81774211179472:apps/service_desk/views/__init__.py[m[36m:[m[32m94[m[36m:[m    template_name = "service_desk/[1;31mdashboard.html[m"
+[35m43f299f104a26a02e672f1ae2b81774211179472:create_ui_framework.cmd[m[36m:[m[32m76[m[36m:[mtype nul > templates\dashboard\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:create_ui_framework.cmd[m[36m:[m[32m82[m[36m:[mtype nul > templates\reports\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:phase10_notifications.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\notifications\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:phase11_reporting.cmd[m[36m:[m[32m46[m[36m:[mtype nul > templates\reporting\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:phase11_reporting.cmd[m[36m:[m[32m47[m[36m:[mtype nul > templates\reporting\executive_[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:phase11_reporting.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\reporting\agent_[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:phase12_identity_security.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\identity\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:phase4_ticket_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\tickets\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:phase6_cmdb.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:phase7_knowledge_base[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:phase7_knowledge_base.cmd[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:phase8_sla_engine.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\sla\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:phase9_automation_engine.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\automation\[1;31mdashboard.html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:setup_phase6_service_desk.py[m[36m:[m[32m51[m[36m:[m    [1;31mdashboard_html[m = """
+[35m43f299f104a26a02e672f1ae2b81774211179472:setup_phase6_service_desk.py[m[36m:[m[32m155[m[36m:[m        "[1;31mdashboard.html[m",
+[35m43f299f104a26a02e672f1ae2b81774211179472:setup_phase6_service_desk.py[m[36m:[m[32m156[m[36m:[m        [1;31mdashboard_html[m
+[35m43f299f104a26a02e672f1ae2b81774211179472:setup_phase6_service_desk.py[m[36m:[m[32m174[m[36m:[m        "service_desk/[1;31mdashboard.html[m"
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:PHASE23_COMMUNICATION_INTEGRATION_HUB.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:PHASE24_ANALYTICS_BUSINESS_INTELLIGENCE.cmd[m[36m:[m[32m67[m[36m:[mtype nul > templates\analytics\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:PHASE25_SECURITY_IAM_ENGINE.cmd[m[36m:[m[32m121[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:PHASE26_CMDB_ASSET_MANAGEMENT.cmd[m[36m:[m[32m103[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:PHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m111[m[36m:[mtype nul > templates\ai\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:PHASE30_MOBILE_PWA_PLATFORM.cmd[m[36m:[m[32m79[m[36m:[mtype nul > templates\mobile\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:PHASE31_OPERATIONS_MONITORING_CENTER.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\noc\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:PHASE32_ENTERPRISE_API_INTEGRATION_GATEWAY.cmd[m[36m:[m[32m130[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:PHASE33_NETWORK_DISCOVERY_INTELLIGENCE.cmd[m[36m:[m[32m127[m[36m:[mtype nul > templates\network\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:PHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m117[m[36m:[mtype nul > templates\itil\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:PHASE35_ENTERPRISE_CMDB_PLATFORM.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:PHASE36_IDENTITY_ACCESS_SECURITY_CENTER.cmd[m[36m:[m[32m126[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:PHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\workflow\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:PHASE39_ENTERPRISE_ANALYTICS_REPORTING.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\executive_dashboard\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:PHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m86[m[36m:[mtype nul > templates\customer_portal\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:PHASE41_47_ENTERPRISE_OPERATIONS_MASTER.cmd[m[36m:[m[32m153[m[36m:[mtype nul > templates\enterprise_operations\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:PHASE48_54_AI_DATA_ENTERPRISE_MASTER.cmd[m[36m:[m[32m162[m[36m:[mtype nul > templates\ai_operations\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:apps/billing/views.py[m[36m:[m[32m40[m[36m:[m        "billing/[1;31mdashboard.html[m",
+Binary file [35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:apps/service_desk/__pycache__/views.cpython-313.pyc[m matches
+Binary file [35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:apps/service_desk/__pycache__/views.cpython-314.pyc[m matches
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:apps/service_desk/views/__init__.py[m[36m:[m[32m94[m[36m:[m    template_name = "service_desk/[1;31mdashboard.html[m"
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:create_ui_framework.cmd[m[36m:[m[32m76[m[36m:[mtype nul > templates\dashboard\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:create_ui_framework.cmd[m[36m:[m[32m82[m[36m:[mtype nul > templates\reports\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:phase10_notifications.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\notifications\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:phase11_reporting.cmd[m[36m:[m[32m46[m[36m:[mtype nul > templates\reporting\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:phase11_reporting.cmd[m[36m:[m[32m47[m[36m:[mtype nul > templates\reporting\executive_[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:phase11_reporting.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\reporting\agent_[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:phase12_identity_security.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\identity\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:phase4_ticket_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\tickets\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:phase6_cmdb.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:phase7_knowledge_base[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:phase7_knowledge_base.cmd[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:phase8_sla_engine.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\sla\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:phase9_automation_engine.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\automation\[1;31mdashboard.html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:setup_phase6_service_desk.py[m[36m:[m[32m51[m[36m:[m    [1;31mdashboard_html[m = """
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:setup_phase6_service_desk.py[m[36m:[m[32m155[m[36m:[m        "[1;31mdashboard.html[m",
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:setup_phase6_service_desk.py[m[36m:[m[32m156[m[36m:[m        [1;31mdashboard_html[m
+[35m2117fbebf9cbc0ade5f54c76a9979b78f2746fac:setup_phase6_service_desk.py[m[36m:[m[32m174[m[36m:[m        "service_desk/[1;31mdashboard.html[m"
+[35m23af91dee0eadcffada679ec68fa617241287c2e:PHASE23_COMMUNICATION_INTEGRATION_HUB.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:PHASE24_ANALYTICS_BUSINESS_INTELLIGENCE.cmd[m[36m:[m[32m67[m[36m:[mtype nul > templates\analytics\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:PHASE25_SECURITY_IAM_ENGINE.cmd[m[36m:[m[32m121[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:PHASE26_CMDB_ASSET_MANAGEMENT.cmd[m[36m:[m[32m103[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:PHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m111[m[36m:[mtype nul > templates\ai\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:PHASE30_MOBILE_PWA_PLATFORM.cmd[m[36m:[m[32m79[m[36m:[mtype nul > templates\mobile\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:PHASE31_OPERATIONS_MONITORING_CENTER.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\noc\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:PHASE32_ENTERPRISE_API_INTEGRATION_GATEWAY.cmd[m[36m:[m[32m130[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:PHASE33_NETWORK_DISCOVERY_INTELLIGENCE.cmd[m[36m:[m[32m127[m[36m:[mtype nul > templates\network\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:PHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m117[m[36m:[mtype nul > templates\itil\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:PHASE35_ENTERPRISE_CMDB_PLATFORM.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:PHASE36_IDENTITY_ACCESS_SECURITY_CENTER.cmd[m[36m:[m[32m126[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:PHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\workflow\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:PHASE39_ENTERPRISE_ANALYTICS_REPORTING.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\executive_dashboard\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:PHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m86[m[36m:[mtype nul > templates\customer_portal\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:PHASE41_47_ENTERPRISE_OPERATIONS_MASTER.cmd[m[36m:[m[32m153[m[36m:[mtype nul > templates\enterprise_operations\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:PHASE48_54_AI_DATA_ENTERPRISE_MASTER.cmd[m[36m:[m[32m162[m[36m:[mtype nul > templates\ai_operations\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:apps/billing/views.py[m[36m:[m[32m40[m[36m:[m        "billing/[1;31mdashboard.html[m",
+Binary file [35m23af91dee0eadcffada679ec68fa617241287c2e:apps/service_desk/__pycache__/views.cpython-313.pyc[m matches
+Binary file [35m23af91dee0eadcffada679ec68fa617241287c2e:apps/service_desk/__pycache__/views.cpython-314.pyc[m matches
+[35m23af91dee0eadcffada679ec68fa617241287c2e:apps/service_desk/views/__init__.py[m[36m:[m[32m94[m[36m:[m    template_name = "service_desk/[1;31mdashboard.html[m"
+[35m23af91dee0eadcffada679ec68fa617241287c2e:create_ui_framework.cmd[m[36m:[m[32m76[m[36m:[mtype nul > templates\dashboard\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:create_ui_framework.cmd[m[36m:[m[32m82[m[36m:[mtype nul > templates\reports\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:phase10_notifications.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\notifications\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:phase11_reporting.cmd[m[36m:[m[32m46[m[36m:[mtype nul > templates\reporting\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:phase11_reporting.cmd[m[36m:[m[32m47[m[36m:[mtype nul > templates\reporting\executive_[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:phase11_reporting.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\reporting\agent_[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:phase12_identity_security.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\identity\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:phase4_ticket_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\tickets\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:phase6_cmdb.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:phase7_knowledge_base[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:phase7_knowledge_base.cmd[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:phase8_sla_engine.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\sla\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:phase9_automation_engine.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\automation\[1;31mdashboard.html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:setup_phase6_service_desk.py[m[36m:[m[32m51[m[36m:[m    [1;31mdashboard_html[m = """
+[35m23af91dee0eadcffada679ec68fa617241287c2e:setup_phase6_service_desk.py[m[36m:[m[32m155[m[36m:[m        "[1;31mdashboard.html[m",
+[35m23af91dee0eadcffada679ec68fa617241287c2e:setup_phase6_service_desk.py[m[36m:[m[32m156[m[36m:[m        [1;31mdashboard_html[m
+[35m23af91dee0eadcffada679ec68fa617241287c2e:setup_phase6_service_desk.py[m[36m:[m[32m174[m[36m:[m        "service_desk/[1;31mdashboard.html[m"
+[35md4469a703a6a6488ca739c3341bab9499250121e:PHASE23_COMMUNICATION_INTEGRATION_HUB.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:PHASE24_ANALYTICS_BUSINESS_INTELLIGENCE.cmd[m[36m:[m[32m67[m[36m:[mtype nul > templates\analytics\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:PHASE25_SECURITY_IAM_ENGINE.cmd[m[36m:[m[32m121[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:PHASE26_CMDB_ASSET_MANAGEMENT.cmd[m[36m:[m[32m103[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:PHASE28_AI_SERVICE_DESK_INTELLIGENCE.cmd[m[36m:[m[32m111[m[36m:[mtype nul > templates\ai\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:PHASE30_MOBILE_PWA_PLATFORM.cmd[m[36m:[m[32m79[m[36m:[mtype nul > templates\mobile\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:PHASE31_OPERATIONS_MONITORING_CENTER.cmd[m[36m:[m[32m115[m[36m:[mtype nul > templates\noc\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:PHASE32_ENTERPRISE_API_INTEGRATION_GATEWAY.cmd[m[36m:[m[32m130[m[36m:[mtype nul > templates\integrations\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:PHASE33_NETWORK_DISCOVERY_INTELLIGENCE.cmd[m[36m:[m[32m127[m[36m:[mtype nul > templates\network\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:PHASE34_ITIL_INCIDENT_PROBLEM_CHANGE.cmd[m[36m:[m[32m117[m[36m:[mtype nul > templates\itil\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:PHASE35_ENTERPRISE_CMDB_PLATFORM.cmd[m[36m:[m[32m135[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:PHASE36_IDENTITY_ACCESS_SECURITY_CENTER.cmd[m[36m:[m[32m126[m[36m:[mtype nul > templates\security\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:PHASE38_WORKFLOW_AUTOMATION_ENGINE.cmd[m[36m:[m[32m134[m[36m:[mtype nul > templates\workflow\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:PHASE39_ENTERPRISE_ANALYTICS_REPORTING.cmd[m[36m:[m[32m109[m[36m:[mtype nul > templates\executive_dashboard\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:PHASE40_CUSTOMER_PORTAL_SERVICE_CATALOG.cmd[m[36m:[m[32m86[m[36m:[mtype nul > templates\customer_portal\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:PHASE41_47_ENTERPRISE_OPERATIONS_MASTER.cmd[m[36m:[m[32m153[m[36m:[mtype nul > templates\enterprise_operations\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:PHASE48_54_AI_DATA_ENTERPRISE_MASTER.cmd[m[36m:[m[32m162[m[36m:[mtype nul > templates\ai_operations\[1;31mdashboard.html[m
+Binary file [35md4469a703a6a6488ca739c3341bab9499250121e:apps/service_desk/__pycache__/views.cpython-313.pyc[m matches
+Binary file [35md4469a703a6a6488ca739c3341bab9499250121e:apps/service_desk/__pycache__/views.cpython-314.pyc[m matches
+[35md4469a703a6a6488ca739c3341bab9499250121e:apps/service_desk/views.py[m[36m:[m[32m14[m[36m:[m        "service_desk/[1;31mdashboard.html[m",
+[35md4469a703a6a6488ca739c3341bab9499250121e:create_ui_framework.cmd[m[36m:[m[32m76[m[36m:[mtype nul > templates\dashboard\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:create_ui_framework.cmd[m[36m:[m[32m82[m[36m:[mtype nul > templates\reports\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:phase10_notifications.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\notifications\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:phase11_reporting.cmd[m[36m:[m[32m46[m[36m:[mtype nul > templates\reporting\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:phase11_reporting.cmd[m[36m:[m[32m47[m[36m:[mtype nul > templates\reporting\executive_[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:phase11_reporting.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\reporting\agent_[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:phase12_identity_security.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\identity\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:phase4_ticket_engine.cmd[m[36m:[m[32m38[m[36m:[mtype nul > templates\tickets\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:phase6_cmdb.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\cmdb\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:phase7_knowledge_base[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:phase7_knowledge_base.cmd[m[36m:[m[32m45[m[36m:[mtype nul > templates\knowledge\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:phase8_sla_engine.cmd[m[36m:[m[32m44[m[36m:[mtype nul > templates\sla\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:phase9_automation_engine.cmd[m[36m:[m[32m48[m[36m:[mtype nul > templates\automation\[1;31mdashboard.html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:setup_phase6_service_desk.py[m[36m:[m[32m51[m[36m:[m    [1;31mdashboard_html[m = """
+[35md4469a703a6a6488ca739c3341bab9499250121e:setup_phase6_service_desk.py[m[36m:[m[32m155[m[36m:[m        "[1;31mdashboard.html[m",
+[35md4469a703a6a6488ca739c3341bab9499250121e:setup_phase6_service_desk.py[m[36m:[m[32m156[m[36m:[m        [1;31mdashboard_html[m
+[35md4469a703a6a6488ca739c3341bab9499250121e:setup_phase6_service_desk.py[m[36m:[m[32m174[m[36m:[m        "service_desk/[1;31mdashboard.html[m"
