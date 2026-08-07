@@ -38,4 +38,6 @@ Thumbs.db
 
 # Deployment generated files
 deployment/logs/
-deployment/releases/
+deployment/releases/AI_Agentina/.env
+AI_Agentina/*Key*
+*API key*
