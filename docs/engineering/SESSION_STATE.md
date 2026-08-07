@@ -25,19 +25,25 @@ step). An out-of-date `SESSION_STATE.md` is itself a defect — treat it as one 
 
 | | |
 |---|---|
-| **Current Milestone** | IM-03 — Incident Lifecycle Completion, schema-free portion (third milestone of the Enterprise ITSM Master Development Program) |
+| **Current Milestone** | CI-01 — GitHub Actions CI pipeline (fifth milestone of the Enterprise ITSM Master Development Program) |
 | **Current Sprint** | Phase 1: Incident Management completion (see [ROADMAP.md](ROADMAP.md)) |
 | **Current Objective** | Work the ITSM program milestone-by-milestone — inspect, design, implement, test, document, commit locally per milestone; push only on explicit approval regardless of local commit cadence (see [WORKFLOW.md](WORKFLOW.md)) |
-| **Overall Repository Health** | **Improving, still mixed.** Core `service_desk` app is healthy (`manage.py check` clean, 33/33 tests passing, migrations in sync, zero drift). `TicketService` is now actually wired into views (assign/status-change/comment/close/reopen/create) instead of sitting unused. Problem Management domain (ADR-009, PM-02.1, PM-02.2) is implemented but not yet wired to any view. Surrounding repository still has scaffolding debt (~59 unregistered apps), two live file-collision hazards, empty CI, and hardcoded secrets. Full detail: [ARCHITECTURE.md](ARCHITECTURE.md). |
+| **Overall Repository Health** | **Improving, still mixed.** Core `service_desk` app is healthy (`manage.py check` clean, 44/44 tests passing, migrations in sync, zero drift). `TicketService` is wired into views. `ticketing/settings.py` no longer hardcodes secrets/DEBUG/hosts (SEC-01). CI now actually runs `check`/`test`/migration-drift/`--deploy` on every push and PR (CI-01) — the empty-CI gap that let the FIX-01 regression (INC-001) through undetected is closed. Problem Management domain (ADR-009, PM-02.1, PM-02.2) is implemented but not yet wired to any view. Surrounding repository still has scaffolding debt (~59 unregistered apps), two live file-collision hazards, and no dependency manifest. Full detail: [ARCHITECTURE.md](ARCHITECTURE.md). |
 
 ## Git Status
 
 | | |
 |---|---|
 | **Current Branch** | `feature/incident-management-dashboard` |
-| **Working Tree Status** | IM-03 changes about to be committed locally as of this update (see Unpushed Commits) |
-| **Ahead / Behind Origin** | 2 / 0 before this session's IM-03 commit (IM-01's `23a2e8d` and IM-02's `1aed27d` were already unpushed) |
-| **Latest Commit prior to this update** | `1aed27d` — "IM-02 incident dashboard stabilization" |
+| **Working Tree Status** | CI-01 changes about to be committed locally as of this update (see Unpushed Commits) |
+| **Ahead / Behind Origin** | 5 / 0 before this session's CI-01 commit |
+| **Latest Commit prior to this update** | `56c98bc` — "Remove exposed AI credentials and secure environment files" |
+
+**Note on process continuity:** this session was interrupted mid-write while finishing SEC-01's documentation
+(caught mid-edit of this file's own predecessor state). The repository owner committed the SEC-01 code
+directly during that gap (`bf89826`) and added one follow-up commit (`56c98bc`) that this session did not
+write. Both were verified against the actual repository before continuing — not assumed from the CI-01
+prompt's claimed baseline — per this file's own "never assume, always verify" rule.
 
 **How to re-check:** `git status`, `git rev-list --left-right --count origin/feature/incident-management-dashboard...HEAD`, `git log --oneline -10`.
 
@@ -55,24 +61,29 @@ step). An out-of-date `SESSION_STATE.md` is itself a defect — treat it as one 
 | **PM-02.2** | `ProblemService`, `ProblemSelector` — business logic and query layer, not yet wired to any view | `4c7a37c` |
 | **IM-01** | Fixed `create.html`/`detail.html` template defects (wrong field set, dead uppercase status/priority comparisons, unloaded icon library, dead `ticket.attachment` reference); added 4 regression tests | `23a2e8d` |
 | **IM-02** | Incident Dashboard stabilization: added the missing `service_desk:incident_dashboard` URL route (view was previously 100% unreachable), created `service_desk/incidents.html`, scoped the base queryset through `get_ticket_queryset(user)` (previously unscoped — an RBAC gap), corrected `status__in`/`priority__in` to real lowercase `Ticket` choices, added 3 new `TicketSelector` methods (`get_active_tickets`, `get_resolved_or_closed_tickets`, `get_high_priority_tickets`); added 6 regression tests | `1aed27d` |
-| **IM-03** | Incident Lifecycle Completion, schema-free portion: wired `TicketService` into 5 new views (`TicketAssignView`, `TicketStatusChangeView`, `TicketCommentView`, `TicketCloseView`, `TicketReopenView`) plus `TicketCreateView` now creates through `TicketService.create_ticket`; `TicketDetailView` renders real `TicketHistory` and a workflow control panel instead of a hardcoded stub; fixed `assign_ticket` losing the previous assignee on reassignment; added 11 regression tests. The 3 schema-dependent items (work notes visibility, attachments, requester confirmation) were asked about directly and went unanswered — deliberately not implemented, not guessed at. | *(this session, see Unpushed Commits)* |
+| **IM-03** | Incident Lifecycle Completion, schema-free portion: wired `TicketService` into 5 new views (`TicketAssignView`, `TicketStatusChangeView`, `TicketCommentView`, `TicketCloseView`, `TicketReopenView`) plus `TicketCreateView` now creates through `TicketService.create_ticket`; `TicketDetailView` renders real `TicketHistory` and a workflow control panel instead of a hardcoded stub; fixed `assign_ticket` losing the previous assignee on reassignment; added 11 regression tests. The 3 schema-dependent items (work notes visibility, attachments, requester confirmation) were asked about directly and went unanswered — deliberately not implemented, not guessed at. | `ea82610` |
+| **SEC-01** | `ticketing/settings.py` hardened: `SECRET_KEY`/`DEBUG`/`ALLOWED_HOSTS` moved to env vars (stdlib only), production refuses to start without a real `DJANGO_SECRET_KEY`, `.env.example` added. Full detail: ROADMAP.md. Code was written this session but committed by the repository owner directly during a process interruption (see note above) — content matches what this session built. | `bf89826` |
+| *(follow-up, not a numbered milestone)* | `.gitignore` hardened against accidental credential commits (`AI_Agentina` paths) — verified nothing was ever actually exposed in history or the working tree. | `56c98bc` |
+| **CI-01** | GitHub Actions CI pipeline — see Completed table in ROADMAP.md for full detail. `django-tests.yml` and `security-scan.yml` now actually run; `deployment.yml` stays a documented no-op per explicit instruction. | *(this session, see Unpushed Commits)* |
 
 ## Unpushed Commits
 
-Note the commits through `311c913` were committed **and pushed** by the repository owner directly
-(outside any AI session) — confirmed via `git log --oneline origin/...` matching local, author
-`Zw3liy <goodwill00765@gmail.com>`. `23a2e8d` (IM-01) and `1aed27d` (IM-02) were committed locally this
-program and remain unpushed. As of this update, **IM-03's changes are about to be committed locally**
-under the standing local-commit authorization for this program (push still requires separate explicit
-approval — see [WORKFLOW.md](WORKFLOW.md)). Re-run `git status` /
+Commits through `311c913` were committed **and pushed** by the repository owner directly (outside any AI
+session) — confirmed via `git log --oneline origin/...` matching local, author
+`Zw3liy <goodwill00765@gmail.com>`. `23a2e8d` (IM-01), `1aed27d` (IM-02), `ea82610` (IM-03), `bf89826`
+(SEC-01), and `56c98bc` (credential-cleanup follow-up) are all local-only, unpushed — the last two were
+committed by the repository owner directly, not by this session, but remain unpushed same as the rest. As
+of this update, **CI-01's changes are about to be committed locally** under the standing local-commit
+authorization for this program (push still requires separate explicit approval — see
+[WORKFLOW.md](WORKFLOW.md)). Re-run `git status` /
 `git rev-list --left-right --count origin/feature/incident-management-dashboard...HEAD` rather than
 trusting this section once further commits land — it will go stale the moment the next milestone starts.
 
 ## Current Roadmap Item
 
-- **Priority:** IM-03 — Incident Lifecycle Completion, schema-free portion (Phase 1, Incident Management completion).
-- **Reason:** `TicketService` was fully built (assign/unassign/status transitions/comments/close/reopen, all transaction-safe with full history logging) but completely unused — no view called any of it. Wiring it in was the unambiguous, no-new-decision part of "Incident Lifecycle Completion"; the three genuinely schema-dependent parts (work notes visibility, attachments, requester confirmation) were asked about via a direct three-question prompt and went unanswered, so they stayed out of this pass rather than being guessed at.
-- **Dependencies:** None for what was implemented — view/selector/service/template/urls/test change, no model/migration impact. IM-04 (the deferred items) depends on an explicit answer to the three questions.
+- **Priority:** CI-01 — GitHub Actions CI pipeline (Phase 1, Incident Management completion — cross-cutting infrastructure, not incident-specific).
+- **Reason:** All three workflow files were 0 bytes since before this program started; nothing ran automatically on push/PR. This is explicitly what would have caught the FIX-01 regression (INC-001) automatically instead of requiring manual discovery — highest-leverage low-effort item, prioritized ahead of further feature work per this milestone's own instruction ("prioritize SEC-01... CI-01" ordering).
+- **Dependencies:** None. No `requirements.txt`/`pyproject.toml`/`Pipfile` exists anywhere in the repository (confirmed exhaustively during inspection) — worked around by installing Django directly in the workflow, pinned to the exact local version, rather than inventing a manifest.
 - **Expected completion:** This session; committed locally under the standing per-milestone local-commit authorization, push pending separate explicit approval.
 
 ## Open Decisions
@@ -100,14 +111,13 @@ trusting this section once further commits land — it will go stale the moment 
 
 - **Scaffolding debt:** ~59 of ~60 apps under `apps/` are unregistered, untested dead code (ARCHITECTURE.md §2). Not a blocker to current work, but a standing risk that someone wires one in without realizing it has no tests or service-layer discipline.
 - **File-collision hazard, unresolved:** `apps/service_desk/models.py` vs `apps/service_desk/models/` (package wins, flat file is dead) and `apps/service_desk/views.py` vs `apps/service_desk/views/` (flat file wins, package is dead, opposite resolution direction). See ARCHITECTURE.md §4. Tracked as ROADMAP item, not yet fixed.
-- **CI is a placeholder:** all three `.github/workflows/*.yml` files are 0 bytes. The FIX-01 regression would have been caught automatically had this existed. Tracked as ROADMAP item CI-01.
-- **Configuration debt:** hardcoded `SECRET_KEY` committed to version control, `DEBUG=True` not environment-gated. Tracked as ROADMAP item SEC-01.
 - **`develop` branch divergence:** diverged since the second commit in repository history, missing ~130 files present on `main`. Not a blocker to this branch's work, but unresolved.
 - **Dead duplicate templates:** `templates/navbar.html` (identical to live `templates/includes/navbar.html`) and `templates/sidebar.html` (stale duplicate of live `templates/includes/sidebar.html`) — found during IM-01's audit, not yet removed.
 - **`ProblemService`/`ProblemSelector` unused:** implemented (PM-02.2) but no view/URL calls them yet — Phase 2 work.
 - **`DashboardView` (plain, not Incident) has no context data:** its template expects ticket stats that are never supplied — found during IM-02 inspection, left out of scope since IM-02 was specifically about `IncidentDashboardView`. Same fix shape applies (`get_ticket_queryset` + `TicketSelector`).
 - **`templates/tickets/edit.html` is dead, incompatible scaffolding:** uses `esd-*` CSS classes not defined anywhere in the loaded stylesheet, references `ticket.ticket_number`/`form.requester_name`/`form.work_email`/`form.attachment`, none of which exist on the real `Ticket` model or `TicketCreateForm`. Not wired to any view. Confirmed during IM-03 inspection — do not resurrect as-is if/when attachments get built (IM-04).
 - **Technician cannot see unassigned tickets** — see Open Decisions above.
+- **No dependency manifest exists anywhere in the repository** (`requirements.txt`/`pyproject.toml`/`Pipfile` all absent) — confirmed exhaustively during CI-01 inspection. CI works around this by installing Django directly, pinned. This remains a real reproducibility gap for anything beyond CI (a fresh clone has no documented way to know what to `pip install`) — not fixed here since it would mean guessing what's actually required vs. incidentally installed on this dev machine (which has dozens of unrelated packages: anthropic, fastapi, celery, playwright, etc. — none used by the tested codebase).
 
 ## Recent ADRs
 
@@ -117,14 +127,13 @@ trusting this section once further commits land — it will go stale the moment 
 
 Highest priority first — see [ROADMAP.md](ROADMAP.md) for full detail and status tracking:
 
-1. Get an explicit answer on the three IM-04 sub-decisions (work notes, attachments, requester confirmation) — this is what's actually blocking further Phase 1 feature work now that IM-03's schema-free portion is done.
+1. Get an explicit answer on the three IM-04 sub-decisions (work notes, attachments, requester confirmation) — this is what's actually blocking further Phase 1 feature work.
 2. Decide whether Technician visibility should extend to unassigned tickets (found during IM-03 — not blocking, but worth a deliberate answer rather than leaving it implicit).
 3. Resolve Requester-visibility into Problems before starting Phase 2 UI work.
-4. Stand up real CI (`django-tests.yml` at minimum) — cheap, prevents a repeat of FIX-01.
+4. Consider a `requirements.txt` (or `pyproject.toml`) — CI-01 worked around its absence, but it's still a real reproducibility gap for anyone else cloning this repo.
 5. Fix `DashboardView`'s missing context data (same shape as IM-02).
 6. Resolve the `models.py`/`views.py` collision hazards as their own isolated change.
-7. Move `SECRET_KEY`/`DEBUG` to environment configuration.
-8. Get a scope decision on the ~59 unregistered scaffold apps.
+7. Get a scope decision on the ~59 unregistered scaffold apps.
 
 ## Required Checks Before Commit
 
@@ -161,7 +170,7 @@ At the end of every engineering session, update this file with:
 - **Known blockers** — add, resolve, or re-confirm entries above
 - **Date** — update "Last Updated" in the Repository State table
 
-**Last session summary (this update):** IM-03 — inspected the full incident lifecycle surface first
+**Previous session summary:** IM-03 — inspected the full incident lifecycle surface first
 (`TicketService`, `TicketHistory`, security mixins, `MEDIA_ROOT` config, `templates/tickets/edit.html`)
 and produced design findings before writing code, per the milestone's own instruction. Asked three direct
 questions (work notes visibility, attachments model shape, requester confirmation) via a structured
@@ -176,6 +185,25 @@ reassignment but never the previous one. Discovered and documented (not fixed) t
 Technician cannot see an unassigned ticket at all under the current RBAC policy (by design or gap — asked,
 not decided), and `templates/tickets/edit.html` is dead Arena-era scaffolding using an unloaded CSS system
 and nonexistent form fields — flagged so it isn't mistaken for a starting point when attachments get built.
-Added `apps/service_desk/test_suite/test_ticket_workflow.py` (11 new tests) — 33/33 total passing.
-Committed locally under the standing per-milestone authorization; not pushed. Next: get an answer on the
+Added `apps/service_desk/test_suite/test_ticket_workflow.py` (11 new tests) — 33/33 total passing. That
+session was interrupted mid-write while finishing SEC-01's documentation; the repository owner committed
+the SEC-01 code directly (`bf89826`) plus one credential-hygiene follow-up (`56c98bc`) during the gap.
+
+**Last session summary (this update):** CI-01 — verified the interruption's aftermath against the actual
+repository first (didn't just trust the next prompt's claimed baseline): confirmed `bf89826`/`56c98bc`
+were real, authored by the repository owner, and that the `AI_Agentina` credential material referenced in
+`56c98bc` was never actually present in git history or the working tree (preventive `.gitignore` entry,
+not a live leak). Inspected `.github/workflows/` (all three files 0 bytes), confirmed no
+`requirements.txt`/`pyproject.toml`/`Pipfile` exists anywhere, and scanned every first-party import under
+`apps/service_desk/`/`ticketing/` to confirm the tested codebase only needs Django itself (this dev
+machine has dozens of unrelated globally-installed packages — anthropic, fastapi, celery, playwright,
+etc. — none of them used). Wrote `django-tests.yml` (checkout → setup-python 3.14 → install Django
+5.2.16, pinned → `check` → `makemigrations --check --dry-run` → `test`) and `security-scan.yml` (same
+setup → `manage.py check --deploy`, Django's built-in production-readiness check; confirmed locally it
+exits 0 with warnings-only under default dev settings, so it's informational, not build-blocking, on
+expected dev-mode findings). Left `deployment.yml` as a documented no-op per explicit instruction.
+Validated all three YAML files parse correctly (`pyyaml` installed transiently for this check only, not
+added to the repo). Caught `ROADMAP.md`/`SESSION_STATE.md` up to reflect SEC-01/the credential follow-up/
+CI-01 together, since the interruption had left them stale. Committed locally under the standing
+per-milestone authorization; not pushed. Next: get an answer on the
 IM-04 questions — that's what's actually blocking further Phase 1 work now.

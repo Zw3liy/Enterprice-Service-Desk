@@ -1,0 +1,37 @@
+name: Django Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      # No requirements.txt, pyproject.toml, or Pipfile exists in this
+      # repository (verified during CI-01 inspection). Scanning every
+      # first-party import under apps/service_desk/ and ticketing/ shows
+      # the tested codebase only uses the standard library plus Django
+      # itself. Installing Django directly here, pinned to the exact
+      # version used in local development, rather than inventing a
+      # requirements.txt this repository doesn't have.
+      - name: Install Django
+        run: pip install "Django==5.2.16"
+
+      - name: Django system check
+        run: python manage.py check
+
+      - name: Check for missing migrations
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Run test suite
+        run: python manage.py test
