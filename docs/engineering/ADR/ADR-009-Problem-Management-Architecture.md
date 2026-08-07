@@ -1,6 +1,6 @@
 # ADR-009: Problem Management Architecture
 
-**Status:** PROPOSED
+**Status:** ACCEPTED
 **Date:** 2026-08-07
 **Related:** [DESIGN_PM-02_PROBLEM_MANAGEMENT.md](../DESIGN_PM-02_PROBLEM_MANAGEMENT.md), [ARCHITECTURE.md](../ARCHITECTURE.md) §2
 
@@ -154,5 +154,12 @@ Problem Management code goes if/when PM-02 is approved for implementation.
 
 ## Approval
 
-**Status: PROPOSED.** Not yet approved. Do not begin PM-02 implementation on the strength of this document
-alone — it requires explicit sign-off, recorded here once given.
+**Status: ACCEPTED.** Option A is confirmed as the standing architecture decision for this repository.
+`Problem`, `ProblemHistory`, `RootCauseAnalysis`, `FiveWhys`, `FishboneFactor`, `Evidence`, `Action`, and
+`Approval` were implemented inside `apps/service_desk/models/`, and the `ProblemService`/`ProblemSelector`
+service/selector layer was implemented inside `apps/service_desk/services/` and
+`apps/service_desk/selectors/` — all per this ADR's recommendation, none of it inside
+`apps/problem_management`, which remains dormant and unregistered exactly as this ADR anticipated.
+`RootCauseAnalysis.problem` is a `OneToOneField` (`related_name="rca"`), so `problem.rca` is the canonical
+one-Problem-to-one-RCA relationship this ADR's Option A assumed. Implementation commits:
+`8d30023` (models and migrations), `4c7a37c` (services and selectors).

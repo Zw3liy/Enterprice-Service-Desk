@@ -1,12 +1,12 @@
 # Engineering Roadmap
 
-Current as of milestone **PM-00.1**. Update item status in place as work lands; don't leave completed
+Current as of milestone **IM-01**. Update item status in place as work lands; don't leave completed
 items undated. See [ARCHITECTURE.md](ARCHITECTURE.md) for the factual basis behind each item, and
 [SESSION_STATE.md](SESSION_STATE.md) for the live snapshot of exactly where the repository is right now.
 
 ## Status legend
 `OPEN` — not started · `DONE` — completed and verified · `PROPOSED` — designed, not implemented ·
-`BLOCKED` — cannot start until a dependency is resolved
+`ACCEPTED` — decided, implementation may proceed · `BLOCKED` — cannot start until a dependency is resolved
 
 ---
 
@@ -18,35 +18,60 @@ items undated. See [ARCHITECTURE.md](ARCHITECTURE.md) for the factual basis behi
 | **FE-01** | Enterprise sidebar integration, styling, and accessibility fixes | `8fd7b1d`, `d2bafee` |
 | **FIX-01** | Restored the four ticket views (`DashboardView`, `TicketListView`, `TicketCreateView`, `TicketDetailView`) deleted by FE-01's final commit; recovered application startup and the test suite (12/12 passing). Full root cause in [INCIDENT_LOG.md](INCIDENT_LOG.md), INC-001. | `7180078` |
 | **DOC-01** | Established the engineering knowledge base — README, ARCHITECTURE, ROADMAP, INCIDENT_LOG, PM-02 design, WORKFLOW under `docs/engineering/` | `83f9182` |
+| **PM-00.1 / DOC-01 update** | Added `SESSION_STATE.md` and `ADR-009`; restructured `ROADMAP.md`/`WORKFLOW.md` around milestone tracking and the permanent AI workflow sequence | `311c913` |
+| **ADR-009** | Problem Management architecture decision — **ACCEPTED**. Build inside `apps/service_desk`, not `apps/problem_management`; one Problem owns exactly one RCA via `problem.rca`. See [ADR/ADR-009-Problem-Management-Architecture.md](ADR/ADR-009-Problem-Management-Architecture.md) | decision recorded in `311c913`; implemented in `8d30023`, `4c7a37c` |
+| **PM-02.1** | Problem Management domain models — `Problem`, `ProblemHistory`, `RootCauseAnalysis` (+ `FiveWhys`, `FishboneFactor`, `Evidence`, `Action`, `Approval`), migrations `0004`–`0005`, `RootCauseAnalysis.problem` as `OneToOneField` per ADR-009 | `8d30023` |
+| **PM-02.2** | `ProblemService` and `ProblemSelector` — full business logic and query layer for Problem Management, mirroring the `TicketService`/`TicketSelector` pattern; not yet wired to any view | `4c7a37c` |
+| **IM-01** | Fixed Create/Detail ticket template defects found during frontend audit: `create.html` rendered a nonexistent `category` field and omitted real `urgency`/`request_type`/`tags` fields; `detail.html` compared status/priority against uppercase literals that never matched the real lowercase `Ticket` choices (status/priority badge coloring was silently dead), referenced a nonexistent `ticket.attachment`, and used unloaded Bootstrap Icons classes. 4 new regression tests added. | *(this commit)* |
 
 ## Current
 
-- **PM-00.1** — Engineering Knowledge Base Enhancement (this milestone). Adds
-  [SESSION_STATE.md](SESSION_STATE.md) as the permanent AI/engineer handoff document, ADR-009 for the
-  Problem Management placement decision, and restructures this roadmap and `WORKFLOW.md` so a future
-  session can start from documentation alone. Documentation only — no application code touched.
+- **Enterprise ITSM Master Development Program** — multi-milestone effort per the accepted execution
+  authority: Phase 1 Incident Management completion, Phase 2 Problem Management UI, Phase 3 architecture
+  prep for Change/Knowledge/CMDB/Asset/Reporting/Automation modules. Worked milestone-by-milestone, each
+  fully inspected/designed/implemented/tested/documented/committed locally per
+  [WORKFLOW.md](WORKFLOW.md); pushes remain gated on explicit approval regardless of local commit cadence.
 
-## Next
+## Next — Phase 1: Incident Management completion
 
-1. **ADR-009** — `PROPOSED`. Architecture decision for where Problem Management code lives
-   (`apps/service_desk` vs. reviving `apps/problem_management`). Recommends `apps/service_desk`. See
-   [ADR/ADR-009-Problem-Management-Architecture.md](ADR/ADR-009-Problem-Management-Architecture.md).
-   Awaiting approval — nothing implemented.
+Ticket *is* the Incident record in this codebase (`IncidentDashboardView` already filters `Ticket`
+directly rather than a separate model) — Phase 1 extends the existing `Ticket`/`TicketService` machinery,
+it does not introduce a parallel Incident model.
 
-2. **PM-02** — `BLOCKED` on ADR-009 approval and one open design decision (Requester-role visibility into
-   problems — see [DESIGN_PM-02_PROBLEM_MANAGEMENT.md](DESIGN_PM-02_PROBLEM_MANAGEMENT.md) §7). Problem
-   Management / Root Cause Analysis feature. Full design already written; not implemented.
+1. **IM-02** — `OPEN`. Fix `IncidentDashboardView`'s own pre-existing defects (tracked below in Backlog):
+   missing `service_desk/incidents.html` template, wrong-case/invalid `status__in`/`priority__in` filter
+   values.
+2. **IM-03** — `OPEN`. Wire `TicketService`/`TicketSelector` into views — currently implemented but
+   unused; ticket views still talk to the ORM/security policies directly rather than through the service
+   layer both this document and `WORKFLOW.md` mandate.
+3. **IM-04** — `OPEN` — **needs an architecture decision before implementation, not a guess.** "Work
+   notes", "Attachments", and "Requester confirmation" from the Phase 1 feature list each imply a real
+   schema/behavior choice not yet made:
+   - Work notes: does this reuse `TicketHistory.EVENT_COMMENT` (already implemented via
+     `TicketService.add_comment`) with a visibility flag added, or is it a distinct concept from
+     requester-facing comments?
+   - Attachments: `Ticket` has no file field today. Needs a decision on storage backend, size/type limits,
+     and whether it's a single `FileField` or a related `TicketAttachment` model (multiple files).
+   - Requester confirmation: does closing require the requester to confirm resolution (a real workflow
+     gate), or is it advisory only? This changes `TicketService.close_ticket`'s preconditions.
 
-3. **CI-01** — `OPEN`. Populate the three empty GitHub Actions workflow files
+   Flagging these now rather than inventing model/behavior changes silently.
+4. **CI-01** — `OPEN`. Populate the three empty GitHub Actions workflow files
    (`.github/workflows/django-tests.yml` at minimum) to run `manage.py check` and `manage.py test` on
-   every push/PR. This is exactly what would have caught the FIX-01 regression (INC-001) automatically
-   instead of requiring manual discovery — highest-leverage low-effort item outstanding.
+   every push/PR — exactly what would have caught the FIX-01 regression (INC-001) automatically.
+5. **SEC-01** — `OPEN`. Move `SECRET_KEY` out of `ticketing/settings.py` into an environment variable;
+   gate `DEBUG` behind an env flag; add a `.env.example`.
 
-4. **SEC-01** — `OPEN`. Move `SECRET_KEY` out of `ticketing/settings.py` into an environment variable;
-   gate `DEBUG` behind an env flag; add a `.env.example`. Configuration debt flagged in
-   [ARCHITECTURE.md](ARCHITECTURE.md) §6.
+## Next — Phase 2: Problem Management UI
 
-## Future
+Blocked on nothing architecturally (ADR-009 accepted, PM-02.1/PM-02.2 done) — next concrete step is
+views/urls/templates/forms wiring `ProblemService`/`ProblemSelector` into a Problem dashboard, RCA
+interface, known-error workflow, and incident-linking UI, per
+[DESIGN_PM-02_PROBLEM_MANAGEMENT.md](DESIGN_PM-02_PROBLEM_MANAGEMENT.md). One open item carried over:
+Requester-role visibility into Problems (§7 of that doc) still needs an explicit answer before
+`security/policies.py` gets a `get_problem_queryset`.
+
+## Future — Phase 3: Enterprise modules
 
 Large capability areas, not yet scoped into concrete design work. Several correspond to directories that
 already exist under `apps/` as dead scaffolding (ARCHITECTURE.md §2) — "future" here means *design and
@@ -64,13 +89,13 @@ doc, or a target milestone number yet.
 
 ## Backlog / Technical Debt
 
-Tracked, unscheduled. Pull into "Next" when prioritized.
+Tracked, unscheduled. Pull into "Next" when prioritized. (The `IncidentDashboardView` template/filter
+defect that used to be listed here is now tracked as **IM-02** under Phase 1, above.)
 
-- **`OPEN`** — Create the missing template `templates/service_desk/incidents.html` that
-  `IncidentDashboardView` requires, and correct its `status__in`/`priority__in` filter values (currently
-  `"OPEN"/"IN_PROGRESS"/"UNASSIGNED"` and `"HIGH"/"CRITICAL"` — none match the real lowercase `Ticket`
-  choices; `"UNASSIGNED"` and `"CRITICAL"` aren't valid choices at all). See INCIDENT_LOG.md, "Known
-  follow-on defects."
+- **`OPEN`** — Delete the dead duplicate template files found during the IM-01 frontend audit:
+  `templates/navbar.html` (byte-identical to the live `templates/includes/navbar.html`) and
+  `templates/sidebar.html` (a stale, diverged duplicate of the live `templates/includes/sidebar.html`).
+  Neither is referenced by `base.html` or any other live template — confirmed by diff, not assumed.
 - **`OPEN`** — Resolve the `models.py`/`models/` and `views.py`/`views/` collisions in
   `apps/service_desk/` (ARCHITECTURE.md §4) by deleting the dead side of each. Low risk since the dead
   files are already confirmed unreachable — do it as its own isolated change, verified with `manage.py
