@@ -1,4 +1,71 @@
-# Git Workflow
+# Engineering Workflow
+
+## Permanent AI / Engineer Workflow
+
+Every engineering session in this repository — AI-assisted or human — follows this sequence. It exists so
+that no session skips repository assessment and jumps straight to editing code from assumptions or
+half-remembered chat context. Documentation is the source of truth (see
+[SESSION_STATE.md](SESSION_STATE.md)); this sequence is how a session actually consumes it.
+
+```
+Repository Assessment
+        |
+        v
+Read SESSION_STATE.md
+        |
+        v
+Read ROADMAP.md
+        |
+        v
+Read ADRs (docs/engineering/ADR/)
+        |
+        v
+Inspect git status
+        |
+        v
+Design
+        |
+        v
+Approval
+        |
+        v
+Implementation
+        |
+        v
+Testing
+        |
+        v
+Documentation Update
+        |
+        v
+Commit
+        |
+        v
+Update SESSION_STATE.md
+        |
+        v
+Wait for Push Approval
+```
+
+Notes on specific steps:
+
+- **Read SESSION_STATE.md / ROADMAP.md / ADRs first, always** — even if the task seems small or
+  self-contained. `SESSION_STATE.md` is what tells you whether the working tree is already clean, whether
+  there are unpushed commits, and what the current milestone actually is; skipping it risks redoing or
+  contradicting work already in flight.
+- **Inspect git status** before any design work — confirm branch, confirm clean tree, confirm nothing
+  from a prior session is stranded uncommitted.
+- **Design → Approval** happens *before* implementation for anything beyond a trivial, already-approved
+  fix. Don't write code on the strength of a design nobody has signed off on.
+- **Testing** means the checks listed in `SESSION_STATE.md` under "Required Checks Before Commit"
+  (`manage.py check`, `manage.py test`, migration/import/URL/template verification) — not a subset.
+- **Documentation Update** happens in the *same* change as the code, not as a follow-up someday. If the
+  change alters architecture, add or update an ADR in the same pass.
+- **Commit** happens only after the above, and only with explicit approval for that specific commit.
+- **Update SESSION_STATE.md** is not optional cleanup — an out-of-date handoff document actively misleads
+  the next session. Do this before ending the session, not "next time."
+- **Wait for Push Approval** — the workflow ends here by default. See "Pushes require explicit approval"
+  below; nothing in this sequence authorizes a push on its own, including reaching the end of it.
 
 ## Commits are local by default
 
