@@ -1,0 +1,38 @@
+name: Security Scan
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # Django's built-in --deploy check flags exactly what SEC-01
+      # hardened: SECRET_KEY, DEBUG, ALLOWED_HOSTS, cookie/SSL settings.
+      # Zero new dependencies. Most --deploy checks are WARNING level
+      # (e.g. DEBUG=True is the expected default in this CI run, since
+      # DJANGO_DEBUG is not set here), so this reports findings without
+      # failing the build on expected dev-mode warnings - only a genuine
+      # ERROR/CRITICAL level check fails the step.
+      - name: Django deployment security check
+        run: python manage.py check --deploy
+
+      # requirements.txt now exists (DEP-01), so a dependency
+      # vulnerability audit is technically possible - deliberately not
+      # added here. It would mean introducing a new scanner
+      # package/tool, which is explicitly out of CI-01/this scope and
+      # needs its own approval, not a silent addition.

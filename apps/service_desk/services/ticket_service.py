@@ -108,6 +108,8 @@ class TicketService:
         if not technician.is_active:
             raise ValidationError("Technician is inactive.")
 
+        previous = ticket.assigned_to
+
         ticket.assigned_to = technician
         ticket.save(update_fields=["assigned_to", "updated_at"])
 
@@ -115,6 +117,7 @@ class TicketService:
             ticket=ticket,
             event_type=TicketHistory.EVENT_ASSIGNED,
             user=user,
+            old_value=str(previous) if previous else "",
             new_value=technician.get_username(),
         )
 

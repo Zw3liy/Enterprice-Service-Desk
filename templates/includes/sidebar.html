@@ -1,1 +1,38 @@
-<div class="sidebar p-3"><h5>Service Desk</h5><hr><ul class="nav flex-column"><li class="nav-item"><a class="nav-link" href="{% url "service_desk:dashboard" %}">Dashboard</a></li><li class="nav-item"><a class="nav-link" href="{% url "service_desk:ticket_list" %}">Tickets</a></li><li class="nav-item"><a class="nav-link" href="{% url "service_desk:ticket_create" %}">Create Ticket</a></li></ul></div>
+<nav class="col-md-2 d-md-block sidebar p-3" aria-label="Main navigation">
+
+    <div class="position-sticky">
+
+        <h5 class="mb-3">
+            Service Desk
+        </h5>
+
+        <hr>
+
+        <ul class="nav flex-column">
+
+            <li class="nav-item">
+                <a class="nav-link"
+                   href="{% url 'service_desk:dashboard' %}">
+                    Dashboard
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link"
+                   href="{% url 'service_desk:ticket_list' %}">
+                    Tickets
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link"
+                   href="{% url 'service_desk:ticket_create' %}">
+                    Create Ticket
+                </a>
+            </li>
+
+        </ul>
+
+    </div>
+
+</nav>

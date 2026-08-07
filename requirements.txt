@@ -1,0 +1,9 @@
+# Enterprise Service Desk — runtime dependencies.
+#
+# Verified by scanning every first-party import under apps/service_desk/
+# and ticketing/ (see docs/engineering/ROADMAP.md, CI-01): the tested
+# codebase uses only the Python standard library plus Django itself.
+# Pinned to the exact version this project has been developed and
+# tested against.
+
+Django==5.2.16

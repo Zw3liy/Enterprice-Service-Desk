@@ -140,6 +140,79 @@ class TicketDeletePermissionMixin(
 
 
 # =====================================================
+# Problem Permissions
+# =====================================================
+
+
+class ProblemPermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Base problem access permission.
+
+    Default permission:
+        view_problem
+    """
+
+    permission_required = (
+        "service_desk.view_problem"
+    )
+
+
+
+class ProblemViewPermissionMixin(
+    ProblemPermissionMixin
+):
+    """
+    Problem viewing permission.
+    """
+
+    permission_required = (
+        "service_desk.view_problem"
+    )
+
+
+
+class ProblemCreatePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Problem creation permission.
+    """
+
+    permission_required = (
+        "service_desk.add_problem"
+    )
+
+
+
+class ProblemChangePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Problem update permission.
+    """
+
+    permission_required = (
+        "service_desk.change_problem"
+    )
+
+
+
+class ProblemDeletePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Problem deletion permission.
+    """
+
+    permission_required = (
+        "service_desk.delete_problem"
+    )
+
+
+
+# =====================================================
 # Role Enforcement
 # =====================================================
 

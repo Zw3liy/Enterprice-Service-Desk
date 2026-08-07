@@ -1,0 +1,31 @@
+name: Django Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Django system check
+        run: python manage.py check
+
+      - name: Check for missing migrations
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Run test suite
+        run: python manage.py test

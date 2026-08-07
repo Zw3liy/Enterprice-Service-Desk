@@ -1,0 +1,8 @@
+# Future deployment automation.
+# Deployment is outside CI-01 scope.
+#
+# See docs/engineering/ROADMAP.md ("Future - Phase 3: Enterprise modules",
+# Deployment) for where this is tracked. This file intentionally defines
+# no workflow yet - GitHub Actions may show it as an invalid/skipped
+# workflow file in the Actions tab as a result, which is expected: it
+# has no "on"/"jobs" keys on purpose, so it never triggers or runs.

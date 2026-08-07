@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a href="{% url 'service_desk:problem_list' %}">Problems</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">#{{ problem.id }}</li>
+                </ol>
+            </nav>
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
+                <h2 class="h3 fw-bold mb-0">
+                    Problem #{{ problem.id }}: {{ problem.title }}
+                    {% if problem.is_known_error %}
+                        <span class="badge bg-warning text-dark ms-2">Known Error</span>
+                    {% endif %}
+                </h2>
+                <a href="{% url 'service_desk:problem_list' %}" class="btn btn-outline-secondary btn-sm">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Main Column -->
+        <div class="col-12 col-lg-8">
+
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="card-title mb-0 fw-semibold text-primary">Description</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text text-break" style="white-space: pre-line;">{{ problem.description }}</p>
+                </div>
+            </div>
+
+            <!-- Root Cause Analysis -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="card-title mb-0 fw-semibold">Root Cause Analysis</h5>
+                </div>
+                <div class="card-body">
+
+                    {% if rca %}
+                        <ul class="list-group list-group-flush mb-3">
+                            <li class="list-group-item d-flex justify-content-between px-0">
+                                <span class="text-muted small">RCA Status</span>
+                                <span class="fw-medium">{{ rca.get_status_display }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between px-0">
+                                <span class="text-muted small">Method</span>
+                                <span class="fw-medium">{{ rca.get_method_display }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between px-0">
+                                <span class="text-muted small">Owner</span>
+                                <span class="fw-medium">{% if rca.owner %}{{ rca.owner.username }}{% else %}Unassigned{% endif %}</span>
+                            </li>
+                        </ul>
+
+                        {% if rca.five_whys.all %}
+                            <h6 class="fw-semibold small text-uppercase text-muted">Five Whys</h6>
+                            <ol class="mb-3">
+                                {% for step in rca.five_whys.all %}
+                                    <li><strong>{{ step.question }}</strong> — {{ step.answer }}</li>
+                                {% endfor %}
+                            </ol>
+                        {% endif %}
+
+                        {% if rca.fishbone_factors.all %}
+                            <h6 class="fw-semibold small text-uppercase text-muted">Fishbone Factors</h6>
+                            <ul class="mb-3">
+                                {% for factor in rca.fishbone_factors.all %}
+                                    <li>
+                                        <strong>{{ factor.get_category_display }}:</strong>
+                                        {{ factor.factor_description }}
+                                        {% if factor.is_root_cause %}<span class="badge bg-danger ms-1">Root Cause</span>{% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    {% else %}
+                        <p class="text-muted small mb-0">
+                            No Root Cause Analysis yet — one is created automatically when this problem
+                            enters <strong>Investigating</strong>.
+                        </p>
+                    {% endif %}
+
+                    <hr>
+
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <h6 class="fw-semibold small text-uppercase text-muted">Root Cause</h6>
+                            <p class="small">{{ problem.root_cause|default:"Not recorded yet." }}</p>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <h6 class="fw-semibold small text-uppercase text-muted">Workaround</h6>
+                            <p class="small">{{ problem.workaround|default:"Not recorded yet." }}</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Linked Tickets -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="card-title mb-0 fw-semibold">Linked Incidents</h5>
+                </div>
+                <div class="card-body">
+
+                    {% if problem.related_tickets.all %}
+                        <ul class="list-group list-group-flush mb-3">
+                            {% for ticket in problem.related_tickets.all %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    <a href="{% url 'service_desk:ticket_detail' ticket.pk %}">
+                                        #{{ ticket.id }} {{ ticket.title }}
+                                    </a>
+                                    {% if perms.service_desk.change_problem %}
+                                    <form method="post" action="{% url 'service_desk:problem_unlink_ticket' problem.pk ticket.pk %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">Unlink</button>
+                                    </form>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted small">No incidents linked yet.</p>
+                    {% endif %}
+
+                    {% if perms.service_desk.change_problem %}
+                    <form method="post" action="{% url 'service_desk:problem_link_ticket' problem.pk %}" class="d-flex gap-2">
+                        {% csrf_token %}
+                        <input type="number" name="ticket_id" class="form-control form-control-sm" placeholder="Ticket ID" required>
+                        <button type="submit" class="btn btn-outline-primary btn-sm text-nowrap">Link Ticket</button>
+                    </form>
+
+                    {% if repeat_incident_candidates %}
+                        <h6 class="fw-semibold small text-uppercase text-muted mt-3">Repeat Incident Candidates</h6>
+                        <ul class="list-unstyled small mb-0">
+                            {% for candidate in repeat_incident_candidates %}
+                                <li>
+                                    <a href="{% url 'service_desk:ticket_detail' candidate.pk %}">
+                                        #{{ candidate.id }} {{ candidate.title }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% endif %}
+
+                </div>
+            </div>
+
+            <!-- Activity -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="card-title mb-0 fw-semibold">Activity &amp; Updates</h5>
+                </div>
+                <div class="card-body">
+
+                    {% if history %}
+                        <ul class="list-unstyled mb-4">
+                            {% for entry in history %}
+                                <li class="border-bottom pb-3 mb-3">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <span class="fw-semibold small">{{ entry.get_event_type_display }}</span>
+                                            <span class="text-muted small ms-2">
+                                                {% if entry.performed_by %}{{ entry.performed_by.username }}{% else %}System{% endif %}
+                                            </span>
+                                        </div>
+                                        <span class="text-muted small">{{ entry.created_at|date:"M d, Y H:i" }}</span>
+                                    </div>
+                                    {% if entry.comment %}
+                                        <p class="mb-0 mt-1 text-break">{{ entry.comment }}</p>
+                                    {% endif %}
+                                    {% if entry.from_status or entry.to_status %}
+                                        <p class="mb-0 mt-1 text-muted small">{{ entry.from_status }} &rarr; {{ entry.to_status }}</p>
+                                    {% elif entry.old_value or entry.new_value %}
+                                        <p class="mb-0 mt-1 text-muted small">{{ entry.old_value }} &rarr; {{ entry.new_value }}</p>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted small">No updates or comments posted yet.</p>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'service_desk:problem_comment' problem.pk %}">
+                        {% csrf_token %}
+                        <div class="mb-2">
+                            <label for="comment" class="form-label fw-medium">Add Comment</label>
+                            <textarea name="comment" id="comment" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-comment me-1"></i> Post Comment
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-12 col-lg-4">
+
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="card-title mb-0 fw-semibold">Properties</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0">
+                            <span class="text-muted small">Status</span>
+                            <span class="badge {% if problem.status == 'open' %}bg-warning text-dark{% elif problem.status == 'resolved' or problem.status == 'closed' %}bg-success{% elif problem.status == 'known_error' %}bg-danger{% else %}bg-secondary{% endif %}">
+                                {{ problem.get_status_display }}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0">
+                            <span class="text-muted small">Priority</span>
+                            <span class="badge {% if problem.priority == 'high' or problem.priority == 'urgent' %}bg-danger{% elif problem.priority == 'medium' %}bg-info text-dark{% else %}bg-light text-dark border{% endif %}">
+                                {{ problem.get_priority_display }}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0">
+                            <span class="text-muted small">Department</span>
+                            <span class="fw-medium">{% if problem.department %}{{ problem.department.name }}{% else %}&mdash;{% endif %}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0">
+                            <span class="text-muted small">Assigned To</span>
+                            <span class="fw-medium">{% if problem.assigned_to %}{{ problem.assigned_to.username }}{% else %}Unassigned{% endif %}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0">
+                            <span class="text-muted small">Created By</span>
+                            <span class="fw-medium">{% if problem.created_by %}{{ problem.created_by.username }}{% else %}&mdash;{% endif %}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0">
+                            <span class="text-muted small">Created</span>
+                            <span class="text-muted small">{{ problem.created_at|date:"M d, Y H:i" }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            {% if perms.service_desk.change_problem %}
+            <div class="card shadow-sm border-0 mt-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="card-title mb-0 fw-semibold">Workflow</h5>
+                </div>
+                <div class="card-body">
+
+                    <form method="post" action="{% url 'service_desk:problem_assign' problem.pk %}" class="mb-3">
+                        {% csrf_token %}
+                        <label for="investigator_id" class="form-label small fw-medium">Assign Investigator</label>
+                        <div class="d-flex gap-2">
+                            <select name="investigator_id" id="investigator_id" class="form-select form-select-sm">
+                                {% for investigator in available_investigators %}
+                                    <option value="{{ investigator.pk }}" {% if problem.assigned_to_id == investigator.pk %}selected{% endif %}>
+                                        {{ investigator.username }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn btn-outline-primary btn-sm">Assign</button>
+                        </div>
+                    </form>
+
+                    {% if next_statuses %}
+                    <form method="post" action="{% url 'service_desk:problem_status_change' problem.pk %}" class="mb-3">
+                        {% csrf_token %}
+                        <label for="status" class="form-label small fw-medium">Change Status</label>
+                        <div class="d-flex gap-2">
+                            <select name="status" id="status" class="form-select form-select-sm">
+                                {% for status, label in next_statuses %}
+                                    <option value="{{ status }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn btn-outline-primary btn-sm">Update</button>
+                        </div>
+                    </form>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'service_desk:problem_root_cause' problem.pk %}" class="mb-3">
+                        {% csrf_token %}
+                        <label for="root_cause" class="form-label small fw-medium">Record Root Cause</label>
+                        <textarea name="root_cause" id="root_cause" class="form-control form-control-sm mb-2" rows="2">{{ problem.root_cause }}</textarea>
+                        <button type="submit" class="btn btn-outline-primary btn-sm w-100">Save Root Cause</button>
+                    </form>
+
+                    <form method="post" action="{% url 'service_desk:problem_workaround' problem.pk %}" class="mb-3">
+                        {% csrf_token %}
+                        <label for="workaround" class="form-label small fw-medium">Record Workaround</label>
+                        <textarea name="workaround" id="workaround" class="form-control form-control-sm mb-2" rows="2">{{ problem.workaround }}</textarea>
+                        <button type="submit" class="btn btn-outline-primary btn-sm w-100">Save Workaround</button>
+                    </form>
+
+                    {% if not problem.is_known_error %}
+                    <form method="post" action="{% url 'service_desk:problem_mark_known_error' problem.pk %}" class="mb-3">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-warning btn-sm w-100">
+                            <i class="fa-solid fa-triangle-exclamation me-1"></i> Mark Known Error
+                        </button>
+                    </form>
+                    {% endif %}
+
+                    {% if problem.status == 'resolved' %}
+                    <form method="post" action="{% url 'service_desk:problem_close' problem.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success btn-sm w-100">
+                            <i class="fa-solid fa-check me-1"></i> Close Problem
+                        </button>
+                    </form>
+                    {% elif problem.status == 'closed' %}
+                    <form method="post" action="{% url 'service_desk:problem_reopen' problem.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-secondary btn-sm w-100">
+                            <i class="fa-solid fa-rotate-left me-1"></i> Reopen Problem
+                        </button>
+                    </form>
+                    {% endif %}
+
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

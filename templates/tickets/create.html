@@ -49,14 +49,16 @@
                                 {% endif %}
                             </div>
 
-                            <!-- Category (Column 1 on Desktop, Full Width on Mobile) -->
+                            <!-- Request Type (Column 1 on Desktop, Full Width on Mobile) -->
+                            {% if form.request_type %}
                             <div class="col-12 col-md-6">
-                                <label for="{{ form.category.id_for_label }}" class="form-label fw-medium">Category <span class="text-danger">*</span></label>
-                                {{ form.category }}
-                                {% if form.category.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.category.errors.0 }}</div>
+                                <label for="{{ form.request_type.id_for_label }}" class="form-label fw-medium">Request Type</label>
+                                {{ form.request_type }}
+                                {% if form.request_type.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.request_type.errors.0 }}</div>
                                 {% endif %}
                             </div>
+                            {% endif %}
 
                             <!-- Priority (Column 2 on Desktop, Full Width on Mobile) -->
                             <div class="col-12 col-md-6">
@@ -67,16 +69,14 @@
                                 {% endif %}
                             </div>
 
-                            <!-- Requester / Contact Email (Column 1 on Desktop) -->
-                            {% if form.requester_email %}
+                            <!-- Urgency (Column 1 on Desktop) -->
                             <div class="col-12 col-md-6">
-                                <label for="{{ form.requester_email.id_for_label }}" class="form-label fw-medium">Requester Email</label>
-                                {{ form.requester_email }}
-                                {% if form.requester_email.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.requester_email.errors.0 }}</div>
+                                <label for="{{ form.urgency.id_for_label }}" class="form-label fw-medium">Urgency <span class="text-danger">*</span></label>
+                                {{ form.urgency }}
+                                {% if form.urgency.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.urgency.errors.0 }}</div>
                                 {% endif %}
                             </div>
-                            {% endif %}
 
                             <!-- Assigned Department / Impact (Column 2 on Desktop) -->
                             {% if form.department %}
@@ -101,23 +101,24 @@
                                 {% endif %}
                             </div>
 
-                            <!-- File Attachments (Full Width) -->
-                            {% if form.attachment %}
+                            <!-- Tags (Full Width) -->
                             <div class="col-12">
-                                <label for="{{ form.attachment.id_for_label }}" class="form-label fw-medium">Attachments</label>
-                                {{ form.attachment }}
-                                {% if form.attachment.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.attachment.errors.0 }}</div>
+                                <label for="{{ form.tags.id_for_label }}" class="form-label fw-medium">Tags</label>
+                                {{ form.tags }}
+                                {% if form.tags.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.tags.errors.0 }}</div>
+                                {% endif %}
+                                {% if form.tags.help_text %}
+                                    <div class="form-text">{{ form.tags.help_text }}</div>
                                 {% endif %}
                             </div>
-                            {% endif %}
                         </div>
 
                         <!-- Action Buttons Row -->
                         <div class="d-flex flex-column flex-sm-row justify-content-end gap-2 mt-4 pt-3 border-top">
                             <a href="{% url 'service_desk:ticket_list' %}" class="btn btn-outline-secondary px-4 order-2 order-sm-1">Cancel</a>
                             <button type="submit" class="btn btn-primary px-4 order-1 order-sm-2">
-                                <i class="bi bi-plus-lg me-1"></i> Submit Ticket
+                                <i class="fa-solid fa-plus me-1"></i> Submit Ticket
                             </button>
                         </div>
                     </form>

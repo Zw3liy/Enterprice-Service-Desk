@@ -55,6 +55,12 @@ class AuthorizationPolicyTests(TestCase):
         )
 
 
+        self.other_technician = User.objects.create_user(
+            username="other_technician",
+            password="password123"
+        )
+
+
         self.manager = User.objects.create_user(
             username="manager",
             password="password123"
@@ -164,6 +170,18 @@ class AuthorizationPolicyTests(TestCase):
         )
 
 
+        # Assigned to a different technician — should stay excluded
+        # even though Technicians now also see unassigned tickets
+        # (ADR-010, Decision 2).
+        self.other_technician_ticket = Ticket.objects.create(
+            title="Other Technician's Ticket",
+            description="Assigned to a different technician",
+            created_by=self.manager,
+            assigned_to=self.other_technician,
+            department=self.it_department
+        )
+
+
 
     # =====================================================
     # REQUESTER
@@ -193,7 +211,12 @@ class AuthorizationPolicyTests(TestCase):
     # TECHNICIAN
     # =====================================================
 
-    def test_technician_only_sees_assigned_tickets(self):
+    def test_technician_sees_assigned_and_unassigned_tickets(self):
+
+        # ADR-010, Decision 2: Technicians see tickets assigned to
+        # them, plus unassigned tickets (queue-based
+        # self-assignment) — but not tickets assigned to someone
+        # else.
 
         tickets = get_ticket_queryset(
             self.technician
@@ -206,8 +229,14 @@ class AuthorizationPolicyTests(TestCase):
         )
 
 
-        self.assertNotIn(
+        self.assertIn(
             self.manager_ticket,
+            tickets
+        )
+
+
+        self.assertNotIn(
+            self.other_technician_ticket,
             tickets
         )
 
@@ -250,5 +279,5 @@ class AuthorizationPolicyTests(TestCase):
 
         self.assertEqual(
             tickets.count(),
-            4
+            5
         )

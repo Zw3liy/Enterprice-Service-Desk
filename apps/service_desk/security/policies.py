@@ -9,8 +9,9 @@ Phase 2.2 Authorization Hardening
 
 
 from django.contrib.auth.models import Group
+from django.db.models import Q
 
-from apps.service_desk.models import Ticket
+from apps.service_desk.models import Problem, Ticket
 
 
 
@@ -112,7 +113,11 @@ def get_ticket_queryset(user):
         department tickets
 
     Technician:
-        assigned tickets
+        assigned tickets, plus unassigned tickets (queue-based
+        self-assignment — see ADR-010, Decision 2). Not scoped to
+        a department/queue: no such field exists on the data model
+        to scope narrower than "all unassigned tickets" without a
+        new field, which was explicitly not authorized here.
 
     Requester:
         own tickets
@@ -138,7 +143,8 @@ def get_ticket_queryset(user):
     if is_technician(user):
 
         return Ticket.objects.filter(
-            assigned_to=user
+            Q(assigned_to=user)
+            | Q(assigned_to__isnull=True)
         )
 
 
@@ -150,3 +156,50 @@ def get_ticket_queryset(user):
 
 
     return Ticket.objects.none()
+
+
+
+def get_problem_queryset(user):
+    """
+    Object level problem visibility (ADR-010, Decision 1).
+
+    Rules:
+
+    Administrator:
+        all problems
+
+    Manager:
+        department problems
+
+    Technician:
+        assigned problems
+
+    Requester:
+        none — Requesters cannot access Problem records at all.
+    """
+
+
+    if not user.is_authenticated:
+        return Problem.objects.none()
+
+
+    if is_administrator(user):
+
+        return Problem.objects.all()
+
+
+    if is_manager(user):
+
+        return Problem.objects.filter(
+            department__in=user.managed_departments.all()
+        )
+
+
+    if is_technician(user):
+
+        return Problem.objects.filter(
+            assigned_to=user
+        )
+
+
+    return Problem.objects.none()
