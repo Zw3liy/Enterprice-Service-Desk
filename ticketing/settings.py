@@ -5,6 +5,10 @@ Enterprise Service Desk Platform
 Phase 6 - Application Layer
 """
 
+import os
+
+from django.core.exceptions import ImproperlyConfigured
+
 from pathlib import Path
 
 
@@ -16,17 +20,92 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # -------------------------------------------------
+# ENVIRONMENT HELPERS
+#
+# Stdlib-only (no django-environ / python-dotenv
+# dependency added) — see docs/engineering/ROADMAP.md,
+# SEC-01, for why. Every default below reproduces the
+# exact previous hardcoded behavior when no environment
+# variable is set, so local `manage.py runserver` needs
+# no setup. See .env.example for the full variable list.
+# -------------------------------------------------
+
+_DEV_FALLBACK_SECRET_KEY = (
+    "django-insecure-a)ek*sm1cxz@pst6qkgfc&h3-d!memp1ng1wtj)nhp*dxa-_wp"
+)
+
+
+def _env_bool(name, default=False):
+    value = os.environ.get(name)
+
+    if value is None:
+        return default
+
+    return value.strip().lower() in ("1", "true", "yes", "on")
+
+
+def _env_list(name, default):
+    value = os.environ.get(name)
+
+    if value is None:
+        return default
+
+    return [item.strip() for item in value.split(",") if item.strip()]
+
+
+def _env_int(name, default):
+    value = os.environ.get(name)
+
+    if value is None:
+        return default
+
+    try:
+        return int(value)
+    except ValueError:
+        return default
+
+
+# -------------------------------------------------
 # SECURITY
 # -------------------------------------------------
 
-SECRET_KEY = "django-insecure-a)ek*sm1cxz@pst6qkgfc&h3-d!memp1ng1wtj)nhp*dxa-_wp"
+DEBUG = _env_bool("DJANGO_DEBUG", default=True)
 
-DEBUG = True
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
-ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-]
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = _DEV_FALLBACK_SECRET_KEY
+    else:
+        raise ImproperlyConfigured(
+            "DJANGO_SECRET_KEY environment variable must be set "
+            "when DJANGO_DEBUG is not enabled. Refusing to start "
+            "with a public, hardcoded key in a non-debug "
+            "environment."
+        )
+
+ALLOWED_HOSTS = _env_list(
+    "DJANGO_ALLOWED_HOSTS",
+    default=["localhost", "127.0.0.1"],
+)
+
+# Always safe — do not require HTTPS or any deployment-specific
+# setup, so these are on regardless of DEBUG.
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = "DENY"
+
+# Requires HTTPS to function correctly — only enabled outside
+# local development, where DEBUG is explicitly turned off.
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SECURE_SSL_REDIRECT = not DEBUG
+
+# HSTS is opt-in via env var (default 0 = disabled). Misconfiguring
+# this can lock users out of a domain for a long time, so it is
+# never enabled implicitly by DEBUG alone.
+SECURE_HSTS_SECONDS = _env_int("DJANGO_SECURE_HSTS_SECONDS", default=0)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = SECURE_HSTS_SECONDS > 0
+SECURE_HSTS_PRELOAD = SECURE_HSTS_SECONDS > 0
 
 
 # -------------------------------------------------
@@ -229,3 +308,42 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_URL = "/accounts/login/"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/accounts/login/"
+
+
+
+# -------------------------------------------------
+# LOGGING
+#
+# Minimal, dependency-free console logging so warnings
+# (e.g. django.security events, disallowed hosts) are
+# actually visible once DEBUG=False stops showing the
+# debug error page. Does not configure email/SMTP
+# alerting (ADMINS/SERVER_EMAIL) — that needs real
+# credentials, a separate decision, not guessed at here.
+# -------------------------------------------------
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "WARNING",
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "django.security": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+    },
+}
