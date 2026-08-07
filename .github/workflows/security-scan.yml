@@ -16,9 +16,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.14"
+          cache: pip
 
-      - name: Install Django
-        run: pip install "Django==5.2.16"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
       # Django's built-in --deploy check flags exactly what SEC-01
       # hardened: SECRET_KEY, DEBUG, ALLOWED_HOSTS, cookie/SSL settings.
@@ -30,8 +31,8 @@ jobs:
       - name: Django deployment security check
         run: python manage.py check --deploy
 
-      # No requirements.txt / pyproject.toml / Pipfile exists in this
-      # repository (verified during CI-01 inspection), so there is no
-      # dependency source to run a vulnerability audit against.
-      # Documenting this limitation rather than inventing a manifest or
-      # adding an unrelated scanner package/tool.
+      # requirements.txt now exists (DEP-01), so a dependency
+      # vulnerability audit is technically possible - deliberately not
+      # added here. It would mean introducing a new scanner
+      # package/tool, which is explicitly out of CI-01/this scope and
+      # needs its own approval, not a silent addition.

@@ -16,16 +16,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.14"
+          cache: pip
 
-      # No requirements.txt, pyproject.toml, or Pipfile exists in this
-      # repository (verified during CI-01 inspection). Scanning every
-      # first-party import under apps/service_desk/ and ticketing/ shows
-      # the tested codebase only uses the standard library plus Django
-      # itself. Installing Django directly here, pinned to the exact
-      # version used in local development, rather than inventing a
-      # requirements.txt this repository doesn't have.
-      - name: Install Django
-        run: pip install "Django==5.2.16"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
       - name: Django system check
         run: python manage.py check
