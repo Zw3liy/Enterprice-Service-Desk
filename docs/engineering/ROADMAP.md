@@ -1,6 +1,6 @@
 # Engineering Roadmap
 
-Current as of milestone **IM-02**. Update item status in place as work lands; don't leave completed
+Current as of milestone **IM-03**. Update item status in place as work lands; don't leave completed
 items undated. See [ARCHITECTURE.md](ARCHITECTURE.md) for the factual basis behind each item, and
 [SESSION_STATE.md](SESSION_STATE.md) for the live snapshot of exactly where the repository is right now.
 
@@ -23,7 +23,8 @@ items undated. See [ARCHITECTURE.md](ARCHITECTURE.md) for the factual basis behi
 | **PM-02.1** | Problem Management domain models — `Problem`, `ProblemHistory`, `RootCauseAnalysis` (+ `FiveWhys`, `FishboneFactor`, `Evidence`, `Action`, `Approval`), migrations `0004`–`0005`, `RootCauseAnalysis.problem` as `OneToOneField` per ADR-009 | `8d30023` |
 | **PM-02.2** | `ProblemService` and `ProblemSelector` — full business logic and query layer for Problem Management, mirroring the `TicketService`/`TicketSelector` pattern; not yet wired to any view | `4c7a37c` |
 | **IM-01** | Fixed Create/Detail ticket template defects found during frontend audit: `create.html` rendered a nonexistent `category` field and omitted real `urgency`/`request_type`/`tags` fields; `detail.html` compared status/priority against uppercase literals that never matched the real lowercase `Ticket` choices (status/priority badge coloring was silently dead), referenced a nonexistent `ticket.attachment`, and used unloaded Bootstrap Icons classes. 4 new regression tests added. | `23a2e8d` |
-| **IM-02** | Incident Dashboard stabilization. `IncidentDashboardView` had **no URL route at all** (fully unreachable, beyond the previously-known missing template) and used an **unscoped queryset** (`Ticket.objects`, bypassing RBAC — a Requester would have seen every ticket system-wide). Fixed: added `service_desk:incident_dashboard` route, created `service_desk/incidents.html`, scoped the base queryset through `get_ticket_queryset(user)`, corrected `status__in`/`priority__in` to real lowercase choices (`"UNASSIGNED"`/`"CRITICAL"` were never valid), and moved the categorization queries into 3 new `TicketSelector` methods (`get_active_tickets`, `get_resolved_or_closed_tickets`, `get_high_priority_tickets`) instead of inlining ORM filters in the view. 6 new regression tests (RBAC scoping + correct categorization + reachability). | *(this commit)* |
+| **IM-02** | Incident Dashboard stabilization. `IncidentDashboardView` had **no URL route at all** (fully unreachable, beyond the previously-known missing template) and used an **unscoped queryset** (`Ticket.objects`, bypassing RBAC — a Requester would have seen every ticket system-wide). Fixed: added `service_desk:incident_dashboard` route, created `service_desk/incidents.html`, scoped the base queryset through `get_ticket_queryset(user)`, corrected `status__in`/`priority__in` to real lowercase choices (`"UNASSIGNED"`/`"CRITICAL"` were never valid), and moved the categorization queries into 3 new `TicketSelector` methods (`get_active_tickets`, `get_resolved_or_closed_tickets`, `get_high_priority_tickets`) instead of inlining ORM filters in the view. 6 new regression tests (RBAC scoping + correct categorization + reachability). | `1aed27d` |
+| **IM-03** | Incident Lifecycle Completion (schema-free portion only — see "Next" for the 3 deferred, decision-blocked items). `TicketService` — fully built since before this milestone but entirely unused by any view — is now wired into 5 new views: `TicketAssignView`, `TicketStatusChangeView`, `TicketCommentView`, `TicketCloseView`, `TicketReopenView`, plus `TicketCreateView` now creates through `TicketService.create_ticket` instead of `ModelForm.save()`. `TicketDetailView` now renders real `TicketHistory` (previously a hardcoded "No updates yet" stub) and exposes an assignment/status-change/close/reopen control panel gated on `perms.service_desk.change_ticket`. Fixed a real audit gap: `TicketService.assign_ticket` recorded the new assignee on reassignment but never the previous one (unlike `unassign_ticket`, which did). Every new view resolves its ticket through `get_ticket_queryset(request.user)`, not a raw pk lookup — confirmed this also surfaces a pre-existing RBAC property worth knowing: a Technician cannot see an *unassigned* ticket at all (`get_ticket_queryset`'s Technician branch is `assigned_to=user`-only, by design) — initial assignment can only be performed by a Manager (department-scoped) or Administrator. 11 new regression tests. | *(this commit)* |
 
 ## Current
 
@@ -39,28 +40,35 @@ Ticket *is* the Incident record in this codebase (`IncidentDashboardView` alread
 directly rather than a separate model) — Phase 1 extends the existing `Ticket`/`TicketService` machinery,
 it does not introduce a parallel Incident model.
 
-1. **IM-03** — `OPEN`. Wire `TicketService` into the mutation-side views (`TicketCreateView` and any
-   future assign/status-change views still bypass it, calling the ORM/security policies directly) — the
-   read side of this is now partially established: IM-02 already composes `TicketSelector` methods with
-   the RBAC-scoped `get_ticket_queryset(user)` queryset in `IncidentDashboardView`, which is the pattern
-   IM-03 should extend to `TicketService` on the write side.
-2. **IM-04** — `OPEN` — **needs an architecture decision before implementation, not a guess.** "Work
-   notes", "Attachments", and "Requester confirmation" from the Phase 1 feature list each imply a real
-   schema/behavior choice not yet made:
+1. **IM-04** — `OPEN` — **blocked on 3 unanswered decisions, asked directly and not yet answered.**
+   "Work notes", "Attachments", and "Requester confirmation" from the Phase 1 feature list each imply a
+   real schema/behavior choice:
    - Work notes: does this reuse `TicketHistory.EVENT_COMMENT` (already implemented via
-     `TicketService.add_comment`) with a visibility flag added, or is it a distinct concept from
-     requester-facing comments?
-   - Attachments: `Ticket` has no file field today. Needs a decision on storage backend, size/type limits,
-     and whether it's a single `FileField` or a related `TicketAttachment` model (multiple files).
-   - Requester confirmation: does closing require the requester to confirm resolution (a real workflow
-     gate), or is it advisory only? This changes `TicketService.close_ticket`'s preconditions.
+     `TicketService.add_comment`, now exposed via `TicketCommentView` as of IM-03) with a visibility flag
+     added, or stay undifferentiated (current state — every comment visible to anyone who can see the
+     ticket)?
+   - Attachments: `Ticket` has no file field today (`MEDIA_ROOT`/`MEDIA_URL` are already configured in
+     `ticketing/settings.py`, unused). Needs a decision on a single `FileField` vs. a related
+     `TicketAttachment` model. **Do not wire in `templates/tickets/edit.html`'s existing attachment UI** —
+     confirmed during IM-03 inspection to be dead Arena-era scaffolding: it uses `esd-*` CSS classes that
+     don't exist in the loaded stylesheet, and references `ticket.ticket_number`/`form.requester_name`/
+     `form.work_email`, none of which exist on the real `Ticket` model or `TicketCreateForm`.
+   - Requester confirmation: hard workflow gate (new field, `close_ticket` precondition change) or
+     advisory only (no schema change)?
 
-   Flagging these now rather than inventing model/behavior changes silently.
-3. **CI-01** — `OPEN`. Populate the three empty GitHub Actions workflow files
+   These were asked directly (three-question prompt) during IM-03 and went unanswered — still open, not
+   decided by default. Do not guess at them.
+2. **CI-01** — `OPEN`. Populate the three empty GitHub Actions workflow files
    (`.github/workflows/django-tests.yml` at minimum) to run `manage.py check` and `manage.py test` on
    every push/PR — exactly what would have caught the FIX-01 regression (INC-001) automatically.
-4. **SEC-01** — `OPEN`. Move `SECRET_KEY` out of `ticketing/settings.py` into an environment variable;
+3. **SEC-01** — `OPEN`. Move `SECRET_KEY` out of `ticketing/settings.py` into an environment variable;
    gate `DEBUG` behind an env flag; add a `.env.example`.
+4. **`OPEN` — possible RBAC gap, needs a decision, not a silent fix.** `get_ticket_queryset`'s Technician
+   branch (`security/policies.py`) is `Ticket.objects.filter(assigned_to=user)` — a Technician cannot see
+   an unassigned ticket at all, confirmed during IM-03. This may be intentional (triage/routing is a
+   Manager/Administrator responsibility) or a gap (technicians usually need to see and claim an unassigned
+   department queue in ITSM tooling). Not touched — changing RBAC visibility rules deserves the same
+   explicit-decision treatment as the IM-04 items, not a silent expansion.
 
 ## Next — Phase 2: Problem Management UI
 
