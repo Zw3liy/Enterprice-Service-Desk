@@ -270,7 +270,11 @@ class TicketWorkflowViewTests(TestCase):
     # Close / Reopen
     # --------------------------------------------------
 
-    def test_cannot_close_ticket_that_is_not_resolved(self):
+    def test_cannot_close_ticket_that_is_not_awaiting_confirmation(self):
+        """
+        IM-04: close_ticket now requires awaiting_confirmation status,
+        not resolved (ADR-010, Decision 3).
+        """
 
         TicketService.assign_ticket(
             self.ticket, self.technician, user=self.manager
@@ -290,7 +294,12 @@ class TicketWorkflowViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(self.ticket.status, "open")
 
-    def test_close_then_reopen_cycle(self):
+    def test_requester_confirmation_close_then_reopen_cycle(self):
+        """
+        IM-04: full resolved → awaiting_confirmation → closed →
+        reopened cycle, with requester confirmation enforced
+        (ADR-010, Decision 3).
+        """
 
         TicketService.assign_ticket(
             self.ticket, self.technician, user=self.manager
@@ -302,8 +311,24 @@ class TicketWorkflowViewTests(TestCase):
             self.ticket, "resolved", user=self.technician
         )
 
+        # Technician sends for requester confirmation
         self.client.login(
             username="im03_technician",
+            password="password123",
+        )
+
+        confirm_response = self.client.post(
+            f"/tickets/{self.ticket.pk}/request-confirmation/",
+        )
+
+        self.ticket.refresh_from_db()
+
+        self.assertEqual(confirm_response.status_code, 302)
+        self.assertEqual(self.ticket.status, "awaiting_confirmation")
+
+        # Only the requester can close from awaiting_confirmation
+        self.client.login(
+            username="im03_requester",
             password="password123",
         )
 
@@ -316,6 +341,12 @@ class TicketWorkflowViewTests(TestCase):
         self.assertEqual(close_response.status_code, 302)
         self.assertEqual(self.ticket.status, "closed")
 
+        # Reopen (anyone with change_ticket)
+        self.client.login(
+            username="im03_technician",
+            password="password123",
+        )
+
         reopen_response = self.client.post(
             f"/tickets/{self.ticket.pk}/reopen/",
         )
@@ -324,6 +355,40 @@ class TicketWorkflowViewTests(TestCase):
 
         self.assertEqual(reopen_response.status_code, 302)
         self.assertEqual(self.ticket.status, "open")
+
+    def test_non_requester_cannot_close_awaiting_confirmation_ticket(self):
+        """
+        IM-04: a Technician cannot close a ticket in
+        awaiting_confirmation — only the requester can
+        (ADR-010, Decision 3).
+        """
+
+        TicketService.assign_ticket(
+            self.ticket, self.technician, user=self.manager
+        )
+        TicketService.change_status(
+            self.ticket, "in_progress", user=self.technician
+        )
+        TicketService.change_status(
+            self.ticket, "resolved", user=self.technician
+        )
+        TicketService.change_status(
+            self.ticket, "awaiting_confirmation", user=self.technician
+        )
+
+        self.client.login(
+            username="im03_technician",
+            password="password123",
+        )
+
+        response = self.client.post(
+            f"/tickets/{self.ticket.pk}/close/",
+        )
+
+        self.ticket.refresh_from_db()
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(self.ticket.status, "awaiting_confirmation")
 
     # --------------------------------------------------
     # Ticket creation now routed through TicketService

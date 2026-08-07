@@ -20,9 +20,11 @@ class TicketHistory(models.Model):
     EVENT_DEPARTMENT_CHANGED = "department_changed"
     EVENT_REQUEST_TYPE_CHANGED = "request_type_changed"
     EVENT_COMMENT = "comment"
+    EVENT_WORK_NOTE = "work_note"
     EVENT_ATTACHMENT = "attachment"
     EVENT_CLOSED = "closed"
     EVENT_REOPENED = "reopened"
+    EVENT_CONFIRMED = "requester_confirmed"
 
     EVENT_CHOICES = [
         (EVENT_CREATED, "Created"),
@@ -35,9 +37,11 @@ class TicketHistory(models.Model):
         (EVENT_DEPARTMENT_CHANGED, "Department Changed"),
         (EVENT_REQUEST_TYPE_CHANGED, "Request Type Changed"),
         (EVENT_COMMENT, "Comment Added"),
+        (EVENT_WORK_NOTE, "Work Note Added"),
         (EVENT_ATTACHMENT, "Attachment Added"),
         (EVENT_CLOSED, "Closed"),
         (EVENT_REOPENED, "Reopened"),
+        (EVENT_CONFIRMED, "Requester Confirmed"),
     ]
 
     ticket = models.ForeignKey(

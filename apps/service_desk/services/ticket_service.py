@@ -25,7 +25,8 @@ class TicketService:
         "open": ["in_progress"],
         "in_progress": ["pending", "resolved"],
         "pending": ["in_progress", "resolved"],
-        "resolved": ["closed"],
+        "resolved": ["awaiting_confirmation"],
+        "awaiting_confirmation": ["closed"],
         "closed": ["open"],
     }
 
@@ -170,12 +171,31 @@ class TicketService:
                 f"Cannot move from {current} to {status}."
             )
 
+        # ADR-010, Decision 3: the awaiting_confirmation → closed
+        # transition requires the acting user to be the ticket's
+        # requester (created_by). Enforced at the service layer so
+        # it can't be bypassed through any view.
+        if (
+            current == "awaiting_confirmation"
+            and status == "closed"
+        ):
+            if user is None or user != ticket.created_by:
+                raise ValidationError(
+                    "Only the requester can confirm and close this ticket."
+                )
+
         ticket.status = status
         ticket.save(update_fields=["status", "updated_at"])
 
+        # Record which event type to log
+        if status == "closed" and current == "awaiting_confirmation":
+            event_type = TicketHistory.EVENT_CONFIRMED
+        else:
+            event_type = TicketHistory.EVENT_STATUS_CHANGED
+
         TicketHistory.record(
             ticket=ticket,
-            event_type=TicketHistory.EVENT_STATUS_CHANGED,
+            event_type=event_type,
             user=user,
             from_status=current,
             to_status=status,
@@ -320,6 +340,35 @@ class TicketService:
         )
 
     # ==========================================================
+    # Work Notes (internal — Technician/Manager only)
+    # ==========================================================
+
+    @staticmethod
+    @transaction.atomic
+    def add_work_note(
+        ticket: Ticket,
+        note: str,
+        user=None,
+    ) -> TicketHistory:
+        """
+        Add an internal work note to a ticket.
+
+        Work notes are never visible to Requesters — the detail
+        template filters them out for users lacking
+        service_desk.change_ticket (see ADR-010, Decision 3).
+        """
+
+        if not note.strip():
+            raise ValidationError("Work note cannot be empty.")
+
+        return TicketHistory.record(
+            ticket=ticket,
+            event_type=TicketHistory.EVENT_WORK_NOTE,
+            user=user,
+            comment=note.strip(),
+        )
+
+    # ==========================================================
     # Close
     # ==========================================================
 
@@ -329,10 +378,19 @@ class TicketService:
         ticket: Ticket,
         user=None,
     ) -> Ticket:
+        """
+        Close a ticket after requester confirmation.
 
-        if ticket.status != "resolved":
+        Per ADR-010, Decision 3, a ticket must be in
+        'awaiting_confirmation' status before it can be closed,
+        and only the requester (created_by) may perform this
+        action — enforced inside change_status().
+        """
+
+        if ticket.status != "awaiting_confirmation":
             raise ValidationError(
-                "Only resolved tickets can be closed."
+                "Only tickets awaiting requester confirmation "
+                "can be closed."
             )
 
         return TicketService.change_status(
@@ -371,3 +429,74 @@ class TicketService:
     @transaction.atomic
     def delete_ticket(ticket: Ticket) -> None:
         ticket.delete()
+
+    # ==========================================================
+    # Attachments
+    # ==========================================================
+
+    @staticmethod
+    @transaction.atomic
+    def add_attachment(
+        ticket: Ticket,
+        file,
+        user=None,
+        description: str = "",
+    ):
+        """
+        Attach a file to a ticket.
+
+        Validates the file extension against the allowlist and
+        enforces the size cap (TicketAttachment constants).
+        Records the upload in the ticket's audit trail using
+        the existing EVENT_ATTACHMENT event type.
+        """
+
+        from apps.service_desk.models import TicketAttachment
+
+        # Validate extension
+        filename = getattr(file, "name", "")
+        if filename and "." in filename:
+            ext = filename.rsplit(".", 1)[-1].lower()
+        else:
+            ext = ""
+
+        if ext not in TicketAttachment.ALLOWED_EXTENSIONS:
+            allowed = ", ".join(sorted(TicketAttachment.ALLOWED_EXTENSIONS))
+            raise ValidationError(
+                f"File extension '.{ext}' is not allowed. "
+                f"Allowed extensions: {allowed}"
+            )
+
+        # Validate size
+        file.seek(0, 2)  # seek to end
+        size = file.tell()
+        file.seek(0)  # rewind
+
+        if size > TicketAttachment.MAX_FILE_SIZE_BYTES:
+            max_mb = TicketAttachment.MAX_FILE_SIZE_BYTES // (1024 * 1024)
+            raise ValidationError(
+                f"File size exceeds the {max_mb} MB limit."
+            )
+
+        attachment = TicketAttachment.objects.create(
+            ticket=ticket,
+            file=file,
+            description=description.strip(),
+            uploaded_by=user,
+            original_filename=filename,
+            file_size=size,
+        )
+
+        TicketHistory.record(
+            ticket=ticket,
+            event_type=TicketHistory.EVENT_ATTACHMENT,
+            user=user,
+            comment=f"Attached: {filename}",
+            metadata={
+                "attachment_id": attachment.pk,
+                "filename": filename,
+                "size": size,
+            },
+        )
+
+        return attachment

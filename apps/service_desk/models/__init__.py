@@ -2,6 +2,7 @@ from .department import Department
 from .request_type import RequestType
 from .ticket import Ticket
 from .ticket_history import TicketHistory
+from .ticket_attachment import TicketAttachment
 from .problem import Problem
 from .problem_history import ProblemHistory
 from .root_cause_analysis import (
@@ -18,6 +19,7 @@ __all__ = [
     "RequestType",
     "Ticket",
     "TicketHistory",
+    "TicketAttachment",
     "Problem",
     "ProblemHistory",
     "RootCauseAnalysis",

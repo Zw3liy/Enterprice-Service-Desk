@@ -34,6 +34,58 @@
                 </div>
             </div>
 
+            <!-- Attachments Card -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="card-title mb-0 fw-semibold">
+                        <i class="fa-solid fa-paperclip me-1"></i> Attachments
+                        {% if attachments %}<span class="badge bg-secondary ms-2">{{ attachments|length }}</span>{% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if attachments %}
+                        <ul class="list-unstyled mb-3">
+                            {% for att in attachments %}
+                                <li class="d-flex justify-content-between align-items-center py-1 border-bottom">
+                                    <div>
+                                        <a href="{% url 'service_desk:ticket_attachment_download' ticket.pk att.pk %}" class="text-decoration-none">
+                                            <i class="fa-solid fa-file me-1"></i>
+                                            {{ att.original_filename|default:att.file.name }}
+                                        </a>
+                                        <span class="text-muted small ms-2">
+                                            {% if att.file_size %}{{ att.file_size|filesizeformat }}{% endif %}
+                                        </span>
+                                        {% if att.description %}<span class="text-muted small ms-2">— {{ att.description }}</span>{% endif %}
+                                    </div>
+                                    <span class="text-muted small">
+                                        {% if att.uploaded_by %}{{ att.uploaded_by.username }}{% endif %}
+                                        {{ att.uploaded_at|date:"M d, Y" }}
+                                    </span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted small mb-3">No attachments.</p>
+                    {% endif %}
+
+                    {% if perms.service_desk.change_ticket %}
+                    <form method="post" action="{% url 'service_desk:ticket_attach' ticket.pk %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-2">
+                            <label for="attachment" class="form-label small fw-medium">Upload File</label>
+                            <input type="file" name="attachment" id="attachment" class="form-control form-control-sm">
+                        </div>
+                        <div class="mb-2">
+                            <input type="text" name="description" id="description" class="form-control form-control-sm" placeholder="Description (optional)">
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary btn-sm">
+                            <i class="fa-solid fa-upload me-1"></i> Attach
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+
             <!-- Activity / Updates Section -->
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white py-3 border-bottom">
@@ -44,10 +96,10 @@
                     {% if history %}
                         <ul class="list-unstyled mb-4">
                             {% for entry in history %}
-                                <li class="border-bottom pb-3 mb-3">
+                                <li class="border-bottom pb-3 mb-3{% if entry.event_type == 'work_note' %} border-start border-3 border-warning ps-2{% endif %}">
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div>
-                                            <span class="fw-semibold small">{{ entry.get_event_type_display }}</span>
+                                            <span class="fw-semibold small{% if entry.event_type == 'work_note' %} text-warning{% endif %}">{{ entry.get_event_type_display }}</span>
                                             <span class="text-muted small ms-2">
                                                 {% if entry.performed_by %}{{ entry.performed_by.username }}{% else %}System{% endif %}
                                             </span>
@@ -80,6 +132,22 @@
                         </button>
                     </form>
 
+                    {% if perms.service_desk.change_ticket %}
+                    <form method="post" action="{% url 'service_desk:ticket_work_note' ticket.pk %}" class="mt-3">
+                        {% csrf_token %}
+                        <div class="mb-2">
+                            <label for="work_note" class="form-label fw-medium text-warning">
+                                <i class="fa-solid fa-eye-slash me-1"></i> Internal Work Note
+                            </label>
+                            <textarea name="work_note" id="work_note" class="form-control" rows="3" required></textarea>
+                            <div class="form-text">Visible to Technician, Manager, and Admin only — not visible to Requesters.</div>
+                        </div>
+                        <button type="submit" class="btn btn-outline-warning btn-sm">
+                            <i class="fa-solid fa-note-sticky me-1"></i> Add Work Note
+                        </button>
+                    </form>
+                    {% endif %}
+
                 </div>
             </div>
         </div>
@@ -94,7 +162,7 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0">
                             <span class="text-muted small">Status</span>
-                            <span class="badge {% if ticket.status == 'open' %}bg-warning text-dark{% elif ticket.status == 'resolved' %}bg-success{% else %}bg-secondary{% endif %}">
+                            <span class="badge {% if ticket.status == 'open' %}bg-warning text-dark{% elif ticket.status == 'resolved' %}bg-success{% elif ticket.status == 'awaiting_confirmation' %}bg-info text-dark{% else %}bg-secondary{% endif %}">
                                 {{ ticket.get_status_display|default:ticket.status }}
                             </span>
                         </li>
@@ -166,10 +234,10 @@
                     {% endif %}
 
                     {% if ticket.status == 'resolved' %}
-                    <form method="post" action="{% url 'service_desk:ticket_close' ticket.pk %}">
+                    <form method="post" action="{% url 'service_desk:ticket_request_confirmation' ticket.pk %}">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-success btn-sm w-100">
-                            <i class="fa-solid fa-check me-1"></i> Close Ticket
+                        <button type="submit" class="btn btn-outline-success btn-sm w-100">
+                            <i class="fa-solid fa-paper-plane me-1"></i> Send for Confirmation
                         </button>
                     </form>
                     {% elif ticket.status == 'closed' %}
@@ -181,6 +249,29 @@
                     </form>
                     {% endif %}
 
+                </div>
+            </div>
+            {% endif %}
+
+            {% if ticket.status == 'awaiting_confirmation' %}
+            <div class="card shadow-sm border-0 mt-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="card-title mb-0 fw-semibold">
+                        <i class="fa-solid fa-clock me-1 text-info"></i> Awaiting Confirmation
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted mb-2">
+                        This ticket's resolution is awaiting requester confirmation.
+                    </p>
+                    {% if ticket.created_by == request.user %}
+                    <form method="post" action="{% url 'service_desk:ticket_close' ticket.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success btn-sm w-100">
+                            <i class="fa-solid fa-check me-1"></i> Confirm &amp; Close
+                        </button>
+                    </form>
+                    {% endif %}
                 </div>
             </div>
             {% endif %}

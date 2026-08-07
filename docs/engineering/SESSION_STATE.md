@@ -25,10 +25,10 @@ step). An out-of-date `SESSION_STATE.md` is itself a defect — treat it as one 
 
 | | |
 |---|---|
-| **Current Milestone** | PM-03 — Problem Management UI (P1 of the approved ITSM_ROADMAP.md execution order — DONE) |
-| **Current Sprint** | P1 done → IM-04 next (see [ITSM_ROADMAP.md](ITSM_ROADMAP.md) and [ROADMAP.md](ROADMAP.md)) |
-| **Current Objective** | P0 and P1 are both fully done. Next: IM-04 (ADR-010 Decision 3 — Work Notes, Attachments, Requester Confirmation), per the repository owner's explicit execution order (record → PM-03 → IM-04). |
-| **Overall Repository Health** | **Improving, still mixed.** Core `service_desk` app is healthy (`manage.py check` clean, 54/54 tests passing, migrations in sync, zero drift). `ticketing/settings.py` no longer hardcodes secrets/DEBUG/hosts (SEC-01). CI runs on every push/PR (CI-01) from a real `requirements.txt` (DEP-01). The `models.py`/`views.py` file-collision hazard is resolved (ARCH-01). RBAC has `get_problem_queryset` (Requester: none) and Technicians see unassigned tickets too (ADR-010, RBAC-01). **Problem Management is now fully reachable end-to-end** — models (PM-02.1) → services/selectors (PM-02.2) → views/urls/forms/templates (PM-03) — the same shape Incident Management reached across IM-01–IM-03. Surrounding repository still has scaffolding debt (~59 unregistered apps, unchanged — a separate, larger scope decision). Full detail: [ARCHITECTURE.md](ARCHITECTURE.md). |
+| **Current Milestone** | IM-04 — Work Notes, Attachments, Requester Confirmation (DONE) |
+| **Current Sprint** | All approved milestones complete. The execution order (record → PM-03 → IM-04) is fully delivered. |
+| **Current Objective** | All items in the repository owner's explicit execution order are complete. Next priorities should be drawn from ITSM_ROADMAP.md P1/P2. |
+| **Overall Repository Health** | **Improving, still mixed.** Core `service_desk` app is healthy (`manage.py check` clean, 80/80 tests passing, migrations in sync, zero drift). `ticketing/settings.py` no longer hardcodes secrets/DEBUG/hosts (SEC-01). CI runs on every push/PR (CI-01) from a real `requirements.txt` (DEP-01). The `models.py`/`views.py` file-collision hazard is resolved (ARCH-01). RBAC has `get_problem_queryset` (Requester: none) and Technicians see unassigned tickets too (ADR-010, RBAC-01). Problem Management is fully reachable end-to-end (PM-03). Incident Management is fully complete including work notes, attachments, and requester confirmation (IM-04). Surrounding repository still has scaffolding debt (~59 unregistered apps, unchanged — a separate, larger scope decision). Full detail: [ARCHITECTURE.md](ARCHITECTURE.md). |
 
 ## Git Status
 
@@ -71,6 +71,7 @@ prompt's claimed baseline — per this file's own "never assume, always verify" 
 | **ADR-010** | Recorded the three ITSM_ROADMAP.md P0-item-3 decisions, given directly by the repository owner. See [ADR/ADR-010-Visibility-and-IM-04-Scope-Decisions.md](ADR/ADR-010-Visibility-and-IM-04-Scope-Decisions.md). | `98ea39b` |
 | **RBAC-01** | Implemented ADR-010 Decisions 1 & 2: `get_problem_queryset` added (Requester → none); `get_ticket_queryset`'s Technician branch widened to assigned-or-unassigned; `Problem*PermissionMixin` set added; `create_roles.py` grants Technician/Manager/Admin the new `*_problem` permissions. Updated 2 tests whose assertions encoded the old Technician rule (not regressions) plus added 1 new self-assignment test. 45/45 tests pass. | `98ea39b` |
 | **PM-03** | Problem Management UI — see the full entry in ROADMAP.md's Completed table. 13 new views, 13 URL routes, 1 form, 3 templates. Verified twice: a rollback-wrapped manual transaction exercising every view end-to-end, then 9 automated tests. 54/54 tests pass. Problem Management is now fully reachable, matching Incident Management's shape. | *(this session, see Unpushed Commits)* |
+| **IM-04** | Incident Management Completion — Work Notes, Attachments, Requester Confirmation (ADR-010, Decision 3). **Work Notes:** new `EVENT_WORK_NOTE` event type, `TicketService.add_work_note()`, `TicketWorkNoteView` (change_ticket-gated), filtered from Requester's history view. **Attachments:** new `TicketAttachment` model, `TicketService.add_attachment()` with extension allowlist + size cap, upload/download views scoped through RBAC, `EVENT_ATTACHMENT` audit trail. **Requester Confirmation:** new `awaiting_confirmation` status in `STATUS_FLOW` (`resolved → awaiting_confirmation → closed`), service-layer enforcement that only `created_by` may close, `TicketRequestConfirmationView` for Technician/Manager, separate confirmation card on detail page visible to Requester. 2 migrations (0006, 0007), 4 new views, 4 new URL routes, 25 new automated tests (80/80 total passing). | *(this session)* |
 
 ## Unpushed Commits
 
@@ -88,10 +89,10 @@ trusting this section once further commits land — it will go stale the moment 
 
 ## Current Roadmap Item
 
-- **Priority:** PM-03 — Problem Management UI (P1, now DONE).
-- **Reason:** Fully unblocked by ADR-010 Decision 1 (Requesters: no Problem access at all) and RBAC-01's `get_problem_queryset`. Explicit execution order from the repository owner: record decisions → PM-03 → IM-04.
-- **Dependencies:** None — no schema change, `Problem`/`ProblemHistory`/`RootCauseAnalysis` existed since PM-02.1.
-- **Expected completion:** This session; committed locally under the standing per-milestone local-commit authorization, push pending separate explicit approval. **Next: IM-04** (ADR-010 Decision 3 — Work Notes, Attachments, Requester Confirmation), the last item in the given execution order.
+- **Priority:** IM-04 — Work Notes, Attachments, Requester Confirmation (DONE).
+- **Reason:** Last item in the repository owner's explicit execution order (record → PM-03 → IM-04). All three features implemented per ADR-010 Decision 3.
+- **Dependencies:** None remaining.
+- **Expected completion:** **Complete.** 80/80 tests pass, `check` clean, migrations applied, zero drift.
 
 ## Open Decisions
 
@@ -107,8 +108,8 @@ trusting this section once further commits land — it will go stale the moment 
 
 ### IM-04 — Work notes / Attachments / Requester confirmation semantics (Phase 1)
 
-- **Status:** **RESOLVED (decision), not yet implemented.** ADR-010, Decision 3. Build all three.
-  Technical shape for each recorded in the ADR. **This is the current next task** — PM-03 is done.
+- **Status:** **RESOLVED and IMPLEMENTED.** ADR-010, Decision 3. All three features built in IM-04.
+  See the IM-04 entry in the Completed table.
 
 ### Technician visibility of unassigned tickets (found during IM-03)
 
@@ -136,7 +137,7 @@ trusting this section once further commits land — it will go stale the moment 
 Highest priority first, following the repository owner's explicit execution order — see
 [ROADMAP.md](ROADMAP.md) for full detail and status tracking:
 
-1. **IM-04** — Work Notes, Attachments, Requester Confirmation, per ADR-010 Decision 3's technical shape. Last item in the given execution order (record → PM-03 → IM-04); PM-03 is done.
+1. **IM-04 is DONE.** No further items in the approved execution order.
 2. Fix `DashboardView`'s missing context data (same shape as IM-02) — opportunistic cleanup, not in the approved execution order.
 3. Get a scope decision on the ~59 unregistered scaffold apps (ITSM_ROADMAP.md P2/P3 territory).
 4. Consider a service + UI pass for RCA sub-model creation (`FiveWhys`/`FishboneFactor`/`Evidence`/`Action`/`Approval`) — currently read-only, flagged in PM-03 as an explicit gap, not scheduled.

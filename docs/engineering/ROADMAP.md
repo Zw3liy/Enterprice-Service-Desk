@@ -33,6 +33,7 @@ items undated. See [ARCHITECTURE.md](ARCHITECTURE.md) for the factual basis behi
 | **ADR-010** | Recorded the three policy decisions from [ITSM_ROADMAP.md](ITSM_ROADMAP.md) P0 item 3, given directly by the repository owner after two prior unanswered requests — see [ADR/ADR-010-Visibility-and-IM-04-Scope-Decisions.md](ADR/ADR-010-Visibility-and-IM-04-Scope-Decisions.md): (1) Requesters cannot access Problems at all; Technician/Manager/Admin mirror the existing Ticket RBAC shape. (2) Technicians see assigned **and unassigned** tickets (queue-based self-assignment) — flagged that there's no "queue"/department concept to scope this narrower without a new field, so it's unscoped (all unassigned tickets, system-wide). (3) IM-04 — build all three: Work Notes, Attachments, Requester Confirmation — with the technical shape for each recorded in the ADR since the request specified behavior, not schema. | *(this commit)* |
 | **RBAC-01** | Implemented Decisions 1 and 2 from ADR-010. Added `get_problem_queryset(user)` to `security/policies.py`, structurally identical to `get_ticket_queryset` with Requester forced to `Problem.objects.none()`. Changed `get_ticket_queryset`'s Technician branch to `Q(assigned_to=user) \| Q(assigned_to__isnull=True)`. Added `Problem*PermissionMixin` set to `security/mixins.py` (mirrors the `Ticket*PermissionMixin` set) for PM-03 to use. Updated `create_roles.py` to grant Technician/Manager/Administrator the new `*_problem` permissions (Requester gets none, per Decision 1). Updated 2 tests whose assertions encoded the *old* Technician rule (not real regressions — `test_technician_only_sees_assigned_tickets` → renamed and rewritten with a proper "assigned to someone else" exclusion case using a new second-technician fixture; IM-03's unassigned-ticket test flipped from expecting 404 to 200, plus a new self-assignment test). | `98ea39b` |
 | **PM-03** | Problem Management UI. Added `ProblemCreateForm` (`forms/problem_forms.py`), 13 new views (`ProblemListView`, `ProblemCreateView`, `ProblemDetailView`, plus 10 workflow action views: assign/status-change/root-cause/workaround/mark-known-error/comment/link-ticket/unlink-ticket/close/reopen — full parity with what `ProblemService` already supported), 13 new URL routes, and 3 new templates (`templates/problems/list.html` — combines the problem table with `ProblemSelector.dashboard_statistics()` stat cards rather than a separate dashboard route; `create.html`; `detail.html` — renders RCA status/Five Whys/Fishbone factors read-only when present, root cause/workaround, linked incidents with link/unlink controls, `ProblemSelector.repeat_incident_detection()` suggestions, full history, and a workflow control panel gated on `perms.service_desk.change_problem`). Verified end-to-end twice: once via a rollback-wrapped manual transaction exercising every view before writing formal tests, then via 9 new automated tests (`test_problem_management.py`) covering RBAC visibility (Requester 403, Technician/Manager/Admin scoping) and the full lifecycle through the real views (create → investigate → RCA auto-created → root cause → known-error gate → link/unlink ticket → resolve → close → reopen). 54/54 tests pass, `check` clean, zero migration drift (no schema changes — models existed since PM-02.1). **Deliberately not built:** creation UI for `FiveWhys`/`FishboneFactor`/`Evidence`/`Action`/`Approval` — `ProblemService` has no methods to create them, and adding those was out of PM-03's scope; they render read-only when present. Also did not add a `Problems` nav link to `sidebar.html`, consistent with earlier caution about touching that file without being asked. | *(this commit)* |
+| **IM-04** | Incident Management Completion — Work Notes, Attachments, Requester Confirmation (ADR-010, Decision 3). **Work Notes:** added `EVENT_WORK_NOTE` event type to `TicketHistory`, `TicketService.add_work_note()` (mirrors `add_comment()` but records the work note event type), `TicketWorkNoteView` (gated on `change_ticket` — Technician/Manager/Admin only), `TicketDetailView` filters work notes from history for users lacking `change_ticket` (Requesters never see them). **Attachments:** new `TicketAttachment` model (FK to Ticket, FileField, uploaded_by, uploaded_at, description, original_filename, file_size), `TicketService.add_attachment()` with file extension allowlist (executable/script extensions rejected) and 10 MB size cap, `TicketAttachmentUploadView` (change_ticket-gated)0, `TicketAttachmentDownloadView` (view_ticket-gated, scoped; scoped through RBAC ticket queryset), reuses existing `EVENT_ATTACHMENT` event type for audit trail, storage via configured `MEDIA_ROOT`/`MEDIA_URL`. **Requester Confirmation:** new `awaiting_confirmation` status in `Ticket.STATUS_CHOICES`, `STATUS_FLOW` changed: `resolved → [awaiting_confirmation]`, `awaiting_confirmation → [closed]` (replacing old `resolved → [closed]` direct edge), `change_status()` enforces that only `ticket.created_by` may perform the `awaiting_confirmation → closed` transition (service-layer, not bypassable), `close_ticket()` now requires `awaiting_confirmation` status, `TicketCloseView` changed to `TicketViewPermissionMixin` (Requesters can reach it), `TicketRequestConfirmationView` for Technician/Manager to send for confirmation, detail template shows separate "Awaiting Confirmation" card with "Confirm & Close" button visible only to the requester. 2 migrations (0006, 0007), 4 new views, 4 new URL routes, 25 new tests (`test_im04.py`), updated 2 existing tests in `test_ticket_workflow.py`. 80/80 tests pass, `check` clean, zero migration drift. | *(this commit)* |
 
 ## Current
 
@@ -44,24 +45,17 @@ items undated. See [ARCHITECTURE.md](ARCHITECTURE.md) for the factual basis behi
 
 ## Next — Phase 1: Incident Management completion
 
-Ticket *is* the Incident record in this codebase (`IncidentDashboardView` already filters `Ticket`
-directly rather than a separate model) — Phase 1 extends the existing `Ticket`/`TicketService` machinery,
-it does not introduce a parallel Incident model.
-
-Both open decisions that used to block this phase are **RESOLVED** — see ADR-010 and the RBAC-01 entry in
-Completed, above.
-
-1. **IM-04** — `ACCEPTED`, implementation next. Work Notes, Attachments, and Requester Confirmation, all
-   three, per the technical shape recorded in ADR-010, Decision 3. **Do not wire in
-   `templates/tickets/edit.html`'s existing attachment UI** — confirmed during IM-03 inspection to be dead
-   Arena-era scaffolding: it uses `esd-*` CSS classes that don't exist in the loaded stylesheet, and
-   references `ticket.ticket_number`/`form.requester_name`/`form.work_email`, none of which exist on the
-   real `Ticket` model or `TicketCreateForm`.
+**Phase 1 is DONE** — IM-04 (Work Notes, Attachments, Requester Confirmation) is complete. See the
+IM-04 entry in Completed, above. All items in the repository owner's explicit execution order
+(record → PM-03 → IM-04) have been delivered.
 
 **Phase 2 (Problem Management UI) is DONE** — see the PM-03 entry in Completed, above. One deliberate scope
 gap carried forward: creation UI for the RCA sub-models (`FiveWhys`, `FishboneFactor`, `Evidence`,
 `Action`, `Approval`) — `ProblemService` has no methods to create them yet, so this needs its own service +
 UI pass if wanted. Not currently scheduled in P0–P3.
+
+Next priorities should be drawn from ITSM_ROADMAP.md P1 (SLA Management, Notification Features,
+Service Request Management) or from the Backlog below.
 
 ## Future — Phase 3: Enterprise modules
 

@@ -25,6 +25,7 @@ class Ticket(models.Model):
         ("in_progress", "In Progress"),
         ("pending", "Pending"),
         ("resolved", "Resolved"),
+        ("awaiting_confirmation", "Awaiting Confirmation"),
         ("closed", "Closed"),
     ]
 
@@ -48,7 +49,7 @@ class Ticket(models.Model):
     )
 
     status = models.CharField(
-        max_length=20,
+        max_length=30,
         choices=STATUS_CHOICES,
         default="open",
         db_index=True,

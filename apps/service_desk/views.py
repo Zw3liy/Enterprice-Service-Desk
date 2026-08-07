@@ -9,6 +9,7 @@ Phase 2.2.4 — Authorization Hardening
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import View
@@ -19,7 +20,7 @@ from django.views.generic import (
     DetailView,
 )
 
-from .models import Problem, Ticket
+from .models import Problem, Ticket, TicketAttachment, TicketHistory
 from .forms.ticket_forms import TicketCreateForm
 from .forms.problem_forms import ProblemCreateForm
 
@@ -201,9 +202,22 @@ class TicketDetailView(
 
         context = super().get_context_data(**kwargs)
 
-        context["history"] = self.object.history.select_related(
+        history_qs = self.object.history.select_related(
             "performed_by"
         ).order_by("-created_at")
+
+        # Work notes are filtered out for Requesters (users without
+        # change_ticket) — ADR-010, Decision 3.
+        if not self.request.user.has_perm("service_desk.change_ticket"):
+            history_qs = history_qs.exclude(
+                event_type=TicketHistory.EVENT_WORK_NOTE,
+            )
+
+        context["history"] = history_qs
+
+        context["attachments"] = self.object.attachments.select_related(
+            "uploaded_by"
+        ).order_by("-uploaded_at")
 
         context["available_technicians"] = User.objects.filter(
             groups__name="Technician",
@@ -309,6 +323,49 @@ class TicketStatusChangeView(
         return redirect("service_desk:ticket_detail", pk=ticket.pk)
 
 
+# --------------------------------------------------
+# Ticket Request Confirmation
+# --------------------------------------------------
+
+class TicketRequestConfirmationView(
+    TicketChangePermissionMixin,
+    View
+):
+    """
+    Move a resolved ticket to 'awaiting_confirmation'.
+
+    This is the Technician/Manager action that signals the
+    resolution is ready for requester review. The actual
+    close/confirm is done by the requester via
+    TicketCloseView (ADR-010, Decision 3).
+
+    Requires:
+        service_desk.change_ticket
+    """
+
+    def post(self, request, pk):
+
+        ticket = get_object_or_404(
+            get_ticket_queryset(request.user),
+            pk=pk,
+        )
+
+        try:
+            TicketService.change_status(
+                ticket,
+                "awaiting_confirmation",
+                user=request.user,
+            )
+            messages.success(
+                request,
+                "Ticket sent for requester confirmation.",
+            )
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return redirect("service_desk:ticket_detail", pk=ticket.pk)
+
+
 
 # --------------------------------------------------
 # Ticket Comment
@@ -351,20 +408,156 @@ class TicketCommentView(
         return redirect("service_desk:ticket_detail", pk=ticket.pk)
 
 
+# --------------------------------------------------
+# Ticket Work Note (internal — Technician/Manager only)
+# --------------------------------------------------
+
+class TicketWorkNoteView(
+    TicketChangePermissionMixin,
+    View
+):
+    """
+    Add an internal work note to a ticket.
+
+    Requires:
+        service_desk.change_ticket
+
+    Work notes are never visible to Requesters — the template
+    filters them out for users lacking change_ticket (see
+    ADR-010, Decision 3). This permission gate ensures only
+    Technician/Manager/Admin can add them.
+    """
+
+    def post(self, request, pk):
+
+        ticket = get_object_or_404(
+            get_ticket_queryset(request.user),
+            pk=pk,
+        )
+
+        note = request.POST.get("work_note", "")
+
+        try:
+            TicketService.add_work_note(
+                ticket,
+                note,
+                user=request.user,
+            )
+            messages.success(request, "Work note added.")
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return redirect("service_desk:ticket_detail", pk=ticket.pk)
+
+
+# --------------------------------------------------
+# Ticket Attachment Upload
+# --------------------------------------------------
+
+class TicketAttachmentUploadView(
+    TicketChangePermissionMixin,
+    View
+):
+    """
+    Upload a file attachment to a ticket.
+
+    Requires:
+        service_desk.change_ticket
+
+    Only Technician/Manager/Admin can upload attachments.
+    File extension and size are validated by TicketService.
+    """
+
+    def post(self, request, pk):
+
+        ticket = get_object_or_404(
+            get_ticket_queryset(request.user),
+            pk=pk,
+        )
+
+        uploaded_file = request.FILES.get("attachment")
+
+        if not uploaded_file:
+            messages.error(request, "No file selected.")
+            return redirect("service_desk:ticket_detail", pk=ticket.pk)
+
+        description = request.POST.get("description", "")
+
+        try:
+            TicketService.add_attachment(
+                ticket,
+                uploaded_file,
+                user=request.user,
+                description=description,
+            )
+            messages.success(request, "File attached successfully.")
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return redirect("service_desk:ticket_detail", pk=ticket.pk)
+
+
+# --------------------------------------------------
+# Ticket Attachment Download
+# --------------------------------------------------
+
+class TicketAttachmentDownloadView(
+    TicketViewPermissionMixin,
+    View
+):
+    """
+    Download a ticket attachment.
+
+    Requires:
+        service_desk.view_ticket
+
+    The attachment must belong to a ticket visible to the
+    requesting user (RBAC-scoped queryset), ensuring
+    Requesters can only download from their own tickets,
+    Technicians from assigned/unassigned, etc.
+    """
+
+    def get(self, request, pk, attachment_pk):
+
+        ticket = get_object_or_404(
+            get_ticket_queryset(request.user),
+            pk=pk,
+        )
+
+        attachment = get_object_or_404(
+            TicketAttachment,
+            pk=attachment_pk,
+            ticket=ticket,
+        )
+
+        try:
+            return FileResponse(
+                attachment.file.open("rb"),
+                as_attachment=True,
+                filename=attachment.original_filename or attachment.file.name,
+            )
+        except FileNotFoundError:
+            raise Http404("Attachment file not found on disk.")
+
+
 
 # --------------------------------------------------
 # Ticket Close / Reopen
 # --------------------------------------------------
 
 class TicketCloseView(
-    TicketChangePermissionMixin,
+    TicketViewPermissionMixin,
     View
 ):
     """
-    Close a resolved ticket.
+    Close a ticket after requester confirmation.
 
-    Requires:
-        service_desk.change_ticket
+    Per ADR-010, Decision 3: the permission mixin is
+    TicketViewPermissionMixin (view_ticket — which Requesters
+    hold) because the real gate is "are you the requester,"
+    enforced in the service layer (change_status rejects
+    non-requesters for the awaiting_confirmation → closed
+    transition).
     """
 
     def post(self, request, pk):
@@ -376,7 +569,7 @@ class TicketCloseView(
 
         try:
             TicketService.close_ticket(ticket, user=request.user)
-            messages.success(request, "Ticket closed.")
+            messages.success(request, "Ticket closed. Resolution confirmed.")
         except ValidationError as exc:
             messages.error(request, " ".join(exc.messages))
 
