@@ -110,6 +110,42 @@ class TicketSelector:
         return cls._base_queryset()[:limit]
 
     @classmethod
+    def get_active_tickets(
+        cls, queryset: QuerySet[Ticket] | None = None
+    ) -> QuerySet[Ticket]:
+        """
+        Retrieve tickets that are not yet resolved or closed
+        (open, in_progress, or pending).
+
+        Accepts an optional base queryset so it can be composed
+        with an already RBAC-scoped queryset (see
+        security.policies.get_ticket_queryset) instead of always
+        starting from the unscoped table.
+        """
+        base = queryset if queryset is not None else cls._base_queryset()
+        return base.filter(status__in=["open", "in_progress", "pending"])
+
+    @classmethod
+    def get_resolved_or_closed_tickets(
+        cls, queryset: QuerySet[Ticket] | None = None
+    ) -> QuerySet[Ticket]:
+        """
+        Retrieve tickets that are resolved or closed.
+        """
+        base = queryset if queryset is not None else cls._base_queryset()
+        return base.filter(status__in=["resolved", "closed"])
+
+    @classmethod
+    def get_high_priority_tickets(
+        cls, queryset: QuerySet[Ticket] | None = None
+    ) -> QuerySet[Ticket]:
+        """
+        Retrieve high and urgent priority tickets.
+        """
+        base = queryset if queryset is not None else cls._base_queryset()
+        return base.filter(priority__in=["high", "urgent"])
+
+    @classmethod
     def search(cls, query: str) -> QuerySet[Ticket]:
         """
         Full ticket search.

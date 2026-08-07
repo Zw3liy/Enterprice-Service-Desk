@@ -1,6 +1,6 @@
 # Engineering Roadmap
 
-Current as of milestone **IM-01**. Update item status in place as work lands; don't leave completed
+Current as of milestone **IM-02**. Update item status in place as work lands; don't leave completed
 items undated. See [ARCHITECTURE.md](ARCHITECTURE.md) for the factual basis behind each item, and
 [SESSION_STATE.md](SESSION_STATE.md) for the live snapshot of exactly where the repository is right now.
 
@@ -22,7 +22,8 @@ items undated. See [ARCHITECTURE.md](ARCHITECTURE.md) for the factual basis behi
 | **ADR-009** | Problem Management architecture decision — **ACCEPTED**. Build inside `apps/service_desk`, not `apps/problem_management`; one Problem owns exactly one RCA via `problem.rca`. See [ADR/ADR-009-Problem-Management-Architecture.md](ADR/ADR-009-Problem-Management-Architecture.md) | decision recorded in `311c913`; implemented in `8d30023`, `4c7a37c` |
 | **PM-02.1** | Problem Management domain models — `Problem`, `ProblemHistory`, `RootCauseAnalysis` (+ `FiveWhys`, `FishboneFactor`, `Evidence`, `Action`, `Approval`), migrations `0004`–`0005`, `RootCauseAnalysis.problem` as `OneToOneField` per ADR-009 | `8d30023` |
 | **PM-02.2** | `ProblemService` and `ProblemSelector` — full business logic and query layer for Problem Management, mirroring the `TicketService`/`TicketSelector` pattern; not yet wired to any view | `4c7a37c` |
-| **IM-01** | Fixed Create/Detail ticket template defects found during frontend audit: `create.html` rendered a nonexistent `category` field and omitted real `urgency`/`request_type`/`tags` fields; `detail.html` compared status/priority against uppercase literals that never matched the real lowercase `Ticket` choices (status/priority badge coloring was silently dead), referenced a nonexistent `ticket.attachment`, and used unloaded Bootstrap Icons classes. 4 new regression tests added. | *(this commit)* |
+| **IM-01** | Fixed Create/Detail ticket template defects found during frontend audit: `create.html` rendered a nonexistent `category` field and omitted real `urgency`/`request_type`/`tags` fields; `detail.html` compared status/priority against uppercase literals that never matched the real lowercase `Ticket` choices (status/priority badge coloring was silently dead), referenced a nonexistent `ticket.attachment`, and used unloaded Bootstrap Icons classes. 4 new regression tests added. | `23a2e8d` |
+| **IM-02** | Incident Dashboard stabilization. `IncidentDashboardView` had **no URL route at all** (fully unreachable, beyond the previously-known missing template) and used an **unscoped queryset** (`Ticket.objects`, bypassing RBAC — a Requester would have seen every ticket system-wide). Fixed: added `service_desk:incident_dashboard` route, created `service_desk/incidents.html`, scoped the base queryset through `get_ticket_queryset(user)`, corrected `status__in`/`priority__in` to real lowercase choices (`"UNASSIGNED"`/`"CRITICAL"` were never valid), and moved the categorization queries into 3 new `TicketSelector` methods (`get_active_tickets`, `get_resolved_or_closed_tickets`, `get_high_priority_tickets`) instead of inlining ORM filters in the view. 6 new regression tests (RBAC scoping + correct categorization + reachability). | *(this commit)* |
 
 ## Current
 
@@ -38,13 +39,12 @@ Ticket *is* the Incident record in this codebase (`IncidentDashboardView` alread
 directly rather than a separate model) — Phase 1 extends the existing `Ticket`/`TicketService` machinery,
 it does not introduce a parallel Incident model.
 
-1. **IM-02** — `OPEN`. Fix `IncidentDashboardView`'s own pre-existing defects (tracked below in Backlog):
-   missing `service_desk/incidents.html` template, wrong-case/invalid `status__in`/`priority__in` filter
-   values.
-2. **IM-03** — `OPEN`. Wire `TicketService`/`TicketSelector` into views — currently implemented but
-   unused; ticket views still talk to the ORM/security policies directly rather than through the service
-   layer both this document and `WORKFLOW.md` mandate.
-3. **IM-04** — `OPEN` — **needs an architecture decision before implementation, not a guess.** "Work
+1. **IM-03** — `OPEN`. Wire `TicketService` into the mutation-side views (`TicketCreateView` and any
+   future assign/status-change views still bypass it, calling the ORM/security policies directly) — the
+   read side of this is now partially established: IM-02 already composes `TicketSelector` methods with
+   the RBAC-scoped `get_ticket_queryset(user)` queryset in `IncidentDashboardView`, which is the pattern
+   IM-03 should extend to `TicketService` on the write side.
+2. **IM-04** — `OPEN` — **needs an architecture decision before implementation, not a guess.** "Work
    notes", "Attachments", and "Requester confirmation" from the Phase 1 feature list each imply a real
    schema/behavior choice not yet made:
    - Work notes: does this reuse `TicketHistory.EVENT_COMMENT` (already implemented via
@@ -56,10 +56,10 @@ it does not introduce a parallel Incident model.
      gate), or is it advisory only? This changes `TicketService.close_ticket`'s preconditions.
 
    Flagging these now rather than inventing model/behavior changes silently.
-4. **CI-01** — `OPEN`. Populate the three empty GitHub Actions workflow files
+3. **CI-01** — `OPEN`. Populate the three empty GitHub Actions workflow files
    (`.github/workflows/django-tests.yml` at minimum) to run `manage.py check` and `manage.py test` on
    every push/PR — exactly what would have caught the FIX-01 regression (INC-001) automatically.
-5. **SEC-01** — `OPEN`. Move `SECRET_KEY` out of `ticketing/settings.py` into an environment variable;
+4. **SEC-01** — `OPEN`. Move `SECRET_KEY` out of `ticketing/settings.py` into an environment variable;
    gate `DEBUG` behind an env flag; add a `.env.example`.
 
 ## Next — Phase 2: Problem Management UI
@@ -89,9 +89,15 @@ doc, or a target milestone number yet.
 
 ## Backlog / Technical Debt
 
-Tracked, unscheduled. Pull into "Next" when prioritized. (The `IncidentDashboardView` template/filter
-defect that used to be listed here is now tracked as **IM-02** under Phase 1, above.)
+Tracked, unscheduled. Pull into "Next" when prioritized. (The `IncidentDashboardView` template/filter/
+routing/RBAC defects that used to be listed here were fixed in **IM-02** — see Completed, above.)
 
+- **`OPEN`** — `DashboardView` (the plain one at `service_desk:dashboard`, not `IncidentDashboardView`)
+  has no `get_context_data` at all, but its template (`service_desk/dashboard.html`) expects
+  `total_tickets`/`open_tickets`/`resolved_tickets`/`recent_tickets` — every one of those renders as the
+  template's `|default:"0"` fallback or an empty state today. Found during IM-02 inspection; left
+  out of scope since IM-02 was specifically about `IncidentDashboardView`. Same fix shape as IM-02: base
+  on `get_ticket_queryset(user)`, use `TicketSelector`/`dashboard_statistics()`.
 - **`OPEN`** — Delete the dead duplicate template files found during the IM-01 frontend audit:
   `templates/navbar.html` (byte-identical to the live `templates/includes/navbar.html`) and
   `templates/sidebar.html` (a stale, diverged duplicate of the live `templates/includes/sidebar.html`).

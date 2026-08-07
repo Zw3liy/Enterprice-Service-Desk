@@ -6,7 +6,6 @@ Phase 2.2.4 — Authorization Hardening
 """
 
 
-from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import (
     TemplateView,
@@ -20,6 +19,7 @@ from .forms.ticket_forms import TicketCreateForm
 
 from .security.policies import get_ticket_queryset
 from .security.mixins import TicketPermissionMixin
+from .selectors.ticket_selector import TicketSelector
 
 
 
@@ -182,21 +182,26 @@ class TicketDetailView(
 # Incident Dashboard
 # --------------------------------------------------
 
-class IncidentDashboardView(PermissionRequiredMixin, TemplateView):
-    template_name = "service_desk/incidents.html"
+class IncidentDashboardView(TicketPermissionMixin, TemplateView):
+    """
+    Incident dashboard.
 
-    permission_required = "service_desk.view_ticket"
+    Ticket is the incident record in this codebase (there is no
+    separate Incident model) — visibility is scoped through
+    security.policies.get_ticket_queryset(), matching every other
+    ticket view in this module.
+    """
+
+    template_name = "service_desk/incidents.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        incidents = (
-            Ticket.objects
-            .select_related(
-                "department",
-                "assigned_to",
-            )
-            .order_by("-created_at")
+        incidents = get_ticket_queryset(
+            self.request.user
+        ).select_related(
+            "department",
+            "assigned_to",
         )
 
         context.update({
@@ -207,29 +212,13 @@ class IncidentDashboardView(PermissionRequiredMixin, TemplateView):
                 incidents.count(),
 
             "pending_incidents":
-                incidents.filter(
-                    status__in=[
-                        "OPEN",
-                        "IN_PROGRESS",
-                        "UNASSIGNED",
-                    ]
-                ),
+                TicketSelector.get_active_tickets(incidents),
 
             "resolved_incidents":
-                incidents.filter(
-                    status__in=[
-                        "RESOLVED",
-                        "CLOSED",
-                    ]
-                ),
+                TicketSelector.get_resolved_or_closed_tickets(incidents),
 
             "critical_incidents":
-                incidents.filter(
-                    priority__in=[
-                        "HIGH",
-                        "CRITICAL",
-                    ]
-                ),
+                TicketSelector.get_high_priority_tickets(incidents),
 
         })
 
