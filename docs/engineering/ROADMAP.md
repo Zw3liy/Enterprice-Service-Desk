@@ -1,6 +1,6 @@
 # Engineering Roadmap
 
-Current as of milestone **ARCH-01**. Update item status in place as work lands; don't leave completed
+Current as of milestone **RBAC-01**. Update item status in place as work lands; don't leave completed
 items undated. See [ARCHITECTURE.md](ARCHITECTURE.md) for the factual basis behind each item, and
 [SESSION_STATE.md](SESSION_STATE.md) for the live snapshot of exactly where the repository is right now.
 
@@ -29,7 +29,9 @@ items undated. See [ARCHITECTURE.md](ARCHITECTURE.md) for the factual basis behi
 | **CI-01** | GitHub Actions CI pipeline. All three workflow files were 0 bytes. `django-tests.yml`: checkout → `setup-python` (3.14) → install Django (pinned to the exact local version, `5.2.16`) → `manage.py check` → `makemigrations --check --dry-run` → `manage.py test`, on every push/PR. `security-scan.yml`: same setup, runs `manage.py check --deploy` (Django's built-in production-readiness check — flags exactly what SEC-01 hardened; confirmed locally it exits 0 with warnings-only under default dev settings, so it reports without blocking on expected dev-mode findings). `deployment.yml` left as a documented no-op per explicit instruction — comment-only, no `on`/`jobs` keys, will show as an invalid/skipped workflow in the Actions UI by design. **No `requirements.txt`/`pyproject.toml`/`Pipfile` exists anywhere in this repository** (confirmed exhaustively) — every first-party import under `apps/service_desk/`/`ticketing/` was scanned and only uses stdlib + Django, so both real workflows install Django directly, pinned, rather than inventing a dependency manifest. | `c173415` |
 | **ITSM-ROADMAP** | Full repository audit across all 9 core ITSM capability areas plus AI/Notification/Security cross-cutting concerns — see [ITSM_ROADMAP.md](ITSM_ROADMAP.md). Confirms Incident and Problem Management are the only areas with real implementation; every other capability's scaffold is empty at the model level (verified, not assumed). P0–P3 prioritization with reasoning, module dependency map, sprint-level plan. Approved by the repository owner; this document is the standing execution order going forward. | `073f7f9` |
 | **DEP-01** | Dependency manifest. Added `requirements.txt` at repo root (`Django==5.2.16` — the one verified runtime dependency). Updated both CI workflows to `pip install -r requirements.txt` (with `cache: pip`, now viable since a lockfile-equivalent exists) instead of the CI-01-era inline pinned install. Verified locally: `pip install -r requirements.txt` reproduces a working environment, `check`/`makemigrations --check`/`test` (44/44) all still pass, both workflow YAML files re-validated as syntactically correct. Deliberately did **not** add a dependency-audit tool (e.g. `pip-audit`) even though one is now technically possible — that's a new package/tool addition, out of this item's scope, needs its own approval. | `c140d25` |
-| **ARCH-01** | Resolved the `models.py`/`models/` and `views.py`/`views/` file-collision hazard (ARCHITECTURE.md §4) that already caused INC-001. Re-verified which side was live (unchanged from the original finding — `models/` package live, `views.py` flat file live), grepped for any direct reference to the dead paths (none found), then deleted `apps/service_desk/models.py` (the dead flat file) and `apps/service_desk/views/` (the dead directory). Verified both before and after: import resolution unchanged, `manage.py check` clean, zero migration drift, 44/44 tests pass. | *(this commit)* |
+| **ARCH-01** | Resolved the `models.py`/`models/` and `views.py`/`views/` file-collision hazard (ARCHITECTURE.md §4) that already caused INC-001. Re-verified which side was live (unchanged from the original finding — `models/` package live, `views.py` flat file live), grepped for any direct reference to the dead paths (none found), then deleted `apps/service_desk/models.py` (the dead flat file) and `apps/service_desk/views/` (the dead directory). Verified both before and after: import resolution unchanged, `manage.py check` clean, zero migration drift, 44/44 tests pass. | `14f36e6` |
+| **ADR-010** | Recorded the three policy decisions from [ITSM_ROADMAP.md](ITSM_ROADMAP.md) P0 item 3, given directly by the repository owner after two prior unanswered requests — see [ADR/ADR-010-Visibility-and-IM-04-Scope-Decisions.md](ADR/ADR-010-Visibility-and-IM-04-Scope-Decisions.md): (1) Requesters cannot access Problems at all; Technician/Manager/Admin mirror the existing Ticket RBAC shape. (2) Technicians see assigned **and unassigned** tickets (queue-based self-assignment) — flagged that there's no "queue"/department concept to scope this narrower without a new field, so it's unscoped (all unassigned tickets, system-wide). (3) IM-04 — build all three: Work Notes, Attachments, Requester Confirmation — with the technical shape for each recorded in the ADR since the request specified behavior, not schema. | *(this commit)* |
+| **RBAC-01** | Implemented Decisions 1 and 2 from ADR-010. Added `get_problem_queryset(user)` to `security/policies.py`, structurally identical to `get_ticket_queryset` with Requester forced to `Problem.objects.none()`. Changed `get_ticket_queryset`'s Technician branch to `Q(assigned_to=user) \| Q(assigned_to__isnull=True)`. Added `Problem*PermissionMixin` set to `security/mixins.py` (mirrors the `Ticket*PermissionMixin` set) for PM-03 to use. Updated `create_roles.py` to grant Technician/Manager/Administrator the new `*_problem` permissions (Requester gets none, per Decision 1). Updated 2 tests whose assertions encoded the *old* Technician rule (not real regressions — `test_technician_only_sees_assigned_tickets` → renamed and rewritten with a proper "assigned to someone else" exclusion case using a new second-technician fixture; IM-03's unassigned-ticket test flipped from expecting 404 to 200, plus a new self-assignment test). | *(this commit)* |
 
 ## Current
 
@@ -45,39 +47,23 @@ Ticket *is* the Incident record in this codebase (`IncidentDashboardView` alread
 directly rather than a separate model) — Phase 1 extends the existing `Ticket`/`TicketService` machinery,
 it does not introduce a parallel Incident model.
 
-1. **IM-04** — `OPEN` — **blocked on 3 unanswered decisions, asked directly and not yet answered.**
-   "Work notes", "Attachments", and "Requester confirmation" from the Phase 1 feature list each imply a
-   real schema/behavior choice:
-   - Work notes: does this reuse `TicketHistory.EVENT_COMMENT` (already implemented via
-     `TicketService.add_comment`, now exposed via `TicketCommentView` as of IM-03) with a visibility flag
-     added, or stay undifferentiated (current state — every comment visible to anyone who can see the
-     ticket)?
-   - Attachments: `Ticket` has no file field today (`MEDIA_ROOT`/`MEDIA_URL` are already configured in
-     `ticketing/settings.py`, unused). Needs a decision on a single `FileField` vs. a related
-     `TicketAttachment` model. **Do not wire in `templates/tickets/edit.html`'s existing attachment UI** —
-     confirmed during IM-03 inspection to be dead Arena-era scaffolding: it uses `esd-*` CSS classes that
-     don't exist in the loaded stylesheet, and references `ticket.ticket_number`/`form.requester_name`/
-     `form.work_email`, none of which exist on the real `Ticket` model or `TicketCreateForm`.
-   - Requester confirmation: hard workflow gate (new field, `close_ticket` precondition change) or
-     advisory only (no schema change)?
+Both open decisions that used to block this phase are **RESOLVED** — see ADR-010 and the RBAC-01 entry in
+Completed, above.
 
-   These were asked directly (three-question prompt) during IM-03 and went unanswered — still open, not
-   decided by default. Do not guess at them.
-2. **`OPEN` — possible RBAC gap, needs a decision, not a silent fix.** `get_ticket_queryset`'s Technician
-   branch (`security/policies.py`) is `Ticket.objects.filter(assigned_to=user)` — a Technician cannot see
-   an unassigned ticket at all, confirmed during IM-03. This may be intentional (triage/routing is a
-   Manager/Administrator responsibility) or a gap (technicians usually need to see and claim an unassigned
-   department queue in ITSM tooling). Not touched — changing RBAC visibility rules deserves the same
-   explicit-decision treatment as the IM-04 items, not a silent expansion.
+1. **IM-04** — `ACCEPTED`, implementation next. Work Notes, Attachments, and Requester Confirmation, all
+   three, per the technical shape recorded in ADR-010, Decision 3. **Do not wire in
+   `templates/tickets/edit.html`'s existing attachment UI** — confirmed during IM-03 inspection to be dead
+   Arena-era scaffolding: it uses `esd-*` CSS classes that don't exist in the loaded stylesheet, and
+   references `ticket.ticket_number`/`form.requester_name`/`form.work_email`, none of which exist on the
+   real `Ticket` model or `TicketCreateForm`.
 
 ## Next — Phase 2: Problem Management UI
 
-Blocked on nothing architecturally (ADR-009 accepted, PM-02.1/PM-02.2 done) — next concrete step is
-views/urls/templates/forms wiring `ProblemService`/`ProblemSelector` into a Problem dashboard, RCA
-interface, known-error workflow, and incident-linking UI, per
-[DESIGN_PM-02_PROBLEM_MANAGEMENT.md](DESIGN_PM-02_PROBLEM_MANAGEMENT.md). One open item carried over:
-Requester-role visibility into Problems (§7 of that doc) still needs an explicit answer before
-`security/policies.py` gets a `get_problem_queryset`.
+Blocked on nothing — ADR-009 accepted, PM-02.1/PM-02.2 done, ADR-010 Decision 1 resolves the last open
+question (Requester-visibility into Problems: none, at all). `get_problem_queryset` implemented in
+RBAC-01. Next concrete step: views/urls/templates/forms wiring `ProblemService`/`ProblemSelector` into a
+Problem dashboard, RCA interface, known-error workflow, and incident-linking UI, per
+[DESIGN_PM-02_PROBLEM_MANAGEMENT.md](DESIGN_PM-02_PROBLEM_MANAGEMENT.md).
 
 ## Future — Phase 3: Enterprise modules
 

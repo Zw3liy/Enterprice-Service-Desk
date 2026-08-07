@@ -141,11 +141,11 @@ class TicketWorkflowViewTests(TestCase):
 
         self.assertEqual(response.status_code, 403)
 
-    def test_technician_cannot_see_unassigned_ticket(self):
+    def test_technician_can_see_unassigned_ticket(self):
 
-        # Confirms the documented RBAC rule ("Technician: assigned
-        # tickets") actually holds for an unassigned ticket, not
-        # just tickets belonging to someone else.
+        # ADR-010, Decision 2: Technicians can see unassigned
+        # tickets (queue-based self-assignment), not just tickets
+        # already assigned to them.
         self.client.login(
             username="im03_technician",
             password="password123",
@@ -153,7 +153,24 @@ class TicketWorkflowViewTests(TestCase):
 
         response = self.client.get(f"/tickets/{self.ticket.pk}/")
 
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 200)
+
+    def test_technician_can_self_assign_unassigned_ticket(self):
+
+        self.client.login(
+            username="im03_technician",
+            password="password123",
+        )
+
+        response = self.client.post(
+            f"/tickets/{self.ticket.pk}/assign/",
+            {"technician_id": self.technician.pk},
+        )
+
+        self.ticket.refresh_from_db()
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(self.ticket.assigned_to, self.technician)
 
     # --------------------------------------------------
     # Status change (technician acting on a ticket assigned to them)

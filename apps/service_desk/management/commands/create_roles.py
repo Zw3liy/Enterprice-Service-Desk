@@ -20,7 +20,7 @@ from django.contrib.auth.models import (
 
 from django.contrib.contenttypes.models import ContentType
 
-from apps.service_desk.models import Ticket
+from apps.service_desk.models import Problem, Ticket
 
 
 
@@ -33,6 +33,10 @@ class Command(BaseCommand):
 
         ticket_content_type = ContentType.objects.get_for_model(
             Ticket
+        )
+
+        problem_content_type = ContentType.objects.get_for_model(
+            Problem
         )
 
 
@@ -56,11 +60,33 @@ class Command(BaseCommand):
                 content_type=ticket_content_type,
                 codename="delete_ticket",
             ),
+
+            "view_problem": Permission.objects.get(
+                content_type=problem_content_type,
+                codename="view_problem",
+            ),
+
+            "add_problem": Permission.objects.get(
+                content_type=problem_content_type,
+                codename="add_problem",
+            ),
+
+            "change_problem": Permission.objects.get(
+                content_type=problem_content_type,
+                codename="change_problem",
+            ),
+
+            "delete_problem": Permission.objects.get(
+                content_type=problem_content_type,
+                codename="delete_problem",
+            ),
         }
 
 
         roles = {
 
+            # Requesters get no Problem permissions at all — ADR-010,
+            # Decision 1: Requesters cannot access Problem records.
             "Requester": [
                 permissions["view"],
                 permissions["add"],
@@ -70,12 +96,18 @@ class Command(BaseCommand):
             "Technician": [
                 permissions["view"],
                 permissions["change"],
+                permissions["view_problem"],
+                permissions["add_problem"],
+                permissions["change_problem"],
             ],
 
 
             "Manager": [
                 permissions["view"],
                 permissions["change"],
+                permissions["view_problem"],
+                permissions["add_problem"],
+                permissions["change_problem"],
             ],
 
 
@@ -84,6 +116,10 @@ class Command(BaseCommand):
                 permissions["add"],
                 permissions["change"],
                 permissions["delete"],
+                permissions["view_problem"],
+                permissions["add_problem"],
+                permissions["change_problem"],
+                permissions["delete_problem"],
             ],
 
         }
