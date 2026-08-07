@@ -25,19 +25,19 @@ step). An out-of-date `SESSION_STATE.md` is itself a defect — treat it as one 
 
 | | |
 |---|---|
-| **Current Milestone** | RBAC-01 — implement ADR-010 Decisions 1 & 2 (P0 item 3 of the approved ITSM_ROADMAP.md execution order, now that decisions are actually recorded) |
-| **Current Sprint** | P0 wrapping up → P1 (PM-03) next (see [ITSM_ROADMAP.md](ITSM_ROADMAP.md) and [ROADMAP.md](ROADMAP.md)) |
-| **Current Objective** | P0 is now fully done (dependency manifest, dead-scaffold cleanup, and — as of this update — the three decisions recorded in ADR-010 and Decisions 1/2 implemented). Next: PM-03 (Problem Management UI), then IM-04 (Decision 3's three features), per the repository owner's explicit execution order. |
-| **Overall Repository Health** | **Improving, still mixed.** Core `service_desk` app is healthy (`manage.py check` clean, 45/45 tests passing, migrations in sync, zero drift). `TicketService` is wired into views. `ticketing/settings.py` no longer hardcodes secrets/DEBUG/hosts (SEC-01). CI runs on every push/PR (CI-01) from a real `requirements.txt` (DEP-01). The `models.py`/`views.py` file-collision hazard is resolved (ARCH-01). RBAC now has `get_problem_queryset` (Requester: none) and Technicians see unassigned tickets too (ADR-010). Problem Management's model/service/selector/RBAC layers are all complete; only the UI (PM-03) is missing. Surrounding repository still has scaffolding debt (~59 unregistered apps, unchanged — a separate, larger scope decision). Full detail: [ARCHITECTURE.md](ARCHITECTURE.md). |
+| **Current Milestone** | PM-03 — Problem Management UI (P1 of the approved ITSM_ROADMAP.md execution order — DONE) |
+| **Current Sprint** | P1 done → IM-04 next (see [ITSM_ROADMAP.md](ITSM_ROADMAP.md) and [ROADMAP.md](ROADMAP.md)) |
+| **Current Objective** | P0 and P1 are both fully done. Next: IM-04 (ADR-010 Decision 3 — Work Notes, Attachments, Requester Confirmation), per the repository owner's explicit execution order (record → PM-03 → IM-04). |
+| **Overall Repository Health** | **Improving, still mixed.** Core `service_desk` app is healthy (`manage.py check` clean, 54/54 tests passing, migrations in sync, zero drift). `ticketing/settings.py` no longer hardcodes secrets/DEBUG/hosts (SEC-01). CI runs on every push/PR (CI-01) from a real `requirements.txt` (DEP-01). The `models.py`/`views.py` file-collision hazard is resolved (ARCH-01). RBAC has `get_problem_queryset` (Requester: none) and Technicians see unassigned tickets too (ADR-010, RBAC-01). **Problem Management is now fully reachable end-to-end** — models (PM-02.1) → services/selectors (PM-02.2) → views/urls/forms/templates (PM-03) — the same shape Incident Management reached across IM-01–IM-03. Surrounding repository still has scaffolding debt (~59 unregistered apps, unchanged — a separate, larger scope decision). Full detail: [ARCHITECTURE.md](ARCHITECTURE.md). |
 
 ## Git Status
 
 | | |
 |---|---|
 | **Current Branch** | `feature/incident-management-dashboard` |
-| **Working Tree Status** | RBAC-01 changes about to be committed locally as of this update (see Unpushed Commits) |
-| **Ahead / Behind Origin** | 9 / 0 before this session's ADR-010 + RBAC-01 commits, verified via `git rev-list --left-right --count` |
-| **Latest Commit prior to this update** | `14f36e6` — "ARCH-01 delete dead models.py and views/ file-collision hazard" |
+| **Working Tree Status** | PM-03 changes about to be committed locally as of this update (see Unpushed Commits) |
+| **Ahead / Behind Origin** | 10 / 0 before this session's PM-03 commit, verified via `git rev-list --left-right --count` |
+| **Latest Commit prior to this update** | `98ea39b` — "ADR-010 record and implement Problem/Technician visibility decisions" |
 
 **Note on process continuity:** this session was interrupted mid-write while finishing SEC-01's documentation
 (caught mid-edit of this file's own predecessor state). The repository owner committed the SEC-01 code
@@ -68,8 +68,9 @@ prompt's claimed baseline — per this file's own "never assume, always verify" 
 | **ITSM-ROADMAP** | Full 9-module ITSM capability audit, P0–P3 prioritization, sprint plan — see [ITSM_ROADMAP.md](ITSM_ROADMAP.md). Approved by the repository owner; now the standing execution order. | `073f7f9` |
 | **DEP-01** | Dependency manifest: `requirements.txt` (`Django==5.2.16`) added; both CI workflows switched from an inline pinned install to `pip install -r requirements.txt` with pip caching. See ROADMAP.md for full detail. | `c140d25` |
 | **ARCH-01** | Resolved the `models.py`/`models/` and `views.py`/`views/` file-collision hazard (the exact class of bug that caused INC-001). Re-verified which side was live before touching anything, grepped for direct references to the dead paths (none found), deleted `apps/service_desk/models.py` and `apps/service_desk/views/`. Verified before and after: import resolution unchanged, `check` clean, zero migration drift, 44/44 tests pass. | `14f36e6` |
-| **ADR-010** | Recorded the three ITSM_ROADMAP.md P0-item-3 decisions, given directly by the repository owner. See [ADR/ADR-010-Visibility-and-IM-04-Scope-Decisions.md](ADR/ADR-010-Visibility-and-IM-04-Scope-Decisions.md). | *(this session, see Unpushed Commits)* |
-| **RBAC-01** | Implemented ADR-010 Decisions 1 & 2: `get_problem_queryset` added (Requester → none); `get_ticket_queryset`'s Technician branch widened to assigned-or-unassigned; `Problem*PermissionMixin` set added; `create_roles.py` grants Technician/Manager/Admin the new `*_problem` permissions. Updated 2 tests whose assertions encoded the old Technician rule (not regressions) plus added 1 new self-assignment test. 45/45 tests pass. | *(this session, see Unpushed Commits)* |
+| **ADR-010** | Recorded the three ITSM_ROADMAP.md P0-item-3 decisions, given directly by the repository owner. See [ADR/ADR-010-Visibility-and-IM-04-Scope-Decisions.md](ADR/ADR-010-Visibility-and-IM-04-Scope-Decisions.md). | `98ea39b` |
+| **RBAC-01** | Implemented ADR-010 Decisions 1 & 2: `get_problem_queryset` added (Requester → none); `get_ticket_queryset`'s Technician branch widened to assigned-or-unassigned; `Problem*PermissionMixin` set added; `create_roles.py` grants Technician/Manager/Admin the new `*_problem` permissions. Updated 2 tests whose assertions encoded the old Technician rule (not regressions) plus added 1 new self-assignment test. 45/45 tests pass. | `98ea39b` |
+| **PM-03** | Problem Management UI — see the full entry in ROADMAP.md's Completed table. 13 new views, 13 URL routes, 1 form, 3 templates. Verified twice: a rollback-wrapped manual transaction exercising every view end-to-end, then 9 automated tests. 54/54 tests pass. Problem Management is now fully reachable, matching Incident Management's shape. | *(this session, see Unpushed Commits)* |
 
 ## Unpushed Commits
 
@@ -77,20 +78,20 @@ Commits through `311c913` were committed **and pushed** by the repository owner 
 session) — confirmed via `git log --oneline origin/...` matching local, author
 `Zw3liy <goodwill00765@gmail.com>`. `23a2e8d` (IM-01), `1aed27d` (IM-02), `ea82610` (IM-03), `bf89826`
 (SEC-01), `56c98bc` (credential-cleanup follow-up), `c173415` (CI-01), `073f7f9` (ITSM-ROADMAP), `c140d25`
-(DEP-01), and `14f36e6` (ARCH-01) are all local-only, unpushed — two of them were committed by the
-repository owner directly, not by this session, but remain unpushed same as the rest. As of this update,
-**ADR-010's and RBAC-01's changes are about to be committed locally** under the standing local-commit
-authorization for this program (push still requires separate explicit approval — see
+(DEP-01), `14f36e6` (ARCH-01), and `98ea39b` (ADR-010 + RBAC-01) are all local-only, unpushed — two of
+them were committed by the repository owner directly, not by this session, but remain unpushed same as
+the rest. As of this update, **PM-03's changes are about to be committed locally** under the standing
+local-commit authorization for this program (push still requires separate explicit approval — see
 [WORKFLOW.md](WORKFLOW.md)). Re-run `git status` /
 `git rev-list --left-right --count origin/feature/incident-management-dashboard...HEAD` rather than
 trusting this section once further commits land — it will go stale the moment the next milestone starts.
 
 ## Current Roadmap Item
 
-- **Priority:** RBAC-01 — implement ADR-010 Decisions 1 & 2 (P0 item 3, now unblocked).
-- **Reason:** ADR-010 recorded the repository owner's actual decisions (after two prior unanswered requests). Implementing the RBAC pieces (Decisions 1 & 2) immediately, since Decision 1 is what unblocks PM-03 — the next thing in the explicit execution order.
-- **Dependencies:** None for Decisions 1 & 2 (no schema change). Decision 3 (IM-04) needs a migration and comes after PM-03, per the given execution order.
-- **Expected completion:** This session; committed locally under the standing per-milestone local-commit authorization, push pending separate explicit approval. **Next: PM-03 (Problem Management UI), fully unblocked now**, then IM-04.
+- **Priority:** PM-03 — Problem Management UI (P1, now DONE).
+- **Reason:** Fully unblocked by ADR-010 Decision 1 (Requesters: no Problem access at all) and RBAC-01's `get_problem_queryset`. Explicit execution order from the repository owner: record decisions → PM-03 → IM-04.
+- **Dependencies:** None — no schema change, `Problem`/`ProblemHistory`/`RootCauseAnalysis` existed since PM-02.1.
+- **Expected completion:** This session; committed locally under the standing per-milestone local-commit authorization, push pending separate explicit approval. **Next: IM-04** (ADR-010 Decision 3 — Work Notes, Attachments, Requester Confirmation), the last item in the given execution order.
 
 ## Open Decisions
 
@@ -106,8 +107,8 @@ trusting this section once further commits land — it will go stale the moment 
 
 ### IM-04 — Work notes / Attachments / Requester confirmation semantics (Phase 1)
 
-- **Status:** **RESOLVED** — ADR-010, Decision 3. Build all three. Technical shape for each recorded in
-  the ADR. Implementation is next, after PM-03, per the given execution order.
+- **Status:** **RESOLVED (decision), not yet implemented.** ADR-010, Decision 3. Build all three.
+  Technical shape for each recorded in the ADR. **This is the current next task** — PM-03 is done.
 
 ### Technician visibility of unassigned tickets (found during IM-03)
 
@@ -121,7 +122,7 @@ trusting this section once further commits land — it will go stale the moment 
 - **Scaffolding debt:** ~59 of ~60 apps under `apps/` are unregistered, untested dead code (ARCHITECTURE.md §2). Not a blocker to current work, but a standing risk that someone wires one in without realizing it has no tests or service-layer discipline.
 - **`develop` branch divergence:** diverged since the second commit in repository history, missing ~130 files present on `main`. Not a blocker to this branch's work, but unresolved.
 - **Dead duplicate templates:** `templates/navbar.html` (identical to live `templates/includes/navbar.html`) and `templates/sidebar.html` (stale duplicate of live `templates/includes/sidebar.html`) — found during IM-01's audit, not yet removed.
-- **`ProblemService`/`ProblemSelector` unused:** implemented (PM-02.2) but no view/URL calls them yet — PM-03 is next.
+- **RCA sub-model creation UI missing:** `FiveWhys`/`FishboneFactor`/`Evidence`/`Action`/`Approval` render read-only on the Problem detail page (PM-03) but have no creation UI — `ProblemService` has no methods to create them. Flagged as a follow-up, not scheduled in P0–P3.
 - **`DashboardView` (plain, not Incident) has no context data:** its template expects ticket stats that are never supplied — found during IM-02 inspection, left out of scope since IM-02 was specifically about `IncidentDashboardView`. Same fix shape applies (`get_ticket_queryset` + `TicketSelector`).
 - **`templates/tickets/edit.html` is dead, incompatible scaffolding:** uses `esd-*` CSS classes not defined anywhere in the loaded stylesheet, references `ticket.ticket_number`/`form.requester_name`/`form.work_email`/`form.attachment`, none of which exist on the real `Ticket` model or `TicketCreateForm`. Not wired to any view. Confirmed during IM-03 inspection — do not resurrect as-is when IM-04's attachments get built.
 
@@ -135,10 +136,10 @@ trusting this section once further commits land — it will go stale the moment 
 Highest priority first, following the repository owner's explicit execution order — see
 [ROADMAP.md](ROADMAP.md) for full detail and status tracking:
 
-1. **PM-03** — Problem Management UI (views, URLs, forms, templates, RBAC tests, documentation). Fully unblocked now.
-2. **IM-04** — Work Notes, Attachments, Requester Confirmation, per ADR-010 Decision 3's technical shape. Comes after PM-03.
-3. Fix `DashboardView`'s missing context data (same shape as IM-02) — opportunistic cleanup, not in the approved execution order.
-4. Get a scope decision on the ~59 unregistered scaffold apps (ITSM_ROADMAP.md P2/P3 territory).
+1. **IM-04** — Work Notes, Attachments, Requester Confirmation, per ADR-010 Decision 3's technical shape. Last item in the given execution order (record → PM-03 → IM-04); PM-03 is done.
+2. Fix `DashboardView`'s missing context data (same shape as IM-02) — opportunistic cleanup, not in the approved execution order.
+3. Get a scope decision on the ~59 unregistered scaffold apps (ITSM_ROADMAP.md P2/P3 territory).
+4. Consider a service + UI pass for RCA sub-model creation (`FiveWhys`/`FishboneFactor`/`Evidence`/`Action`/`Approval`) — currently read-only, flagged in PM-03 as an explicit gap, not scheduled.
 7. Get a scope decision on the ~59 unregistered scaffold apps.
 
 ## Required Checks Before Commit
@@ -235,7 +236,7 @@ five while already in that section) and `ROADMAP.md`/`SESSION_STATE.md` accordin
 under the standing per-milestone authorization; not pushed. P0 items 1 and 2 done; item 3 (the three
 decisions) had been asked for twice and gone unanswered both times.
 
-**Last session summary (this update):** ADR-010 + RBAC-01 — the repository owner gave the three decisions
+**Previous session summary:** ADR-010 + RBAC-01 — the repository owner gave the three decisions
 directly (Requesters cannot access Problems; Technicians see assigned + unassigned tickets; build all
 three IM-04 features). Recorded them in `ADR/ADR-010-Visibility-and-IM-04-Scope-Decisions.md`, including
 the technical shape chosen for each since the request specified behavior, not schema, and flagged one real
@@ -246,11 +247,30 @@ to `security/policies.py` (Requester → none, others mirror `get_ticket_queryse
 `get_ticket_queryset`'s Technician branch widened to `Q(assigned_to=user) | Q(assigned_to__isnull=True)`;
 `Problem*PermissionMixin` set added to `security/mixins.py`; `create_roles.py` updated to grant the new
 `*_problem` permissions to Technician/Manager/Administrator only. Fixed 2 tests whose assertions encoded
-the *old* Technician rule (not regressions — `test_authorization.py` needed a genuine new fixture, a
-second technician with a ticket assigned to them, to properly test the "not assigned to someone else"
-exclusion now that "unassigned" no longer implies "hidden from technicians"), and added a new
-self-assignment test. 45/45 tests pass, `check` clean, zero migration drift (none expected — pure RBAC
-logic, no schema touched). Committed locally under the standing per-milestone authorization; not pushed.
+the *old* Technician rule (not regressions), and added a new self-assignment test. 45/45 tests pass.
+Committed locally under the standing per-milestone authorization; not pushed.
 
-**PM-03 (Problem Management UI) is now fully unblocked** — that's next, then IM-04's three features
-(Decision 3), per the repository owner's explicit execution order.
+**Last session summary (this update):** PM-03 — built the complete Problem Management UI on top of the
+models/services/selectors/RBAC that already existed. Inspected `ProblemService`/`ProblemSelector` first to
+confirm exactly what was already supported (full lifecycle, RCA auto-creation, known-error gating, ticket
+linking, repeat-incident detection) and, just as importantly, what wasn't (no methods to create
+`FiveWhys`/`FishboneFactor`/`Evidence`/`Action`/`Approval` records) — scoped PM-03 to match reality rather
+than inventing new service methods mid-UI-build. Added `ProblemCreateForm`, 13 views (3 CRUD + 10 workflow
+actions mirroring the Ticket action-view pattern exactly), 13 URL routes, and 3 templates. Verified the
+whole flow twice before calling it done: first a rollback-wrapped manual transaction hitting every view in
+sequence (create → assign → investigate → RCA auto-created → root cause → known-error → link ticket →
+comment → resolve → close → reopen → unlink → confirmed Requester gets 403) with the transaction rolled
+back afterward so nothing touched the real dev database, then a proper automated test module (9 tests:
+RBAC visibility for all four roles, the same full lifecycle, template rendering checks). Along the way,
+caught and fixed two of my own manual-test setup bugs (a `Group.name` collision, then a role-name mismatch
+where I'd used a differently-named test group than what the RBAC check actually looks for) rather than
+mistaking either for a real bug in the code under test. 54/54 tests pass, `check` clean, zero migration
+drift (no schema change — the models existed since PM-02.1). Updated `DESIGN_PM-02_PROBLEM_MANAGEMENT.md`
+to IMPLEMENTED. Deliberately did not add a `Problems` sidebar nav link (consistent with earlier caution
+about that file) or creation UI for the RCA sub-models (no service methods exist for them — flagged as a
+follow-up, not built speculatively). Committed locally under the standing per-milestone authorization; not
+pushed.
+
+**IM-04 is the last item in the given execution order** (record → PM-03 → IM-04) — that's next: Work
+Notes, Attachments, and Requester Confirmation, per the technical shape already recorded in ADR-010,
+Decision 3.

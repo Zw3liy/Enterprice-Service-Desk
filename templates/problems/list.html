@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}
+Problem Management
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+            Problem Management
+        </h2>
+
+        <a href="{% url 'service_desk:problem_create' %}" class="btn btn-primary">
+            <i class="fa-solid fa-plus me-1"></i> New Problem
+        </a>
+    </div>
+
+    <div class="row g-3">
+
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h3 class="h6 text-muted text-uppercase small">Total Problems</h3>
+                    <h2>{{ stats.total_problems }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h3 class="h6 text-muted text-uppercase small">Open / Investigating</h3>
+                    <h2>{{ stats.open_problems|add:stats.investigating_problems }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm border-warning">
+                <div class="card-body">
+                    <h3 class="h6 text-muted text-uppercase small">Known Errors</h3>
+                    <h2 class="text-warning">{{ stats.known_error_problems }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h3 class="h6 text-muted text-uppercase small">Resolved / Closed</h3>
+                    <h2>{{ stats.resolved_problems|add:stats.closed_problems }}</h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card mt-4 shadow-sm">
+
+        <div class="card-header">
+            All Problems
+        </div>
+
+        <div class="card-body">
+
+            {% if problems %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-striped table-hover align-middle">
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Status</th>
+                                <th>Priority</th>
+                                <th>Known Error</th>
+                                <th>Department</th>
+                                <th>Assigned To</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                        {% for problem in problems %}
+
+                            <tr>
+
+                                <td>#{{ problem.id }}</td>
+
+                                <td>
+                                    <a href="{% url 'service_desk:problem_detail' problem.pk %}"
+                                       class="text-decoration-none">
+                                        {{ problem.title }}
+                                    </a>
+                                </td>
+
+                                <td>
+                                    <span class="badge {% if problem.status == 'open' %}bg-warning text-dark{% elif problem.status == 'resolved' or problem.status == 'closed' %}bg-success{% elif problem.status == 'known_error' %}bg-danger{% else %}bg-secondary{% endif %}">
+                                        {{ problem.get_status_display }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="badge {% if problem.priority == 'high' or problem.priority == 'urgent' %}bg-danger{% else %}bg-light text-dark border{% endif %}">
+                                        {{ problem.get_priority_display }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    {% if problem.is_known_error %}
+                                        <i class="fa-solid fa-triangle-exclamation text-warning"></i>
+                                    {% else %}
+                                        &mdash;
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if problem.department %}{{ problem.department.name }}{% else %}&mdash;{% endif %}
+                                </td>
+
+                                <td>
+                                    {% if problem.assigned_to %}{{ problem.assigned_to.username }}{% else %}Unassigned{% endif %}
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-info mb-0">
+                    No problems found.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

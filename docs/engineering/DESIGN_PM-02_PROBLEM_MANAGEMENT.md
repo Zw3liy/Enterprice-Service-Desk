@@ -1,9 +1,13 @@
 # Design: PM-02 — Problem Management / Root Cause Analysis
 
-**Status: PROPOSED — not implemented.** No code from this design exists in the repository yet. This
-document captures the design as presented for approval; implementation is blocked on the open question
-in §7 and explicit go-ahead (feature development was paused in favor of PM-00 documentation before this
-was built).
+**Status: IMPLEMENTED.** Models/migrations landed in PM-02.1 (`8d30023`), services/selectors in PM-02.2
+(`4c7a37c`), the §7 open question (Requester visibility) resolved in ADR-010 Decision 1, and the UI layer
+(views/urls/forms/templates/RBAC/tests) landed in PM-03. See [ROADMAP.md](ROADMAP.md) for commit-level
+detail and [ADR/ADR-010-Visibility-and-IM-04-Scope-Decisions.md](ADR/ADR-010-Visibility-and-IM-04-Scope-Decisions.md)
+for the visibility decision. One deliberate scope gap: this design's models for `FiveWhys`,
+`FishboneFactor`, `Evidence`, `Action`, and `Approval` exist and are readable from the Problem detail page,
+but PM-03 did not add creation UI for them — `ProblemService` never gained methods to create them, and
+building that was out of PM-03's scope. Flagged as a follow-up, not silently skipped.
 
 ## 1. Precondition check
 
