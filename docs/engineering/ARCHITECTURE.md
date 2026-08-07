@@ -46,53 +46,32 @@ The active app is itself organized as a set of subpackages, not all of which are
 | `views.py` vs `views/` | Collision — see §4. |
 | `models.py` vs `models/` | Collision — see §4. |
 
-## 4. File-collision hazard: flat module vs. same-named package
+## 4. File-collision hazard: flat module vs. same-named package — RESOLVED (ARCH-01)
 
-Two places in `apps/service_desk/` have **both** a flat `<name>.py` file and a `<name>/` directory sitting
-next to each other with the same import name. Python resolves this ambiguously, and the two cases resolve
-**in opposite directions**, which has already caused one production-breaking regression (see
-INCIDENT_LOG.md).
+**Status: fixed.** Two places in `apps/service_desk/` used to have **both** a flat `<name>.py` file and a
+`<name>/` directory sitting next to each other with the same import name, resolving **in opposite
+directions** — which caused one production-breaking regression (see INCIDENT_LOG.md, INC-001). Both dead
+sides were deleted in ARCH-01 after confirming (again) which side was live and that nothing referenced the
+dead one directly:
 
-### `models.py` vs `models/` — the package wins
+- **`models.py` vs `models/`** — the package (`apps/service_desk/models/`, with `__init__.py`) was always
+  the live one; the flat `apps/service_desk/models.py` (~315 lines) was dead and has been deleted.
+- **`views.py` vs `views/`** — the flat file (`apps/service_desk/views.py`) was always the live one; the
+  `apps/service_desk/views/` directory (`dashboard.py`, `ticket_views.py`, both 0 bytes, no `__init__.py`)
+  was dead and has been deleted.
 
-- `apps/service_desk/models.py` (flat file, ~315 lines) defines its own `Department`, `RequestType`,
-  `Ticket` classes.
-- `apps/service_desk/models/` (package, has `__init__.py`) defines the same class names across separate
-  files and re-exports them.
-- **The package wins**, because it's a real Python package (`__init__.py` present) and CPython's import
-  machinery prefers a real package over a same-named module in the same directory.
-- Verified empirically: `Ticket.__module__ == "apps.service_desk.models.ticket"`, and
-  `Ticket._meta.get_field("priority").db_index is True` — that `db_index=True` only exists in the
-  package's version of the field, not the flat file's.
-- **Consequence: `apps/service_desk/models.py` is dead code.** It is never imported by the running
-  application. Every other module (`services/`, `selectors/`, `security/`, `admin.py`, `views.py`) imports
-  from `apps.service_desk.models` and gets the package version.
-- Do not edit `models.py` expecting it to take effect. Model changes belong in `models/`.
-
-### `views.py` vs `views/` — the flat file wins
-
-- `apps/service_desk/views.py` (flat file) defines the actual view classes.
-- `apps/service_desk/views/` (directory: `dashboard.py`, `ticket_views.py`) has **no `__init__.py`** —
-  it is not a regular package, only a namespace-package candidate, which import resolution checks last.
-- **The flat file wins**, and both files in the `views/` directory are empty (0 bytes) anyway.
-- **Consequence: `apps/service_desk/views/` is dead code`,** in the opposite direction from the `models`
-  case. This asymmetry is exactly why this collision pattern is dangerous — you cannot infer "package
-  wins" or "flat file wins" from one case and apply it to the other; it depends on whether `__init__.py`
-  is present.
-
-**Recommendation:** delete one side of each collision once confirmed safe (tracked in ROADMAP.md). Until
-then, always verify which file is live before editing — see the re-check command below.
-
-**How to re-check which one is live for any ambiguous module:**
+Verified before deletion (import resolution unchanged), and again after (44/44 tests still pass,
+`manage.py check` clean, zero migration drift):
 ```
 python -c "import django,os; os.environ.setdefault('DJANGO_SETTINGS_MODULE','ticketing.settings'); django.setup(); import apps.service_desk.<module> as m; print(m.__file__)"
 ```
 
 ## 5. Migrations
 
-`apps/service_desk/migrations/` has three migrations (0001–0003), and they are **in sync** with the
-active `models/` package — `python manage.py makemigrations --check --dry-run service_desk` reports no
-changes as of this milestone. This is one of the healthy parts of the codebase.
+`apps/service_desk/migrations/` has five migrations (0001–0005, the last two added by PM-02.1 for the
+Problem Management models), and they are **in sync** with the active `models/` package —
+`python manage.py makemigrations --check --dry-run` reports no changes as of this milestone. This is one
+of the healthy parts of the codebase.
 
 The ~59 unregistered apps' `migrations/` directories are not meaningful — they were never run against any
 database, since their apps aren't installed.

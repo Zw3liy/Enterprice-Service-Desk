@@ -25,19 +25,19 @@ step). An out-of-date `SESSION_STATE.md` is itself a defect — treat it as one 
 
 | | |
 |---|---|
-| **Current Milestone** | DEP-01 — Dependency manifest (P0 item 1 of the approved ITSM_ROADMAP.md execution order) |
+| **Current Milestone** | ARCH-01 — Dead scaffold file cleanup (P0 item 2 of the approved ITSM_ROADMAP.md execution order) |
 | **Current Sprint** | P0: Platform Stabilization (see [ITSM_ROADMAP.md](ITSM_ROADMAP.md) and [ROADMAP.md](ROADMAP.md)) |
 | **Current Objective** | Execute the approved ITSM roadmap in order — P0 (dependency manifest → dead-scaffold cleanup → resolve IM-04/visibility decisions) before P1 (PM-03 Problem Management UI, blocked on those same decisions) |
-| **Overall Repository Health** | **Improving, still mixed.** Core `service_desk` app is healthy (`manage.py check` clean, 44/44 tests passing, migrations in sync, zero drift). `TicketService` is wired into views. `ticketing/settings.py` no longer hardcodes secrets/DEBUG/hosts (SEC-01). CI runs `check`/`test`/migration-drift/`--deploy` on every push and PR (CI-01), now installing from a real `requirements.txt` (DEP-01) instead of an inline pin. Problem Management domain (ADR-009, PM-02.1, PM-02.2) is implemented but not yet wired to any view — that's PM-03, blocked on the visibility decision below. Surrounding repository still has scaffolding debt (~59 unregistered apps) and two live file-collision hazards (next up: ARCH-01). Full detail: [ARCHITECTURE.md](ARCHITECTURE.md). |
+| **Overall Repository Health** | **Improving, still mixed.** Core `service_desk` app is healthy (`manage.py check` clean, 44/44 tests passing, migrations in sync, zero drift). `TicketService` is wired into views. `ticketing/settings.py` no longer hardcodes secrets/DEBUG/hosts (SEC-01). CI runs `check`/`test`/migration-drift/`--deploy` on every push and PR (CI-01), installing from a real `requirements.txt` (DEP-01). The `models.py`/`views.py` file-collision hazard that caused INC-001 is now resolved (ARCH-01) — both dead files deleted. Problem Management domain (ADR-009, PM-02.1, PM-02.2) is implemented but not yet wired to any view — that's PM-03, blocked on the visibility decision below. Surrounding repository still has scaffolding debt (~59 unregistered apps, unchanged — a separate, larger scope decision). Full detail: [ARCHITECTURE.md](ARCHITECTURE.md). |
 
 ## Git Status
 
 | | |
 |---|---|
 | **Current Branch** | `feature/incident-management-dashboard` |
-| **Working Tree Status** | DEP-01 changes about to be committed locally as of this update (see Unpushed Commits) |
-| **Ahead / Behind Origin** | 7 / 0 before this session's DEP-01 commit (includes CI-01 `c173415` and the approved `ITSM_ROADMAP.md` at `073f7f9`), verified via `git rev-list --left-right --count` |
-| **Latest Commit prior to this update** | `073f7f9` — "ITSM-ROADMAP add capability matrix, prioritization, and sprint plan" |
+| **Working Tree Status** | ARCH-01 changes about to be committed locally as of this update (see Unpushed Commits) |
+| **Ahead / Behind Origin** | 8 / 0 before this session's ARCH-01 commit, verified via `git rev-list --left-right --count` |
+| **Latest Commit prior to this update** | `c140d25` — "DEP-01 add dependency manifest and switch CI to install from it" |
 
 **Note on process continuity:** this session was interrupted mid-write while finishing SEC-01's documentation
 (caught mid-edit of this file's own predecessor state). The repository owner committed the SEC-01 code
@@ -66,27 +66,28 @@ prompt's claimed baseline — per this file's own "never assume, always verify" 
 | *(follow-up, not a numbered milestone)* | `.gitignore` hardened against accidental credential commits (`AI_Agentina` paths) — verified nothing was ever actually exposed in history or the working tree. | `56c98bc` |
 | **CI-01** | GitHub Actions CI pipeline — see Completed table in ROADMAP.md for full detail. `django-tests.yml` and `security-scan.yml` now actually run; `deployment.yml` stays a documented no-op per explicit instruction. | `c173415` |
 | **ITSM-ROADMAP** | Full 9-module ITSM capability audit, P0–P3 prioritization, sprint plan — see [ITSM_ROADMAP.md](ITSM_ROADMAP.md). Approved by the repository owner; now the standing execution order. | `073f7f9` |
-| **DEP-01** | Dependency manifest: `requirements.txt` (`Django==5.2.16`) added; both CI workflows switched from an inline pinned install to `pip install -r requirements.txt` with pip caching. See ROADMAP.md for full detail. | *(this session, see Unpushed Commits)* |
+| **DEP-01** | Dependency manifest: `requirements.txt` (`Django==5.2.16`) added; both CI workflows switched from an inline pinned install to `pip install -r requirements.txt` with pip caching. See ROADMAP.md for full detail. | `c140d25` |
+| **ARCH-01** | Resolved the `models.py`/`models/` and `views.py`/`views/` file-collision hazard (the exact class of bug that caused INC-001). Re-verified which side was live before touching anything, grepped for direct references to the dead paths (none found), deleted `apps/service_desk/models.py` and `apps/service_desk/views/`. Verified before and after: import resolution unchanged, `check` clean, zero migration drift, 44/44 tests pass. | *(this session, see Unpushed Commits)* |
 
 ## Unpushed Commits
 
 Commits through `311c913` were committed **and pushed** by the repository owner directly (outside any AI
 session) — confirmed via `git log --oneline origin/...` matching local, author
 `Zw3liy <goodwill00765@gmail.com>`. `23a2e8d` (IM-01), `1aed27d` (IM-02), `ea82610` (IM-03), `bf89826`
-(SEC-01), `56c98bc` (credential-cleanup follow-up), `c173415` (CI-01), and `073f7f9` (ITSM-ROADMAP) are
-all local-only, unpushed — two of them were committed by the repository owner directly, not by this
-session, but remain unpushed same as the rest. As of this update, **DEP-01's changes are about to be
-committed locally** under the standing local-commit authorization for this program (push still requires
-separate explicit approval — see [WORKFLOW.md](WORKFLOW.md)). Re-run `git status` /
+(SEC-01), `56c98bc` (credential-cleanup follow-up), `c173415` (CI-01), `073f7f9` (ITSM-ROADMAP), and
+`c140d25` (DEP-01) are all local-only, unpushed — two of them were committed by the repository owner
+directly, not by this session, but remain unpushed same as the rest. As of this update, **ARCH-01's
+changes are about to be committed locally** under the standing local-commit authorization for this program
+(push still requires separate explicit approval — see [WORKFLOW.md](WORKFLOW.md)). Re-run `git status` /
 `git rev-list --left-right --count origin/feature/incident-management-dashboard...HEAD` rather than
 trusting this section once further commits land — it will go stale the moment the next milestone starts.
 
 ## Current Roadmap Item
 
-- **Priority:** DEP-01 — Dependency manifest (P0 item 1 of the approved `ITSM_ROADMAP.md` execution order).
-- **Reason:** No dependency manifest existed anywhere in the repository; CI-01 had to work around this with an inline pinned install. A fresh clone had no documented way to know what to install. Flagged as P0 in the approved roadmap because it's a platform reproducibility risk, not a feature gap.
+- **Priority:** ARCH-01 — Dead scaffold file cleanup (P0 item 2 of the approved `ITSM_ROADMAP.md` execution order).
+- **Reason:** `models.py`/`views.py`/`views/` collision hazard already caused one production regression (INC-001, FIX-01). Flagged P0 because it's a standing correctness risk, not a feature gap — someone editing the dead file expecting it to take effect is exactly what happened before.
 - **Dependencies:** None.
-- **Expected completion:** This session; committed locally under the standing per-milestone local-commit authorization, push pending separate explicit approval. Next: ARCH-01 (P0 item 2 — dead scaffold cleanup), then the three decision-blockers (P0 item 3) must actually be answered before PM-03 can start.
+- **Expected completion:** This session; committed locally under the standing per-milestone local-commit authorization, push pending separate explicit approval. **Next: P0 item 3 — the three decision-blockers must actually be answered (not just re-flagged) before PM-03 can start**, per this milestone's own explicit instruction.
 
 ## Open Decisions
 
@@ -112,7 +113,6 @@ trusting this section once further commits land — it will go stale the moment 
 ## Known Blockers
 
 - **Scaffolding debt:** ~59 of ~60 apps under `apps/` are unregistered, untested dead code (ARCHITECTURE.md §2). Not a blocker to current work, but a standing risk that someone wires one in without realizing it has no tests or service-layer discipline.
-- **File-collision hazard, unresolved:** `apps/service_desk/models.py` vs `apps/service_desk/models/` (package wins, flat file is dead) and `apps/service_desk/views.py` vs `apps/service_desk/views/` (flat file wins, package is dead, opposite resolution direction). See ARCHITECTURE.md §4. Tracked as ROADMAP item, not yet fixed.
 - **`develop` branch divergence:** diverged since the second commit in repository history, missing ~130 files present on `main`. Not a blocker to this branch's work, but unresolved.
 - **Dead duplicate templates:** `templates/navbar.html` (identical to live `templates/includes/navbar.html`) and `templates/sidebar.html` (stale duplicate of live `templates/includes/sidebar.html`) — found during IM-01's audit, not yet removed.
 - **`ProblemService`/`ProblemSelector` unused:** implemented (PM-02.2) but no view/URL calls them yet — Phase 2 work.
@@ -211,7 +211,7 @@ added to the repo). Caught `ROADMAP.md`/`SESSION_STATE.md` up to reflect SEC-01/
 CI-01 together, since the interruption had left them stale. Committed locally under the standing
 per-milestone authorization; not pushed.
 
-**Last session summary (this update):** ITSM-ROADMAP + DEP-01 — performed a full 9-module ITSM capability
+**Previous session summary:** ITSM-ROADMAP + DEP-01 — performed a full 9-module ITSM capability
 audit (`docs/engineering/ITSM_ROADMAP.md`), verifying every claim by inspection (grep for actual usages,
 file-size checks) rather than assuming from directory names; confirmed Incident and Problem Management are
 the only areas with real implementation, every other capability's scaffold is empty. Roadmap approved by
@@ -219,7 +219,21 @@ the repository owner with an explicit P0→P1→P2→P3 execution order. Started
 (`Django==5.2.16`, the one verified runtime dependency) and switched both CI workflows from an inline
 pinned install to `pip install -r requirements.txt` with pip caching. Verified locally: the manifest
 installs cleanly, `check`/`makemigrations --check`/`test` (44/44) all still pass, both workflow YAML files
-re-validated. Committed locally under the standing per-milestone authorization; not pushed. Next: ARCH-01
-(delete the dead `models.py`/`views/` files — P0 item 2), then the three decision-blockers (P0 item 3)
-must be *actually answered*, not just re-flagged, before PM-03 can start — per this milestone's own
-explicit instruction not to proceed without them recorded.
+re-validated. Committed locally under the standing per-milestone authorization; not pushed.
+
+**Last session summary (this update):** ARCH-01 — re-verified (didn't trust the earlier finding blindly)
+which side of each collision was live: `import apps.service_desk.models`/`views` confirmed unchanged
+resolution (`models/__init__.py`, `views.py`), grepped the whole `apps/service_desk/` tree for any direct
+reference to the dead paths by name (none found beyond the expected package-level import), then deleted
+`apps/service_desk/models.py` (dead flat file, ~315 lines) and `apps/service_desk/views/` (dead directory,
+two 0-byte files, no `__init__.py`). Verified again after deletion: import resolution unchanged,
+`manage.py check` clean, zero migration drift, 44/44 tests still pass. Updated `ARCHITECTURE.md` §4
+(marked the hazard RESOLVED with what was actually done, corrected a stale "three migrations" claim to
+five while already in that section) and `ROADMAP.md`/`SESSION_STATE.md` accordingly. Committed locally
+under the standing per-milestone authorization; not pushed.
+
+**P0 items 1 and 2 are now done.** Item 3 — Problem requester visibility, Technician visibility rules, and
+IM-04 scope — has been asked for twice now and gone unanswered both times. Per this milestone's own
+explicit instruction ("Do not implement until these decisions are recorded"), PM-03 does not start until
+there's an actual recorded answer, not another restatement of the question. That's the next thing needed
+from the repository owner before any further P0/P1 work proceeds.
