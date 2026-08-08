@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Suppliers — Enterprise Service Desk{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Suppliers</h1>
+    <a href="{% url 'service_desk:supplier_create' %}" class="btn btn-primary">New Supplier</a>
+</div>
+
+<div class="list-group">
+    {% for supplier in suppliers %}
+        <a href="{% url 'service_desk:supplier_detail' supplier.pk %}" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ supplier.name }}</h5>
+                <small class="text-muted">{% if supplier.department %}{{ supplier.department.name }}{% endif %}</small>
+            </div>
+            <p class="mb-1">{{ supplier.description|default:""|truncatechars:120 }}</p>
+            <small>{{ supplier.contact_name }} — {{ supplier.contact_email }}</small>
+        </a>
+    {% empty %}
+        <div class="alert alert-secondary">No suppliers found.</div>
+    {% endfor %}
+</div>
+
+{% endblock %}

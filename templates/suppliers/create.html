@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Create Supplier — Enterprise Service Desk{% endblock %}
+
+{% block content %}
+
+<h1>Create Supplier</h1>
+
+<form method="post" novalidate>
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="mb-3">
+            <label class="form-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+            {% endif %}
+            {% for error in field.errors %}
+                <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a href="{% url 'service_desk:supplier_list' %}" class="btn btn-secondary">Cancel</a>
+</form>
+
+{% endblock %}

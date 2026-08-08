@@ -211,6 +211,45 @@ class ProblemDeletePermissionMixin(
     )
 
 
+# =====================================================
+# Supplier Permissions
+
+
+class SupplierPermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Base supplier access permission.
+    """
+
+    permission_required = (
+        "service_desk.view_supplier",
+    )
+
+
+class SupplierViewPermissionMixin(
+    SupplierPermissionMixin
+):
+    """
+    Supplier viewing permission.
+    """
+
+    permission_required = (
+        "service_desk.view_supplier",
+    )
+
+
+class SupplierCreatePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Supplier creation permission.
+    """
+
+    permission_required = (
+        "service_desk.add_supplier",
+    )
+
 
 # =====================================================
 # Role Enforcement

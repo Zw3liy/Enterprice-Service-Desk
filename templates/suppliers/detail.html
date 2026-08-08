@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Supplier — {{ supplier.name }}{% endblock %}
+
+{% block content %}
+
+<h1>{{ supplier.name }}</h1>
+
+<dl class="row">
+    <dt class="col-sm-3">Description</dt>
+    <dd class="col-sm-9">{{ supplier.description|default:"—" }}</dd>
+
+    <dt class="col-sm-3">Contact</dt>
+    <dd class="col-sm-9">{{ supplier.contact_name }} &middot; {{ supplier.contact_email }}</dd>
+
+    <dt class="col-sm-3">Phone</dt>
+    <dd class="col-sm-9">{{ supplier.phone|default:"—" }}</dd>
+
+    <dt class="col-sm-3">Department</dt>
+    <dd class="col-sm-9">{% if supplier.department %}{{ supplier.department.name }}{% else %}&mdash;{% endif %}</dd>
+
+    <dt class="col-sm-3">Active</dt>
+    <dd class="col-sm-9">{{ supplier.is_active }}</dd>
+</dl>
+
+<a href="{% url 'service_desk:supplier_list' %}" class="btn btn-secondary">Back</a>
+
+{% endblock %}

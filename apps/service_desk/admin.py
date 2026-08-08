@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Department, RequestType, Ticket
+from .models import Department, RequestType, Ticket, Supplier
 
 
 @admin.register(Department)
@@ -64,4 +64,33 @@ class TicketAdmin(admin.ModelAdmin):
 
     ordering = (
         "-created_at",
+    )
+
+
+@admin.register(Supplier)
+class SupplierAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "contact_name",
+        "contact_email",
+        "phone",
+        "department",
+        "is_active",
+        "created_at",
+    )
+    list_filter = (
+        "is_active",
+        "department",
+    )
+    search_fields = (
+        "name",
+        "contact_name",
+        "contact_email",
+        "phone",
+    )
+    autocomplete_fields = (
+        "department",
+    )
+    ordering = (
+        "name",
     )

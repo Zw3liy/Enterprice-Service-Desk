@@ -13,6 +13,7 @@ from .root_cause_analysis import (
     Action,
     Approval,
 )
+from .supplier import Supplier
 
 __all__ = [
     "Department",
@@ -28,4 +29,5 @@ __all__ = [
     "Evidence",
     "Action",
     "Approval",
+    "Supplier",
 ]

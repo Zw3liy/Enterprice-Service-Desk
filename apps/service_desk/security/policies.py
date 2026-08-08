@@ -11,7 +11,7 @@ Phase 2.2 Authorization Hardening
 from django.contrib.auth.models import Group
 from django.db.models import Q
 
-from apps.service_desk.models import Problem, Ticket
+from apps.service_desk.models import Problem, Supplier, Ticket
 
 
 
@@ -184,22 +184,48 @@ def get_problem_queryset(user):
 
 
     if is_administrator(user):
-
         return Problem.objects.all()
 
 
     if is_manager(user):
-
         return Problem.objects.filter(
             department__in=user.managed_departments.all()
         )
 
 
     if is_technician(user):
-
         return Problem.objects.filter(
             assigned_to=user
         )
 
 
     return Problem.objects.none()
+
+
+
+def get_supplier_queryset(user):
+    """
+    Object level supplier visibility.
+
+    Administrator:
+        all suppliers
+
+    Manager:
+        suppliers tied to managed departments
+
+    Others:
+        none
+    """
+
+    if not user.is_authenticated:
+        return Supplier.objects.none()
+
+    if is_administrator(user):
+        return Supplier.objects.all()
+
+    if is_manager(user):
+        return Supplier.objects.filter(
+            department__in=user.managed_departments.all()
+        )
+
+    return Supplier.objects.none()

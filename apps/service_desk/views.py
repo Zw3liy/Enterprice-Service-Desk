@@ -20,11 +20,16 @@ from django.views.generic import (
     DetailView,
 )
 
-from .models import Problem, Ticket, TicketAttachment, TicketHistory
+from .models import Problem, Supplier, Ticket, TicketAttachment, TicketHistory
 from .forms.ticket_forms import TicketCreateForm
 from .forms.problem_forms import ProblemCreateForm
+from .forms.supplier_forms import SupplierCreateForm
 
-from .security.policies import get_problem_queryset, get_ticket_queryset
+from .security.policies import (
+    get_problem_queryset,
+    get_supplier_queryset,
+    get_ticket_queryset,
+)
 from .security.mixins import (
     TicketPermissionMixin,
     TicketChangePermissionMixin,
@@ -33,11 +38,15 @@ from .security.mixins import (
     ProblemViewPermissionMixin,
     ProblemCreatePermissionMixin,
     ProblemChangePermissionMixin,
+    SupplierCreatePermissionMixin,
+    SupplierViewPermissionMixin,
 )
 from .selectors.ticket_selector import TicketSelector
 from .selectors.problem_selector import ProblemSelector
+from .selectors.supplier_selector import SupplierSelector
 from .services.ticket_service import TicketService
 from .services.problem_service import ProblemService
+from .services.supplier_service import SupplierService
 
 User = get_user_model()
 
@@ -711,6 +720,95 @@ class ProblemListView(
 
         return context
 
+
+
+# --------------------------------------------------
+# Supplier List
+
+
+class SupplierListView(
+    SupplierViewPermissionMixin,
+    ListView
+):
+    """
+    Supplier listing.
+
+    Visibility controlled by:
+        security.policies.get_supplier_queryset()
+    """
+
+    model = Supplier
+    template_name = "suppliers/list.html"
+    context_object_name = "suppliers"
+    permission_required = (
+        "service_desk.view_supplier",
+    )
+
+
+    def get_queryset(self):
+        return get_supplier_queryset(self.request.user)
+
+
+# --------------------------------------------------
+# Supplier Create
+
+
+class SupplierCreateView(
+    SupplierCreatePermissionMixin,
+    CreateView
+):
+    """
+    Supplier creation.
+
+    Requires:
+        service_desk.add_supplier
+    """
+
+    model = Supplier
+    form_class = SupplierCreateForm
+    template_name = "suppliers/create.html"
+    permission_required = (
+        "service_desk.add_supplier",
+    )
+
+
+    success_url = reverse_lazy(
+        "service_desk:supplier_list"
+    )
+
+
+    def form_valid(self, form):
+        self.object = SupplierService.create_supplier(
+            **form.cleaned_data,
+        )
+
+        return redirect(self.get_success_url())
+
+
+# --------------------------------------------------
+# Supplier Detail
+
+
+class SupplierDetailView(
+    SupplierViewPermissionMixin,
+    DetailView
+):
+    """
+    Supplier detail view.
+
+    Object visibility is enforced through queryset filtering.
+    """
+
+    model = Supplier
+    template_name = "suppliers/detail.html"
+    context_object_name = "supplier"
+    permission_required = (
+        "service_desk.view_supplier",
+    )
+
+
+    def get_queryset(self):
+        return get_supplier_queryset(self.request.user)
 
 
 # --------------------------------------------------
