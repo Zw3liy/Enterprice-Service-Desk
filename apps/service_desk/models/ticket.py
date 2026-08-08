@@ -3,6 +3,7 @@ from django.db import models
 
 from .department import Department
 from .request_type import RequestType
+from .sla_policy import SLAPolicy
 
 
 class Ticket(models.Model):
@@ -91,6 +92,14 @@ class Ticket(models.Model):
         max_length=255,
         blank=True,
         default="",
+    )
+
+    sla_policy = models.ForeignKey(
+        SLAPolicy,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="tickets",
     )
 
     created_at = models.DateTimeField(

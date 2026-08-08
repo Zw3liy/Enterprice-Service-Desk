@@ -14,6 +14,7 @@ from .root_cause_analysis import (
     Approval,
 )
 from .supplier import Supplier
+from .sla_policy import SLAPolicy
 
 __all__ = [
     "Department",
@@ -30,4 +31,5 @@ __all__ = [
     "Action",
     "Approval",
     "Supplier",
+    "SLAPolicy",
 ]
