@@ -42,7 +42,7 @@ jobs:
           --health-retries 10
 
     env:
-      DJANGO_SETTINGS_MODULE: ticketing.production_settings
+      DJANGO_SETTINGS_MODULE: ticketing.postgres_test_settings
       DJANGO_SECRET_KEY: ci-only-secret-key-not-used-in-production-123456789
       DJANGO_DEBUG: "false"
       DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
