@@ -45,3 +45,6 @@ deployment/logs/
 deployment/releases/AI_Agentina/.env
 AI_Agentina/*Key*
 *API key*
+
+# Track the sanitized production configuration template.
+!.env.production.example

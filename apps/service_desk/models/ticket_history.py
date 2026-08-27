@@ -64,13 +64,13 @@ class TicketHistory(models.Model):
     )
 
     from_status = models.CharField(
-        max_length=20,
+        max_length=32,
         blank=True,
         default="",
     )
 
     to_status = models.CharField(
-        max_length=20,
+        max_length=32,
         blank=True,
         default="",
     )

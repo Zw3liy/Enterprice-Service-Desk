@@ -1,0 +1,66 @@
+﻿services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: service_desk
+      POSTGRES_USER: service_desk
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-development-only}
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U service_desk -d service_desk
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - service_desk_postgres:/var/lib/postgresql/data
+
+  web:
+    build:
+      context: .
+    environment:
+      DJANGO_SETTINGS_MODULE: ticketing.production_settings
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-development-container-secret-change-me}
+      DJANGO_DEBUG: "false"
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+      DJANGO_CSRF_TRUSTED_ORIGINS: http://localhost:8000
+      DJANGO_SECURE_SSL_REDIRECT: "false"
+      DJANGO_DB_SSL_REQUIRE: "false"
+      DATABASE_URL: postgresql://service_desk:${POSTGRES_PASSWORD:-development-only}@db:5432/service_desk
+      DJANGO_MEDIA_ROOT: /app/media
+    command:
+      - sh
+      - -c
+      - >-
+        python manage.py migrate --noinput &&
+        python manage.py collectstatic --noinput &&
+        gunicorn ticketing.wsgi:application
+        --bind 0.0.0.0:8000
+        --workers 3
+        --timeout 60
+        --access-logfile -
+        --error-logfile -
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - >-
+          import urllib.request;
+          urllib.request.urlopen(
+          'http://127.0.0.1:8000/health/ready/',
+          timeout=3)
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - service_desk_media:/app/media
+
+volumes:
+  service_desk_postgres:
+  service_desk_media:
