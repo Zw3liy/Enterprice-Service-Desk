@@ -15,6 +15,7 @@ from .root_cause_analysis import (
 )
 from .supplier import Supplier
 from .sla import SLAEscalation, SLAPolicy, TicketSLA
+from .notification import Notification
 
 __all__ = [
     "Department",
@@ -34,4 +35,5 @@ __all__ = [
     "SLAPolicy",
     "TicketSLA",
     "SLAEscalation",
+    "Notification",
 ]

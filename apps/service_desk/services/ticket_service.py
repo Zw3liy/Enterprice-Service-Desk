@@ -129,6 +129,16 @@ class TicketService:
             new_value=technician.get_username(),
         )
 
+        from apps.service_desk.services.notification_service import (
+            NotificationService,
+        )
+
+        NotificationService.notify_assignment(
+            ticket,
+            assignee=technician,
+            actor=user,
+        )
+
         return ticket
 
     @staticmethod
@@ -211,6 +221,17 @@ class TicketService:
         from apps.service_desk.services.sla_service import SLAService
 
         SLAService.on_status_change(ticket, current, status)
+
+        from apps.service_desk.services.notification_service import (
+            NotificationService,
+        )
+
+        NotificationService.notify_status_change(
+            ticket,
+            from_status=current,
+            to_status=status,
+            actor=user,
+        )
 
         return ticket
 

@@ -185,6 +185,8 @@ TEMPLATES = [
 
                 "django.contrib.messages.context_processors.messages",
 
+                "apps.service_desk.context_processors.notifications",
+
             ],
         },
     },
@@ -309,6 +311,46 @@ LOGIN_URL = "/accounts/login/"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/accounts/login/"
 
+
+
+# -------------------------------------------------
+# EMAIL / NOTIFICATIONS
+#
+# The service desk's notification boundary is in-app
+# first: a Notification row is always written and email
+# is an optional mirror. Everything below is env-driven
+# (SEC-01's pattern) and defaults to OFF, so a clone of
+# this repository — and CI — never attempts to reach a
+# mail server and no credential is ever committed. See
+# .env.example for the full variable list.
+# -------------------------------------------------
+
+SERVICE_DESK_EMAIL_NOTIFICATIONS = _env_bool(
+    "DJANGO_EMAIL_NOTIFICATIONS",
+    default=False,
+)
+
+EMAIL_BACKEND = os.environ.get(
+    "DJANGO_EMAIL_BACKEND",
+    "django.core.mail.backends.console.EmailBackend",
+)
+
+EMAIL_HOST = os.environ.get("DJANGO_EMAIL_HOST", "")
+
+EMAIL_PORT = _env_int("DJANGO_EMAIL_PORT", default=587)
+
+EMAIL_HOST_USER = os.environ.get("DJANGO_EMAIL_HOST_USER", "")
+
+EMAIL_HOST_PASSWORD = os.environ.get("DJANGO_EMAIL_HOST_PASSWORD", "")
+
+EMAIL_USE_TLS = _env_bool("DJANGO_EMAIL_USE_TLS", default=True)
+
+EMAIL_TIMEOUT = _env_int("DJANGO_EMAIL_TIMEOUT", default=10)
+
+DEFAULT_FROM_EMAIL = os.environ.get(
+    "DJANGO_DEFAULT_FROM_EMAIL",
+    "service-desk@localhost",
+)
 
 
 # -------------------------------------------------

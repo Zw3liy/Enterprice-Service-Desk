@@ -23,6 +23,7 @@ from django.views.generic import (
 )
 
 from .models import (
+    Notification,
     Problem,
     SLAPolicy,
     Supplier,
@@ -41,6 +42,7 @@ from .security.policies import (
     get_ticket_queryset,
 )
 from .security.mixins import (
+    ServiceDeskLoginRequiredMixin,
     TicketPermissionMixin,
     TicketChangePermissionMixin,
     TicketViewPermissionMixin,
@@ -58,10 +60,12 @@ from .selectors.ticket_selector import TicketSelector
 from .selectors.problem_selector import ProblemSelector
 from .selectors.supplier_selector import SupplierSelector
 from .selectors.sla_selector import SLASelector
+from .selectors.notification_selector import NotificationSelector
 from .services.ticket_service import TicketService
 from .services.problem_service import ProblemService
 from .services.supplier_service import SupplierService
 from .services.sla_service import SLAService
+from .services.notification_service import NotificationService
 
 User = get_user_model()
 
@@ -166,6 +170,13 @@ class DashboardView(
         context["sla_summary"] = sla_summary
         context["sla_breached"] = sla_summary["breached"]
         context["sla_at_risk"] = sla_summary["at_risk"]
+
+        context["unread_notifications"] = (
+            NotificationSelector.unread_count(self.request.user)
+        )
+        context["recent_notifications"] = NotificationSelector.recent(
+            self.request.user, limit=5
+        )
 
         return context
 
@@ -1736,3 +1747,79 @@ class SLAPolicyUpdateView(
         messages.success(self.request, "SLA policy updated.")
 
         return redirect("service_desk:sla_policy_list")
+
+
+# --------------------------------------------------
+# Notifications
+# --------------------------------------------------
+
+class NotificationListView(
+    ServiceDeskLoginRequiredMixin,
+    ListView
+):
+    """
+    The signed-in user's own notification inbox.
+
+    Deliberately guarded by authentication only, not a model
+    permission: a notification belongs to its recipient, and the
+    queryset is keyed on request.user, so there is nothing here a
+    Requester should be barred from seeing about their own tickets.
+    """
+
+    model = Notification
+
+    template_name = "notifications/list.html"
+
+    context_object_name = "notifications"
+
+    paginate_by = 25
+
+    def get_queryset(self):
+        return NotificationSelector.for_user(self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["unread_count"] = NotificationSelector.unread_count(
+            self.request.user
+        )
+        return context
+
+
+class NotificationReadView(
+    ServiceDeskLoginRequiredMixin,
+    View
+):
+    """
+    Mark one notification read and follow it to its target.
+    """
+
+    def post(self, request, pk):
+
+        notification = get_object_or_404(
+            NotificationSelector.for_user(request.user),
+            pk=pk,
+        )
+
+        NotificationService.mark_read(notification, request.user)
+
+        return redirect(notification.target_url())
+
+
+class NotificationReadAllView(
+    ServiceDeskLoginRequiredMixin,
+    View
+):
+    """
+    Mark every unread notification read.
+    """
+
+    def post(self, request):
+
+        count = NotificationService.mark_all_read(request.user)
+
+        messages.success(
+            request,
+            f"{count} notification(s) marked as read.",
+        )
+
+        return redirect("service_desk:notification_list")
