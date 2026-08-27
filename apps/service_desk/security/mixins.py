@@ -24,6 +24,7 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
+from django.contrib.auth.views import redirect_to_login
 
 from django.core.exceptions import PermissionDenied
 
@@ -56,11 +57,37 @@ class ServiceDeskPermissionMixin(
 
     Uses Django permissions.
 
-    Missing permissions:
+    Anonymous request:
+        redirect to the login page (there is nothing to deny yet —
+        the user has simply not identified themselves)
+
+    Authenticated request missing the permission:
         HTTP 403
     """
 
     raise_exception = True
+
+    def handle_no_permission(self):
+        """
+        Split the anonymous and authenticated failure paths.
+
+        ``raise_exception = True`` alone makes *every* failure a 403,
+        including for logged-out visitors, which hides the login page
+        behind an error and leaks no route to authenticate. Anonymous
+        users are redirected to ``login_url`` instead; authenticated
+        users still get a hard 403.
+        """
+
+        user = getattr(self.request, "user", None)
+
+        if user is None or not user.is_authenticated:
+            return redirect_to_login(
+                self.request.get_full_path(),
+                self.get_login_url(),
+                self.get_redirect_field_name(),
+            )
+
+        return super().handle_no_permission()
 
 
 
@@ -277,6 +304,16 @@ class RoleRequiredMixin(
         **kwargs
     ):
 
+        # Anonymous visitors must reach the login redirect handled by
+        # LoginRequiredMixin, not a 403 — checking the role first would
+        # deny them before they ever get the chance to authenticate.
+        if not request.user.is_authenticated:
+            return super().dispatch(
+                request,
+                *args,
+                **kwargs
+            )
+
         if (
             self.required_role
             and not request.user.groups.filter(
@@ -314,6 +351,13 @@ class AdministratorRequiredMixin(
         *args,
         **kwargs
     ):
+
+        if not request.user.is_authenticated:
+            return super().dispatch(
+                request,
+                *args,
+                **kwargs
+            )
 
         if not request.user.is_superuser:
             raise PermissionDenied

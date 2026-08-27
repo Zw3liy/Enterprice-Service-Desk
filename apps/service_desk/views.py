@@ -9,6 +9,7 @@ Phase 2.2.4 — Authorization Hardening
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.db.models import Count, Q
 from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -61,9 +62,14 @@ class DashboardView(
     TemplateView
 ):
     """
-    Main dashboard.
+    Main enterprise dashboard.
 
-    Authentication required.
+    Every number and every row rendered here is derived from the
+    RBAC-scoped queryset returned by
+    ``security.policies.get_ticket_queryset`` — the dashboard never
+    reads ``Ticket.objects`` directly, so a Requester can never see
+    another user's counts and a Manager can never see another
+    department's counts.
     """
 
     template_name = "service_desk/dashboard.html"
@@ -71,6 +77,78 @@ class DashboardView(
     permission_required = (
         "service_desk.view_ticket"
     )
+
+    RECENT_TICKET_LIMIT = 10
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+
+        tickets = get_ticket_queryset(self.request.user)
+
+        # Single aggregate query for every status bucket, so the
+        # dashboard costs one round trip rather than one per card.
+        counts = tickets.aggregate(
+            total=Count("pk"),
+            open=Count("pk", filter=Q(status="open")),
+            in_progress=Count("pk", filter=Q(status="in_progress")),
+            pending=Count("pk", filter=Q(status="pending")),
+            resolved=Count("pk", filter=Q(status="resolved")),
+            awaiting_confirmation=Count(
+                "pk", filter=Q(status="awaiting_confirmation")
+            ),
+            closed=Count("pk", filter=Q(status="closed")),
+            unassigned=Count("pk", filter=Q(assigned_to__isnull=True)),
+            high_priority=Count(
+                "pk", filter=Q(priority__in=["high", "urgent"])
+            ),
+        )
+
+        context.update(
+            {
+                "total_tickets": counts["total"],
+                "open_tickets": counts["open"],
+                "in_progress_tickets": counts["in_progress"],
+                "pending_tickets": counts["pending"],
+                "resolved_tickets": counts["resolved"],
+                "awaiting_confirmation_tickets": counts[
+                    "awaiting_confirmation"
+                ],
+                "closed_tickets": counts["closed"],
+                "unassigned_tickets": counts["unassigned"],
+                "high_priority_tickets": counts["high_priority"],
+                "active_tickets": (
+                    counts["open"]
+                    + counts["in_progress"]
+                    + counts["pending"]
+                ),
+                "recent_tickets": tickets.select_related(
+                    "department",
+                    "assigned_to",
+                    "created_by",
+                ).order_by("-created_at")[: self.RECENT_TICKET_LIMIT],
+            }
+        )
+
+        # Problem visibility is a separate policy (ADR-010): Requesters
+        # get nothing, so the Problem card simply renders zero for them.
+        problems = get_problem_queryset(self.request.user)
+
+        context["problem_total"] = problems.count()
+        context["problem_open"] = problems.exclude(
+            status__in=["resolved", "closed"]
+        ).count()
+        context["known_errors"] = problems.filter(
+            is_known_error=True
+        ).count()
+        context["can_view_problems"] = self.request.user.has_perm(
+            "service_desk.view_problem"
+        )
+
+        # SLA indicators are added by the SLA phase (see
+        # SLASelector.dashboard_summary) once SLA tracking exists.
+
+        return context
 
 
 
