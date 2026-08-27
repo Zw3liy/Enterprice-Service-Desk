@@ -23,8 +23,12 @@ from django.views.generic import (
 )
 
 from .models import (
+    Action,
+    Approval,
+    FishboneFactor,
     Notification,
     Problem,
+    RootCauseAnalysis,
     SLAPolicy,
     Supplier,
     Ticket,
@@ -35,6 +39,15 @@ from .forms.ticket_forms import TicketCreateForm
 from .forms.problem_forms import ProblemCreateForm
 from .forms.supplier_forms import SupplierCreateForm, SupplierUpdateForm
 from .forms.sla_forms import SLAPolicyForm
+from .forms.rca_forms import (
+    ActionForm,
+    ApprovalDecisionForm,
+    ApprovalRequestForm,
+    EvidenceForm,
+    FishboneFactorForm,
+    FiveWhysStepForm,
+    RCADetailsForm,
+)
 
 from .security.policies import (
     get_problem_queryset,
@@ -824,7 +837,9 @@ class ProblemListView(
 
         context = super().get_context_data(**kwargs)
 
-        context["stats"] = ProblemSelector.dashboard_statistics()
+        context["stats"] = ProblemSelector.dashboard_statistics(
+            self.get_queryset()
+        )
 
         return context
 
@@ -1215,6 +1230,51 @@ class ProblemDetailView(
         context["repeat_incident_candidates"] = (
             ProblemSelector.repeat_incident_detection(self.object)
         )
+
+        # --- RCA authoring surface ---------------------------------
+        rca = context["rca"]
+
+        can_edit = self.request.user.has_perm(
+            "service_desk.change_problem"
+        )
+
+        rca_locked = bool(
+            rca and rca.status in ProblemService.CLOSED_RCA_STATUSES
+        )
+
+        context["rca_locked"] = rca_locked
+        context["can_edit_rca"] = can_edit and not rca_locked
+
+        if rca:
+            context["five_whys"] = rca.five_whys.all()
+            context["fishbone_factors"] = rca.fishbone_factors.all()
+            context["evidence_items"] = rca.evidence.all()
+            context["actions"] = rca.actions.select_related("assigned_to")
+            context["approvals"] = rca.approvals.select_related("approver")
+            context["pending_approval"] = rca.approvals.filter(
+                approver=self.request.user,
+                status="pending",
+            ).first()
+        else:
+            context["five_whys"] = []
+            context["fishbone_factors"] = []
+            context["evidence_items"] = []
+            context["actions"] = []
+            context["approvals"] = []
+            context["pending_approval"] = None
+
+        if context["can_edit_rca"]:
+            context["rca_form"] = RCADetailsForm(instance=rca)
+            context["five_whys_form"] = FiveWhysStepForm()
+            context["fishbone_form"] = FishboneFactorForm()
+            context["evidence_form"] = EvidenceForm()
+            context["action_form"] = ActionForm()
+            context["approval_request_form"] = ApprovalRequestForm()
+
+        if context["pending_approval"]:
+            context["approval_decision_form"] = ApprovalDecisionForm()
+
+        context["action_status_flow"] = ProblemService.ACTION_STATUS_FLOW
 
         return context
 
@@ -1823,3 +1883,312 @@ class NotificationReadAllView(
         )
 
         return redirect("service_desk:notification_list")
+
+
+# --------------------------------------------------
+# Problem RCA workflows
+#
+# FiveWhys, FishboneFactor, Evidence, Action and Approval were
+# rendered read-only on the Problem detail page with no way to create
+# one outside the Django admin. Each view below is a thin POST handler
+# that validates shape with a form and then delegates every mutation
+# to ProblemService — no view here writes to a model directly.
+# --------------------------------------------------
+
+class ProblemRCAActionMixin(
+    ProblemChangePermissionMixin,
+    View
+):
+    """
+    Shared plumbing for the RCA action views.
+
+    Resolves the problem through get_problem_queryset, so an
+    out-of-scope problem is a 404 for everybody — including a
+    Requester, who has no Problem visibility at all (ADR-010).
+    """
+
+    def get_problem(self, request, pk):
+        return get_object_or_404(
+            get_problem_queryset(request.user),
+            pk=pk,
+        )
+
+    def back(self, problem):
+        return redirect("service_desk:problem_detail", pk=problem.pk)
+
+    def report_form_errors(self, request, form):
+        for field, errors in form.errors.items():
+            label = "" if field == "__all__" else f"{field}: "
+            for error in errors:
+                messages.error(request, f"{label}{error}")
+
+
+class ProblemRCAUpdateView(ProblemRCAActionMixin):
+    """
+    Edit the RCA narrative (method, statement, mitigation, ...).
+    """
+
+    def post(self, request, pk):
+
+        problem = self.get_problem(request, pk)
+        rca = ProblemService.get_or_create_rca(problem, user=request.user)
+
+        form = RCADetailsForm(request.POST, instance=rca)
+
+        if not form.is_valid():
+            self.report_form_errors(request, form)
+            return self.back(problem)
+
+        try:
+            ProblemService.update_rca(
+                RootCauseAnalysis.objects.get(pk=rca.pk),
+                user=request.user,
+                **form.cleaned_data,
+            )
+            messages.success(request, "Root Cause Analysis updated.")
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return self.back(problem)
+
+
+class ProblemFiveWhysAddView(ProblemRCAActionMixin):
+    """
+    Append a step to the Five Whys chain.
+    """
+
+    def post(self, request, pk):
+
+        problem = self.get_problem(request, pk)
+
+        form = FiveWhysStepForm(request.POST)
+
+        if not form.is_valid():
+            self.report_form_errors(request, form)
+            return self.back(problem)
+
+        try:
+            ProblemService.add_five_whys_step(
+                problem,
+                question=form.cleaned_data["question"],
+                answer=form.cleaned_data["answer"],
+                user=request.user,
+            )
+            messages.success(request, "Five Whys step added.")
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return self.back(problem)
+
+
+class ProblemFishboneAddView(ProblemRCAActionMixin):
+    """
+    Record a contributing factor on the Ishikawa diagram.
+    """
+
+    def post(self, request, pk):
+
+        problem = self.get_problem(request, pk)
+
+        form = FishboneFactorForm(request.POST)
+
+        if not form.is_valid():
+            self.report_form_errors(request, form)
+            return self.back(problem)
+
+        try:
+            ProblemService.add_fishbone_factor(
+                problem,
+                category=form.cleaned_data["category"],
+                factor_description=form.cleaned_data["factor_description"],
+                is_root_cause=form.cleaned_data.get("is_root_cause", False),
+                user=request.user,
+            )
+            messages.success(request, "Contributing factor added.")
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return self.back(problem)
+
+
+class ProblemFishboneRootCauseView(ProblemRCAActionMixin):
+    """
+    Flag (or unflag) a factor as the identified root cause.
+    """
+
+    def post(self, request, pk, factor_pk):
+
+        problem = self.get_problem(request, pk)
+
+        factor = get_object_or_404(
+            FishboneFactor,
+            pk=factor_pk,
+            rca__problem=problem,
+        )
+
+        try:
+            ProblemService.set_factor_as_root_cause(
+                factor,
+                user=request.user,
+                is_root_cause=not factor.is_root_cause,
+            )
+            messages.success(request, "Factor updated.")
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return self.back(problem)
+
+
+class ProblemEvidenceAddView(ProblemRCAActionMixin):
+    """
+    Attach supporting evidence to the investigation.
+    """
+
+    def post(self, request, pk):
+
+        problem = self.get_problem(request, pk)
+
+        form = EvidenceForm(request.POST)
+
+        if not form.is_valid():
+            self.report_form_errors(request, form)
+            return self.back(problem)
+
+        try:
+            ProblemService.add_evidence(
+                problem,
+                title=form.cleaned_data["title"],
+                file_or_link=form.cleaned_data["file_or_link"],
+                description=form.cleaned_data.get("description", ""),
+                user=request.user,
+            )
+            messages.success(request, "Evidence recorded.")
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return self.back(problem)
+
+
+class ProblemActionAddView(ProblemRCAActionMixin):
+    """
+    Raise a corrective or preventive action (CAPA).
+    """
+
+    def post(self, request, pk):
+
+        problem = self.get_problem(request, pk)
+
+        form = ActionForm(request.POST)
+
+        if not form.is_valid():
+            self.report_form_errors(request, form)
+            return self.back(problem)
+
+        try:
+            ProblemService.add_action(
+                problem,
+                action_type=form.cleaned_data["action_type"],
+                description=form.cleaned_data["description"],
+                due_date=form.cleaned_data["due_date"],
+                assigned_to=form.cleaned_data.get("assigned_to"),
+                user=request.user,
+            )
+            messages.success(request, "Action raised.")
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return self.back(problem)
+
+
+class ProblemActionStatusView(ProblemRCAActionMixin):
+    """
+    Advance a CAPA through its lifecycle.
+    """
+
+    def post(self, request, pk, action_pk):
+
+        problem = self.get_problem(request, pk)
+
+        action = get_object_or_404(
+            Action,
+            pk=action_pk,
+            rca__problem=problem,
+        )
+
+        try:
+            ProblemService.change_action_status(
+                action,
+                request.POST.get("status", ""),
+                user=request.user,
+            )
+            messages.success(request, "Action updated.")
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return self.back(problem)
+
+
+class ProblemApprovalRequestView(ProblemRCAActionMixin):
+    """
+    Ask a named reviewer to sign the RCA off.
+    """
+
+    def post(self, request, pk):
+
+        problem = self.get_problem(request, pk)
+
+        form = ApprovalRequestForm(request.POST)
+
+        if not form.is_valid():
+            self.report_form_errors(request, form)
+            return self.back(problem)
+
+        try:
+            ProblemService.request_approval(
+                problem,
+                approver=form.cleaned_data["approver"],
+                user=request.user,
+            )
+            messages.success(request, "Sign-off requested.")
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return self.back(problem)
+
+
+class ProblemApprovalDecisionView(ProblemRCAActionMixin):
+    """
+    Record the nominated approver's decision.
+
+    The "only the nominated approver may decide, and only once" rule
+    is enforced in ProblemService.decide_approval, not here.
+    """
+
+    def post(self, request, pk, approval_pk):
+
+        problem = self.get_problem(request, pk)
+
+        approval = get_object_or_404(
+            Approval,
+            pk=approval_pk,
+            rca__problem=problem,
+        )
+
+        form = ApprovalDecisionForm(request.POST)
+
+        if not form.is_valid():
+            self.report_form_errors(request, form)
+            return self.back(problem)
+
+        try:
+            ProblemService.decide_approval(
+                approval,
+                status=form.cleaned_data["status"],
+                comments=form.cleaned_data.get("comments", ""),
+                user=request.user,
+            )
+            messages.success(request, "Decision recorded.")
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return self.back(problem)

@@ -130,11 +130,20 @@ class ProblemSelector:
         )
 
     @classmethod
-    def dashboard_statistics(cls) -> dict[str, Any]:
+    def dashboard_statistics(cls, queryset=None) -> dict[str, Any]:
         """
         Dashboard metrics and trend analysis.
+
+        Takes an already RBAC-scoped queryset. Defaulting to every
+        Problem in the table (the previous behaviour) leaked global
+        counts to a Technician who can only see their own assigned
+        problems, so callers are expected to pass
+        ``get_problem_queryset(user)``; the unscoped default is kept
+        only for management/reporting callers that legitimately run
+        without a user.
         """
-        queryset = Problem.objects.all()
+        if queryset is None:
+            queryset = Problem.objects.all()
 
         stats = queryset.aggregate(
             total_problems=Count("id"),
