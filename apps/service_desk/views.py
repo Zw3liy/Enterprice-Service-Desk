@@ -19,12 +19,13 @@ from django.views.generic import (
     ListView,
     CreateView,
     DetailView,
+    UpdateView,
 )
 
 from .models import Problem, Supplier, Ticket, TicketAttachment, TicketHistory
 from .forms.ticket_forms import TicketCreateForm
 from .forms.problem_forms import ProblemCreateForm
-from .forms.supplier_forms import SupplierCreateForm
+from .forms.supplier_forms import SupplierCreateForm, SupplierUpdateForm
 
 from .security.policies import (
     get_problem_queryset,
@@ -39,6 +40,7 @@ from .security.mixins import (
     ProblemViewPermissionMixin,
     ProblemCreatePermissionMixin,
     ProblemChangePermissionMixin,
+    SupplierChangePermissionMixin,
     SupplierCreatePermissionMixin,
     SupplierViewPermissionMixin,
 )
@@ -813,18 +815,57 @@ class SupplierListView(
 
     Visibility controlled by:
         security.policies.get_supplier_queryset()
+
+    Supports an active/inactive filter and a free-text search, both
+    applied *after* the RBAC scoping so neither can widen visibility.
     """
 
     model = Supplier
     template_name = "suppliers/list.html"
     context_object_name = "suppliers"
+    paginate_by = 25
     permission_required = (
         "service_desk.view_supplier",
     )
 
 
     def get_queryset(self):
-        return get_supplier_queryset(self.request.user)
+
+        queryset = get_supplier_queryset(
+            self.request.user
+        ).select_related("department")
+
+        status = self.request.GET.get("status", "").strip()
+
+        if status == "active":
+            queryset = queryset.filter(is_active=True)
+        elif status == "inactive":
+            queryset = queryset.filter(is_active=False)
+
+        search = self.request.GET.get("q", "").strip()
+
+        if search:
+            queryset = queryset.filter(
+                Q(name__icontains=search)
+                | Q(contact_name__icontains=search)
+                | Q(contact_email__icontains=search)
+                | Q(description__icontains=search)
+            )
+
+        return queryset.order_by("name")
+
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+
+        context["stats"] = SupplierSelector.scoped_summary(
+            get_supplier_queryset(self.request.user)
+        )
+        context["active_status"] = self.request.GET.get("status", "")
+        context["search_query"] = self.request.GET.get("q", "")
+
+        return context
 
 
 # --------------------------------------------------
@@ -855,12 +896,33 @@ class SupplierCreateView(
     )
 
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+
     def form_valid(self, form):
-        self.object = SupplierService.create_supplier(
-            **form.cleaned_data,
+
+        try:
+            self.object = SupplierService.create_supplier(
+                user=self.request.user,
+                **form.cleaned_data,
+            )
+        except ValidationError as exc:
+            for message in exc.messages:
+                form.add_error(None, message)
+            return self.form_invalid(form)
+
+        messages.success(
+            self.request,
+            f"Supplier '{self.object.name}' created.",
         )
 
-        return redirect(self.get_success_url())
+        return redirect(
+            "service_desk:supplier_detail",
+            pk=self.object.pk,
+        )
 
 
 # --------------------------------------------------
@@ -886,7 +948,142 @@ class SupplierDetailView(
 
 
     def get_queryset(self):
+        return get_supplier_queryset(
+            self.request.user
+        ).select_related("department")
+
+
+# --------------------------------------------------
+# Supplier Update
+
+
+class SupplierUpdateView(
+    SupplierChangePermissionMixin,
+    UpdateView
+):
+    """
+    Supplier update.
+
+    Requires:
+        service_desk.change_supplier
+
+    The object is fetched through the RBAC-scoped queryset, so a
+    Manager cannot reach another department's supplier by guessing
+    a primary key.
+    """
+
+    model = Supplier
+    form_class = SupplierUpdateForm
+    template_name = "suppliers/update.html"
+    context_object_name = "supplier"
+    permission_required = (
+        "service_desk.change_supplier",
+    )
+
+
+    def get_queryset(self):
         return get_supplier_queryset(self.request.user)
+
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+
+    def form_valid(self, form):
+
+        # ModelForm validation has already written the submitted values
+        # onto form.instance (which *is* self.object), so passing that
+        # instance to the service would make its change-detection see
+        # "nothing changed" and skip the save. Re-read the persisted row
+        # so the service compares against real stored state.
+        persisted = Supplier.objects.get(pk=self.object.pk)
+
+        try:
+            self.object = SupplierService.update_supplier(
+                persisted,
+                user=self.request.user,
+                **form.cleaned_data,
+            )
+        except ValidationError as exc:
+            for message in exc.messages:
+                form.add_error(None, message)
+            return self.form_invalid(form)
+
+        messages.success(self.request, "Supplier updated.")
+
+        return redirect(
+            "service_desk:supplier_detail",
+            pk=self.object.pk,
+        )
+
+
+# --------------------------------------------------
+# Supplier Lifecycle
+
+
+class SupplierDeactivateView(
+    SupplierChangePermissionMixin,
+    View
+):
+    """
+    Retire a supplier (active -> inactive).
+
+    Suppliers are never hard-deleted through the UI: existing
+    tickets, contracts and audit records reference them.
+    """
+
+    def post(self, request, pk):
+
+        supplier = get_object_or_404(
+            get_supplier_queryset(request.user),
+            pk=pk,
+        )
+
+        try:
+            SupplierService.deactivate_supplier(
+                supplier,
+                user=request.user,
+            )
+            messages.success(
+                request,
+                f"Supplier '{supplier.name}' deactivated.",
+            )
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return redirect("service_desk:supplier_detail", pk=supplier.pk)
+
+
+class SupplierActivateView(
+    SupplierChangePermissionMixin,
+    View
+):
+    """
+    Reinstate a retired supplier (inactive -> active).
+    """
+
+    def post(self, request, pk):
+
+        supplier = get_object_or_404(
+            get_supplier_queryset(request.user),
+            pk=pk,
+        )
+
+        try:
+            SupplierService.activate_supplier(
+                supplier,
+                user=request.user,
+            )
+            messages.success(
+                request,
+                f"Supplier '{supplier.name}' reactivated.",
+            )
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return redirect("service_desk:supplier_detail", pk=supplier.pk)
 
 
 # --------------------------------------------------

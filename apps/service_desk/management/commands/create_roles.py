@@ -20,7 +20,7 @@ from django.contrib.auth.models import (
 
 from django.contrib.contenttypes.models import ContentType
 
-from apps.service_desk.models import Problem, Ticket
+from apps.service_desk.models import Problem, Supplier, Ticket
 
 
 
@@ -37,6 +37,10 @@ class Command(BaseCommand):
 
         problem_content_type = ContentType.objects.get_for_model(
             Problem
+        )
+
+        supplier_content_type = ContentType.objects.get_for_model(
+            Supplier
         )
 
 
@@ -80,6 +84,31 @@ class Command(BaseCommand):
                 content_type=problem_content_type,
                 codename="delete_problem",
             ),
+
+            # Supplier Management (ITSM-08). Requesters and
+            # Technicians get nothing: supplier records are
+            # commercial data, scoped to Managers (own departments)
+            # and Administrators (all) by
+            # security.policies.get_supplier_queryset.
+            "view_supplier": Permission.objects.get(
+                content_type=supplier_content_type,
+                codename="view_supplier",
+            ),
+
+            "add_supplier": Permission.objects.get(
+                content_type=supplier_content_type,
+                codename="add_supplier",
+            ),
+
+            "change_supplier": Permission.objects.get(
+                content_type=supplier_content_type,
+                codename="change_supplier",
+            ),
+
+            "delete_supplier": Permission.objects.get(
+                content_type=supplier_content_type,
+                codename="delete_supplier",
+            ),
         }
 
 
@@ -108,6 +137,9 @@ class Command(BaseCommand):
                 permissions["view_problem"],
                 permissions["add_problem"],
                 permissions["change_problem"],
+                permissions["view_supplier"],
+                permissions["add_supplier"],
+                permissions["change_supplier"],
             ],
 
 
@@ -120,6 +152,10 @@ class Command(BaseCommand):
                 permissions["add_problem"],
                 permissions["change_problem"],
                 permissions["delete_problem"],
+                permissions["view_supplier"],
+                permissions["add_supplier"],
+                permissions["change_supplier"],
+                permissions["delete_supplier"],
             ],
 
         }

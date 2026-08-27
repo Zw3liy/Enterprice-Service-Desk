@@ -278,6 +278,18 @@ class SupplierCreatePermissionMixin(
     )
 
 
+class SupplierChangePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Supplier update / lifecycle permission.
+    """
+
+    permission_required = (
+        "service_desk.change_supplier",
+    )
+
+
 # =====================================================
 # Role Enforcement
 # =====================================================

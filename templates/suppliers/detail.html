@@ -4,25 +4,75 @@
 
 {% block content %}
 
-<h1>{{ supplier.name }}</h1>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item"><a href="{% url 'service_desk:supplier_list' %}">Suppliers</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ supplier.name }}</li>
+    </ol>
+</nav>
 
-<dl class="row">
-    <dt class="col-sm-3">Description</dt>
-    <dd class="col-sm-9">{{ supplier.description|default:"—" }}</dd>
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-4">
+    <h1 class="h3 fw-bold mb-0">
+        {{ supplier.name }}
+        {% if supplier.is_active %}
+            <span class="badge bg-success ms-1">Active</span>
+        {% else %}
+            <span class="badge bg-secondary ms-1">Inactive</span>
+        {% endif %}
+    </h1>
 
-    <dt class="col-sm-3">Contact</dt>
-    <dd class="col-sm-9">{{ supplier.contact_name }} &middot; {{ supplier.contact_email }}</dd>
+    {% if perms.service_desk.change_supplier %}
+    <div class="d-flex gap-2">
+        <a href="{% url 'service_desk:supplier_update' supplier.pk %}" class="btn btn-outline-primary btn-sm">
+            <i class="fa-solid fa-pen me-1" aria-hidden="true"></i> Edit
+        </a>
+        {% if supplier.is_active %}
+            <form method="post" action="{% url 'service_desk:supplier_deactivate' supplier.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger btn-sm">Deactivate</button>
+            </form>
+        {% else %}
+            <form method="post" action="{% url 'service_desk:supplier_activate' supplier.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-success btn-sm">Reactivate</button>
+            </form>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
 
-    <dt class="col-sm-3">Phone</dt>
-    <dd class="col-sm-9">{{ supplier.phone|default:"—" }}</dd>
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Description</dt>
+            <dd class="col-sm-9 text-break">{{ supplier.description|default:"—" }}</dd>
 
-    <dt class="col-sm-3">Department</dt>
-    <dd class="col-sm-9">{% if supplier.department %}{{ supplier.department.name }}{% else %}&mdash;{% endif %}</dd>
+            <dt class="col-sm-3">Contact</dt>
+            <dd class="col-sm-9">
+                {{ supplier.contact_name|default:"—" }}
+                {% if supplier.contact_email %}
+                    &middot; <a href="mailto:{{ supplier.contact_email }}">{{ supplier.contact_email }}</a>
+                {% endif %}
+            </dd>
 
-    <dt class="col-sm-3">Active</dt>
-    <dd class="col-sm-9">{{ supplier.is_active }}</dd>
-</dl>
+            <dt class="col-sm-3">Phone</dt>
+            <dd class="col-sm-9">{{ supplier.phone|default:"—" }}</dd>
 
-<a href="{% url 'service_desk:supplier_list' %}" class="btn btn-secondary">Back</a>
+            <dt class="col-sm-3">Department</dt>
+            <dd class="col-sm-9">{% if supplier.department %}{{ supplier.department.name }}{% else %}&mdash;{% endif %}</dd>
+
+            <dt class="col-sm-3">Status</dt>
+            <dd class="col-sm-9">{% if supplier.is_active %}Active{% else %}Inactive{% endif %}</dd>
+
+            <dt class="col-sm-3">Created</dt>
+            <dd class="col-sm-9 text-muted small">{{ supplier.created_at|date:"M d, Y H:i" }}</dd>
+
+            <dt class="col-sm-3">Last updated</dt>
+            <dd class="col-sm-9 text-muted small">{{ supplier.updated_at|date:"M d, Y H:i" }}</dd>
+        </dl>
+    </div>
+</div>
+
+<a href="{% url 'service_desk:supplier_list' %}" class="btn btn-secondary btn-sm mt-3">Back to suppliers</a>
 
 {% endblock %}
