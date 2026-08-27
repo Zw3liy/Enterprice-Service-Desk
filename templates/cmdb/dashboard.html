@@ -1,0 +1,105 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<section class="enterprise-page">
+
+    <header class="page-header">
+        <div>
+            <h1>Configuration Management</h1>
+            <p>Configuration Item inventory, relationships and dependency operations.</p>
+        </div>
+
+        <a href="#" class="btn btn-primary">Register CI</a>
+    </header>
+
+    <section class="kpi-grid">
+
+        <article class="kpi-card">
+            <span class="kpi-label">Configuration Items</span>
+            <strong class="kpi-value">—</strong>
+        </article>
+
+        <article class="kpi-card">
+            <span class="kpi-label">Active CIs</span>
+            <strong class="kpi-value">—</strong>
+        </article>
+
+        <article class="kpi-card">
+            <span class="kpi-label">Services</span>
+            <strong class="kpi-value">—</strong>
+        </article>
+
+        <article class="kpi-card">
+            <span class="kpi-label">Relationship Risk</span>
+            <strong class="kpi-value">—</strong>
+        </article>
+
+    </section>
+
+    <section class="panel">
+
+        <div class="panel-header">
+            <h2>CMDB Operations</h2>
+        </div>
+
+        <div class="card-grid">
+
+            <a href="#" class="operation-card">
+                <h3>CI Queue</h3>
+                <p>Search and manage configuration items.</p>
+            </a>
+
+            <a href="#" class="operation-card">
+                <h3>Relationships</h3>
+                <p>Review dependencies between configuration items.</p>
+            </a>
+
+            <a href="#" class="operation-card">
+                <h3>Services</h3>
+                <p>Review service-to-CI relationships.</p>
+            </a>
+
+            <a href="#" class="operation-card">
+                <h3>Lifecycle</h3>
+                <p>Monitor CI lifecycle and operational state.</p>
+            </a>
+
+        </div>
+
+    </section>
+
+    <section class="panel">
+
+        <div class="panel-header">
+            <h2>Configuration Item Activity</h2>
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="enterprise-table">
+
+                <thead>
+                    <tr>
+                        <th>CI</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Owner</th>
+                        <th>Relationships</th>
+                        <th>Last Activity</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td colspan="6">No configuration item activity available.</td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</section>
+{% endblock %}

@@ -1,0 +1,266 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1>Service Desk Analytics</h1>
+            <p class="text-muted mb-0">
+                Management intelligence and operational performance
+            </p>
+        </div>
+
+        <span class="badge bg-secondary">
+            Analytics
+        </span>
+
+    </div>
+
+    <!-- KPI CARDS -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="small text-muted">
+                        Total Workload
+                    </div>
+                    <div class="display-6 fw-bold">
+                        —
+                    </div>
+                    <div class="small text-muted">
+                        All operational records
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="small text-muted">
+                        Open Work
+                    </div>
+                    <div class="display-6 fw-bold">
+                        —
+                    </div>
+                    <div class="small text-muted">
+                        Currently active
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="small text-muted">
+                        SLA Performance
+                    </div>
+                    <div class="display-6 fw-bold">
+                        —
+                    </div>
+                    <div class="small text-muted">
+                        Target performance
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="small text-muted">
+                        Resolution
+                    </div>
+                    <div class="display-6 fw-bold">
+                        —
+                    </div>
+                    <div class="small text-muted">
+                        Resolution performance
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- PERFORMANCE OVERVIEW -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header">
+                    <strong>Operational Performance</strong>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="table-responsive">
+
+                        <table class="table table-hover align-middle">
+
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Current</th>
+                                    <th>Target</th>
+                                    <th>Trend</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>Incident Volume</td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Average Resolution</td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                </tr>
+
+                                <tr>
+                                    <td>SLA Compliance</td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                </tr>
+
+                                <tr>
+                                    <td>First Response</td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Backlog</td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-4">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header">
+                    <strong>Management Attention</strong>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="list-group list-group-flush">
+
+                        <div class="list-group-item px-0">
+                            <strong>SLA Breaches</strong>
+                            <div class="small text-muted">
+                                Performance outside agreed targets
+                            </div>
+                        </div>
+
+                        <div class="list-group-item px-0">
+                            <strong>Growing Backlog</strong>
+                            <div class="small text-muted">
+                                Workload requiring capacity review
+                            </div>
+                        </div>
+
+                        <div class="list-group-item px-0">
+                            <strong>High Priority</strong>
+                            <div class="small text-muted">
+                                Business-impacting workload
+                            </div>
+                        </div>
+
+                        <div class="list-group-item px-0">
+                            <strong>Repeat Incidents</strong>
+                            <div class="small text-muted">
+                                Potential problem-management candidates
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ANALYTICS AREAS -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+            <strong>Management Intelligence</strong>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row g-3">
+
+                <div class="col-md-3">
+                    <a href="#"
+                       class="btn btn-outline-primary w-100">
+                        Volume Analysis
+                    </a>
+                </div>
+
+                <div class="col-md-3">
+                    <a href="#"
+                       class="btn btn-outline-primary w-100">
+                        SLA Analysis
+                    </a>
+                </div>
+
+                <div class="col-md-3">
+                    <a href="#"
+                       class="btn btn-outline-primary w-100">
+                        Resolution Analysis
+                    </a>
+                </div>
+
+                <div class="col-md-3">
+                    <a href="#"
+                       class="btn btn-outline-primary w-100">
+                        Trend Analysis
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

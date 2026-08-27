@@ -1,6 +1,5 @@
-from django.contrib import admin
+﻿from django.contrib import admin
 from django.urls import path, include
-
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -15,5 +14,17 @@ urlpatterns = [
     path(
         "",
         include("apps.service_desk.urls")
+    ),
+
+    # Change Management
+    path(
+        "change-management/",
+        include("apps.service_desk.urls.change_management")
+    ),
+
+    # Release Management
+    path(
+        "release/",
+        include("apps.service_desk.urls.release_management")
     ),
 ]

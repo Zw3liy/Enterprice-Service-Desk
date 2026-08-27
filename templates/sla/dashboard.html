@@ -1,0 +1,154 @@
+﻿{% extends "base.html" %}
+
+{% block title %}SLA Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>Service Level Management</h1>
+            <p class="text-muted mb-0">
+                Monitor service-level targets, deadlines, risks, and breaches.
+            </p>
+        </div>
+        <a href="#" class="btn btn-primary">View SLA Queue</a>
+    </div>
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Active SLAs</div>
+                    <div class="fs-2 fw-bold">{{ active_slas|default:"—" }}</div>
+                    <div class="small text-muted">Currently monitored</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted small">At Risk</div>
+                    <div class="fs-2 fw-bold">{{ at_risk_slas|default:"—" }}</div>
+                    <div class="small text-muted">Approaching target</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Breached</div>
+                    <div class="fs-2 fw-bold">{{ breached_slas|default:"—" }}</div>
+                    <div class="small text-muted">Target exceeded</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Compliance</div>
+                    <div class="fs-2 fw-bold">{{ sla_compliance|default:"—" }}</div>
+                    <div class="small text-muted">Current SLA performance</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-8">
+            <div class="card h-100">
+                <div class="card-header">
+                    <strong>SLA Performance</strong>
+                </div>
+                <div class="card-body">
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Ticket</th>
+                                    <th>Priority</th>
+                                    <th>Response</th>
+                                    <th>Resolution</th>
+                                    <th>Status</th>
+                                    <th>Deadline</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sla in sla_items %}
+                                <tr>
+                                    <td>
+                                        <a href="#">
+                                            {{ sla.ticket_number|default:"—" }}
+                                        </a>
+                                    </td>
+                                    <td>{{ sla.priority|default:"—" }}</td>
+                                    <td>{{ sla.response_time|default:"—" }}</td>
+                                    <td>{{ sla.resolution_time|default:"—" }}</td>
+                                    <td>{{ sla.status|default:"—" }}</td>
+                                    <td>{{ sla.deadline|default:"—" }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-muted text-center py-4">
+                                        No SLA records available.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <strong>SLA Risk Summary</strong>
+                </div>
+                <div class="card-body">
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>On Target</span>
+                            <strong>{{ on_target_count|default:"—" }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>At Risk</span>
+                            <strong>{{ at_risk_slas|default:"—" }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Breached</span>
+                            <strong>{{ breached_slas|default:"—" }}</strong>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="d-flex justify-content-between">
+                            <span>Paused</span>
+                            <strong>{{ paused_slas|default:"—" }}</strong>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

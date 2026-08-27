@@ -1,38 +1,124 @@
-<nav class="col-md-2 d-md-block sidebar p-3" aria-label="Main navigation">
+﻿<aside class="sidebar col-md-2">
 
-    <div class="position-sticky">
+    <div class="sidebar-brand mb-3">
 
-        <h5 class="mb-3">
+        <h5>
+            <i class="fa-solid fa-layer-group me-2"></i>
             Service Desk
         </h5>
 
-        <hr>
+    </div>
+
+    <hr>
+
+    <nav aria-label="Main navigation">
 
         <ul class="nav flex-column">
 
             <li class="nav-item">
-                <a class="nav-link"
-                   href="{% url 'service_desk:dashboard' %}">
+                <a
+                    class="nav-link"
+                    href="{% url 'service_desk:dashboard' %}"
+                >
+                    <i class="fa-solid fa-gauge-high me-2"></i>
                     Dashboard
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link"
-                   href="{% url 'service_desk:ticket_list' %}">
+                <a
+                    class="nav-link"
+                    href="{% url 'service_desk:ticket_list' %}"
+                >
+                    <i class="fa-solid fa-ticket me-2"></i>
                     Tickets
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link"
-                   href="{% url 'service_desk:ticket_create' %}">
-                    Create Ticket
+                <a
+                    class="nav-link"
+                    href="{% url 'service_desk:incident_dashboard' %}"
+                >
+                    <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                    Incidents
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a
+                    class="nav-link"
+                    href="{% url 'service_desk:problem_list' %}"
+                >
+                    <i class="fa-solid fa-circle-exclamation me-2"></i>
+                    Problems
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a
+                    class="nav-link"
+                    href="{% url 'service_desk:supplier_list' %}"
+                >
+                    <i class="fa-solid fa-truck-field me-2"></i>
+                    Suppliers
                 </a>
             </li>
 
         </ul>
 
-    </div>
+    </nav>
 
-</nav>
+    <hr>
+
+    <h6 class="text-uppercase text-muted small fw-bold">
+        ITIL
+    </h6>
+
+    <ul class="nav flex-column">
+
+        <li class="nav-item">
+            <a
+                class="nav-link"
+                href="{% url 'change_management:list' %}"
+            >
+                <i class="fa-solid fa-arrows-rotate me-2"></i>
+                Changes
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a
+                class="nav-link"
+                href="{% url 'release_management:list' %}"
+            >
+                <i class="fa-solid fa-box-archive me-2"></i>
+                Releases
+            </a>
+        </li>
+
+    </ul>
+
+    <hr>
+
+    <h6 class="text-uppercase text-muted small fw-bold">
+        Platform
+    </h6>
+
+    <ul class="nav flex-column">
+
+        <li class="nav-item">
+
+            <a
+                class="nav-link"
+                href="{% url 'admin:index' %}"
+            >
+                <i class="fa-solid fa-gears me-2"></i>
+                Administration
+            </a>
+
+        </li>
+
+    </ul>
+
+</aside>

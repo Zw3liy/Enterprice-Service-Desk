@@ -1,1 +1,87 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3"><a class="navbar-brand" href="/">Enterprise Service Desk</a><div class="ms-auto">{% if user.is_authenticated %}<span class="text-white me-3">{{ user.username }}</span><form method="post" action="{% url "logout" %}" class="d-inline">{% csrf_token %}<button class="btn btn-outline-light btn-sm">Logout</button></form>{% else %}<a class="btn btn-outline-light btn-sm" href="{% url "login" %}">Login</a>{% endif %}</div></nav>
+﻿<nav class="navbar navbar-dark bg-dark px-3">
+
+    <a
+        class="navbar-brand fw-bold"
+        href="{% url 'service_desk:dashboard' %}"
+    >
+        <i class="fa-solid fa-headset me-2"></i>
+        Enterprise Service Desk
+    </a>
+
+    <div class="d-flex align-items-center gap-3">
+
+        <a
+            href="{% url 'service_desk:ticket_create' %}"
+            class="btn btn-primary btn-sm"
+        >
+            <i class="fa-solid fa-plus me-1"></i>
+            New Ticket
+        </a>
+
+        {% if user.is_authenticated %}
+
+            <div class="dropdown">
+
+                <button
+                    class="btn btn-dark dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                >
+                    <i class="fa-solid fa-user me-1"></i>
+                    {{ user.get_username }}
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-end">
+
+                    <li>
+                        <a
+                            class="dropdown-item"
+                            href="{% url 'admin:index' %}"
+                        >
+                            <i class="fa-solid fa-gear me-2"></i>
+                            Administration
+                        </a>
+                    </li>
+
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+
+                    <li>
+                        <form
+                            method="post"
+                            action="{% url 'logout' %}"
+                            class="px-3"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="dropdown-item px-0"
+                            >
+                                <i class="fa-solid fa-right-from-bracket me-2"></i>
+                                Sign out
+                            </button>
+
+                        </form>
+                    </li>
+
+                </ul>
+
+            </div>
+
+        {% else %}
+
+            <a
+                href="{% url 'login' %}"
+                class="btn btn-outline-light btn-sm"
+            >
+                Sign in
+            </a>
+
+        {% endif %}
+
+    </div>
+
+</nav>

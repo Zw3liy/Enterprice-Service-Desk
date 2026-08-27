@@ -1,0 +1,163 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1>Change Queue</h1>
+
+            <p class="text-muted">
+                Operational change requests awaiting governance activity
+            </p>
+        </div>
+
+        <span class="badge bg-secondary">
+            CHANGE QUEUE
+        </span>
+
+    </div>
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <strong>Change Requests</strong>
+
+                <div class="text-muted small">
+                    Search and filtering ready
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Search
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Change number or title"
+                    >
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <label class="form-label">
+                        Status
+                    </label>
+
+                    <select class="form-select">
+
+                        <option>All statuses</option>
+                        <option>Draft</option>
+                        <option>Assessment</option>
+                        <option>Awaiting Approval</option>
+                        <option>Approved</option>
+                        <option>Scheduled</option>
+                        <option>Implementing</option>
+                        <option>Completed</option>
+                        <option>Failed</option>
+                        <option>Rolled Back</option>
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <label class="form-label">
+                        Risk
+                    </label>
+
+                    <select class="form-select">
+
+                        <option>All risk levels</option>
+                        <option>Low</option>
+                        <option>Medium</option>
+                        <option>High</option>
+                        <option>Critical</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table align-middle">
+
+                    <thead>
+
+                        <tr>
+                            <th>Change</th>
+                            <th>Title</th>
+                            <th>Risk</th>
+                            <th>Status</th>
+                            <th>Window</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td>
+                                —
+                            </td>
+
+                            <td>
+                                No live change records loaded
+                            </td>
+
+                            <td>
+                                —
+                            </td>
+
+                            <td>
+                                <span class="badge bg-secondary">
+                                    READY
+                                </span>
+                            </td>
+
+                            <td>
+                                —
+                            </td>
+
+                            <td>
+                                <span class="text-muted">
+                                    View
+                                </span>
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

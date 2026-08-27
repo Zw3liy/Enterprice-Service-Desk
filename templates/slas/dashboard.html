@@ -1,0 +1,68 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div class="enterprise-page">
+
+    <div class="page-header">
+        <div>
+            <h1>SLA Management</h1>
+            <p>Service level performance and operational compliance.</p>
+        </div>
+    </div>
+
+    <section class="dashboard-grid">
+
+        <article class="card">
+            <h2>Active SLAs</h2>
+            <p>Monitor currently active service level commitments.</p>
+        </article>
+
+        <article class="card">
+            <h2>At Risk</h2>
+            <p>Requests approaching response or resolution thresholds.</p>
+        </article>
+
+        <article class="card">
+            <h2>Breached</h2>
+            <p>Service level commitments that have exceeded their target.</p>
+        </article>
+
+        <article class="card">
+            <h2>Compliance</h2>
+            <p>Operational SLA performance across the service desk.</p>
+        </article>
+
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2>SLA Operational Overview</h2>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ticket</th>
+                        <th>Priority</th>
+                        <th>Response</th>
+                        <th>Resolution</th>
+                        <th>Status</th>
+                        <th>Risk</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="6">
+                            SLA operational records will appear here.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</div>
+
+{% endblock %}

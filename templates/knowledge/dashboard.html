@@ -1,0 +1,271 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1>Knowledge Base</h1>
+
+            <p class="text-muted">
+                Service Desk knowledge management and operational guidance
+            </p>
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <a
+                href="#"
+                class="btn btn-primary"
+            >
+                New Article
+            </a>
+
+            <span class="badge bg-secondary align-self-center">
+                KNOWLEDGE
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-3">
+
+            <div class="card h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        Published Articles
+                    </div>
+
+                    <div class="display-6">
+                        —
+                    </div>
+
+                    <div class="small text-muted">
+                        Approved knowledge
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        Draft Articles
+                    </div>
+
+                    <div class="display-6">
+                        —
+                    </div>
+
+                    <div class="small text-muted">
+                        Awaiting review
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        Categories
+                    </div>
+
+                    <div class="display-6">
+                        —
+                    </div>
+
+                    <div class="small text-muted">
+                        Knowledge classification
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        Review Required
+                    </div>
+
+                    <div class="display-6">
+                        —
+                    </div>
+
+                    <div class="small text-muted">
+                        Articles requiring attention
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-8">
+
+            <div class="card">
+
+                <div class="card-header">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <strong>Knowledge Articles</strong>
+
+                        <a
+                            href="#"
+                            class="btn btn-sm btn-outline-secondary"
+                        >
+                            View All
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <div class="card-body p-0">
+
+                    <div class="table-responsive">
+
+                        <table class="table table-hover mb-0">
+
+                            <thead>
+
+                                <tr>
+                                    <th>Article</th>
+                                    <th>Category</th>
+                                    <th>Status</th>
+                                    <th>Updated</th>
+                                    <th></th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+
+                                    <td>
+                                        <strong>
+                                            No article loaded
+                                        </strong>
+
+                                        <div class="text-muted small">
+                                            Knowledge content will appear here.
+                                        </div>
+                                    </td>
+
+                                    <td>—</td>
+
+                                    <td>
+                                        <span class="badge bg-secondary">
+                                            —
+                                        </span>
+                                    </td>
+
+                                    <td>—</td>
+
+                                    <td>
+                                        <a
+                                            href="#"
+                                            class="btn btn-sm btn-outline-secondary"
+                                        >
+                                            View
+                                        </a>
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-4">
+
+            <div class="card h-100">
+
+                <div class="card-header">
+                    <strong>Knowledge Categories</strong>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="list-group">
+
+                        <div class="list-group-item d-flex justify-content-between">
+                            <span>Incident Resolution</span>
+                            <span class="badge bg-secondary">—</span>
+                        </div>
+
+                        <div class="list-group-item d-flex justify-content-between">
+                            <span>How-To Guides</span>
+                            <span class="badge bg-secondary">—</span>
+                        </div>
+
+                        <div class="list-group-item d-flex justify-content-between">
+                            <span>Troubleshooting</span>
+                            <span class="badge bg-secondary">—</span>
+                        </div>
+
+                        <div class="list-group-item d-flex justify-content-between">
+                            <span>Service Information</span>
+                            <span class="badge bg-secondary">—</span>
+                        </div>
+
+                        <div class="list-group-item d-flex justify-content-between">
+                            <span>Known Errors</span>
+                            <span class="badge bg-secondary">—</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

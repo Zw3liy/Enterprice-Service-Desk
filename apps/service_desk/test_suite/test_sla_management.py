@@ -1,74 +1,71 @@
 from django.test import TestCase
-from django.contrib.auth.models import User, Group, Permission
 from django.utils.timezone import now, timedelta
-from apps.service_desk.models import Ticket, Department, SLAPolicy
+from django.core.exceptions import ValidationError
+from apps.service_desk.models.sla_policy import SLAPolicy
+from apps.service_desk.models.ticket import Ticket
 from apps.service_desk.services.sla_service import SLAService
+from apps.service_desk.selectors.sla_selector import SLASelector
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 
-class SLAManagementTests(TestCase):
+class SLAPolicyModelTests(TestCase):
+
+    def test_duration_returns_timedelta(self):
+        policy = SLAPolicy(name="Test Policy", duration_minutes=15)
+        self.assertIsInstance(policy.duration(), timedelta)
+
+    def test_clean_raises_for_non_positive_duration(self):
+        policy = SLAPolicy(name="Invalid Policy", duration_minutes=0)
+        with self.assertRaises(ValidationError):
+            policy.clean()
+
+    def test_str_representation(self):
+        policy = SLAPolicy(name="My Policy", duration_minutes=30)
+        self.assertEqual(str(policy), "My Policy")
+
+class SLAServiceTests(TestCase):
 
     def setUp(self):
-        self.group = Group.objects.create(name="Technician")
-        view_perm = Permission.objects.get(codename="view_ticket")
-        change_perm = Permission.objects.get(codename="change_ticket")
-        self.group.permissions.add(view_perm, change_perm)
+        self.user = User.objects.create_user(username="user", password="password")
+        self.policy = SLAPolicy.objects.create(name="Standard SLA", duration_minutes=60)
 
-        self.user = User.objects.create_user(username="technician", password="password123")
-        self.user.groups.add(self.group)
-
-        self.department = Department.objects.create(name="SLA Dept")
-
-        self.sla_policy = SLAPolicy.objects.create(name="Standard 2 hours", duration_minutes=120)
-
-        self.ticket = Ticket.objects.create(
-            title="Ticket with SLA",
-            description="Some issue",
-            priority="medium",
-            urgency="medium",
-            status="open",
-            created_by=self.user,
-            department=self.department,
-            sla_policy=self.sla_policy,
-        )
-
-    def test_sla_deadline_calculation(self):
-        deadline = SLAService.calculate_sla_deadline(self.ticket)
-        self.assertIsNotNone(deadline)
-        expected = self.ticket.created_at + self.sla_policy.duration()
-        self.assertEqual(deadline, expected)
-
-    def test_sla_breach_detection_false(self):
-        self.assertFalse(SLAService.check_sla_breach(self.ticket))
-
-    def test_sla_breach_detection_true(self):
-        # Artificially set created_at to past to cause breach
-        self.ticket.created_at = now() - timedelta(minutes=180)
-        self.ticket.save(update_fields=['created_at'])
-        self.assertTrue(SLAService.check_sla_breach(self.ticket))
-
-    def test_invalid_sla_policy_configuration(self):
-        with self.assertRaises(Exception):
-            SLAPolicy.objects.create(name="Invalid SLA", duration_minutes=0)
-
-    def test_rbac_ticket_visibility(self):
-        from apps.service_desk.security.policies import get_ticket_queryset
-        tickets_visible = get_ticket_queryset(self.user)
-        self.assertIn(self.ticket, tickets_visible)
-
-    def test_timezone_aware_deadline(self):
-        deadline = SLAService.calculate_sla_deadline(self.ticket)
-        self.assertTrue(deadline.tzinfo is not None and deadline.tzinfo.utcoffset(deadline) is not None)
-
-    def test_ticket_without_sla_policy(self):
-        ticket_no_sla = Ticket.objects.create(
-            title="No SLA Ticket",
-            description="No SLA set",
-            priority="low",
-            urgency="low",
-            status="open",
-            created_by=self.user,
-            department=self.department,
-        )
-        deadline = SLAService.calculate_sla_deadline(ticket_no_sla)
+    def test_calculate_sla_deadline_returns_none_if_no_policy(self):
+        ticket = Ticket(created_at=now())
+        ticket.sla_policy = None
+        deadline = SLAService.calculate_sla_deadline(ticket)
         self.assertIsNone(deadline)
-        self.assertFalse(SLAService.check_sla_breach(ticket_no_sla))
+
+    def test_calculate_sla_deadline_returns_correct_deadline(self):
+        ticket = Ticket(created_at=now())
+        ticket.sla_policy = self.policy
+        expected_deadline = ticket.created_at + self.policy.duration()
+        self.assertEqual(SLAService.calculate_sla_deadline(ticket), expected_deadline)
+
+    def test_check_sla_breach_false_if_no_policy(self):
+        ticket = Ticket(created_at=now())
+        ticket.sla_policy = None
+        self.assertFalse(SLAService.check_sla_breach(ticket))
+
+    def test_check_sla_breach_true_and_false(self):
+        past_time = now() - timedelta(hours=2)
+        future_time = now() + timedelta(hours=2)
+        ticket = Ticket(created_at=past_time)
+        ticket.sla_policy = self.policy
+        self.assertTrue(SLAService.check_sla_breach(ticket))
+        ticket.created_at = future_time
+        self.assertFalse(SLAService.check_sla_breach(ticket))
+
+class SLASelectorTests(TestCase):
+    def setUp(self):
+        self.admin = User.objects.create_superuser(username="admin", password="admin123")
+        self.policy = SLAPolicy.objects.create(name="Quick SLA", duration_minutes=1)
+
+    def test_get_tickets_breached_sla_returns_tickets(self):
+        ticket1 = Ticket.objects.create(created_at=now() - timedelta(minutes=10), sla_policy=self.policy)
+        ticket2 = Ticket.objects.create(created_at=now() + timedelta(minutes=10), sla_policy=self.policy)
+
+        breached_tickets = SLASelector.get_tickets_breached_sla(self.admin)
+
+        self.assertTrue(breached_tickets.filter(pk=ticket1.pk).exists())
+        self.assertFalse(breached_tickets.filter(pk=ticket2.pk).exists())

@@ -1,0 +1,145 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<div class="enterprise-page service-level-dashboard">
+
+    <div class="page-header">
+        <div>
+            <h1>Service Level Management</h1>
+            <p>Monitor service commitments, SLA performance, breaches, and operational risk.</p>
+        </div>
+
+        <div class="page-actions">
+            <a href="#" class="btn btn-primary">Create Service Level</a>
+            <a href="#" class="btn btn-secondary">View Queue</a>
+        </div>
+    </div>
+
+    <section class="kpi-grid">
+
+        <article class="kpi-card">
+            <span class="kpi-label">Active Service Levels</span>
+            <strong class="kpi-value">—</strong>
+            <span class="kpi-meta">Configured commitments</span>
+        </article>
+
+        <article class="kpi-card">
+            <span class="kpi-label">At Risk</span>
+            <strong class="kpi-value">—</strong>
+            <span class="kpi-meta">Approaching threshold</span>
+        </article>
+
+        <article class="kpi-card">
+            <span class="kpi-label">Breached</span>
+            <strong class="kpi-value">—</strong>
+            <span class="kpi-meta">Requires attention</span>
+        </article>
+
+        <article class="kpi-card">
+            <span class="kpi-label">Compliance</span>
+            <strong class="kpi-value">—</strong>
+            <span class="kpi-meta">Current SLA performance</span>
+        </article>
+
+    </section>
+
+    <section class="dashboard-grid">
+
+        <article class="enterprise-card">
+            <div class="card-header">
+                <div>
+                    <h2>SLA Performance</h2>
+                    <p>Operational service-level performance overview.</p>
+                </div>
+            </div>
+
+            <div class="status-list">
+                <div class="status-row">
+                    <span>Within target</span>
+                    <strong>—</strong>
+                </div>
+
+                <div class="status-row">
+                    <span>Approaching breach</span>
+                    <strong>—</strong>
+                </div>
+
+                <div class="status-row">
+                    <span>Breached</span>
+                    <strong>—</strong>
+                </div>
+
+                <div class="status-row">
+                    <span>Pending measurement</span>
+                    <strong>—</strong>
+                </div>
+            </div>
+        </article>
+
+        <article class="enterprise-card">
+            <div class="card-header">
+                <div>
+                    <h2>Commitment Types</h2>
+                    <p>Service-level dimensions being monitored.</p>
+                </div>
+            </div>
+
+            <div class="status-list">
+                <div class="status-row">
+                    <span>Response target</span>
+                    <strong>—</strong>
+                </div>
+
+                <div class="status-row">
+                    <span>Resolution target</span>
+                    <strong>—</strong>
+                </div>
+
+                <div class="status-row">
+                    <span>Availability target</span>
+                    <strong>—</strong>
+                </div>
+
+                <div class="status-row">
+                    <span>Service window</span>
+                    <strong>—</strong>
+                </div>
+            </div>
+        </article>
+
+    </section>
+
+    <section class="enterprise-card">
+        <div class="card-header">
+            <div>
+                <h2>Operational SLA Queue</h2>
+                <p>Service commitments requiring monitoring or intervention.</p>
+            </div>
+
+            <a href="#" class="btn btn-secondary">Open Queue</a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="enterprise-table">
+                <thead>
+                    <tr>
+                        <th>Service Level</th>
+                        <th>Service</th>
+                        <th>Target</th>
+                        <th>Current</th>
+                        <th>Status</th>
+                        <th>Owner</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td colspan="6">No service-level records are currently displayed.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</div>
+{% endblock %}

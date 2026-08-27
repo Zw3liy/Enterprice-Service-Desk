@@ -1,8 +1,8 @@
-"""
+﻿"""
 apps/service_desk/views.py
 
 Enterprise Service Desk
-Phase 2.2.4 — Authorization Hardening
+Phase 2.2.4 ΓÇö Authorization Hardening
 """
 
 
@@ -216,7 +216,7 @@ class TicketDetailView(
         ).order_by("-created_at")
 
         # Work notes are filtered out for Requesters (users without
-        # change_ticket) — ADR-010, Decision 3.
+        # change_ticket) ΓÇö ADR-010, Decision 3.
         if not self.request.user.has_perm("service_desk.change_ticket"):
             history_qs = history_qs.exclude(
                 event_type=TicketHistory.EVENT_WORK_NOTE,
@@ -390,7 +390,7 @@ class TicketCommentView(
     Requires:
         service_desk.view_ticket
 
-    Any role that can see a ticket can comment on it — there is
+    Any role that can see a ticket can comment on it ΓÇö there is
     currently no internal/external visibility distinction (see
     IM-03 design findings, docs/engineering/SESSION_STATE.md).
     """
@@ -418,7 +418,7 @@ class TicketCommentView(
 
 
 # --------------------------------------------------
-# Ticket Work Note (internal — Technician/Manager only)
+# Ticket Work Note (internal ΓÇö Technician/Manager only)
 # --------------------------------------------------
 
 class TicketWorkNoteView(
@@ -431,7 +431,7 @@ class TicketWorkNoteView(
     Requires:
         service_desk.change_ticket
 
-    Work notes are never visible to Requesters — the template
+    Work notes are never visible to Requesters ΓÇö the template
     filters them out for users lacking change_ticket (see
     ADR-010, Decision 3). This permission gate ensures only
     Technician/Manager/Admin can add them.
@@ -562,10 +562,10 @@ class TicketCloseView(
     Close a ticket after requester confirmation.
 
     Per ADR-010, Decision 3: the permission mixin is
-    TicketViewPermissionMixin (view_ticket — which Requesters
+    TicketViewPermissionMixin (view_ticket ΓÇö which Requesters
     hold) because the real gate is "are you the requester,"
     enforced in the service layer (change_status rejects
-    non-requesters for the awaiting_confirmation → closed
+    non-requesters for the awaiting_confirmation ΓåÆ closed
     transition).
     """
 
@@ -622,7 +622,7 @@ class IncidentDashboardView(TicketPermissionMixin, TemplateView):
     Incident dashboard.
 
     Ticket is the incident record in this codebase (there is no
-    separate Incident model) — visibility is scoped through
+    separate Incident model) ΓÇö visibility is scoped through
     security.policies.get_ticket_queryset(), matching every other
     ticket view in this module.
     """
@@ -677,7 +677,7 @@ class ProblemListView(
 
     Rules:
         Requester:
-            none — Requesters cannot access Problem records
+            none ΓÇö Requesters cannot access Problem records
             (ADR-010, Decision 1)
 
         Technician:
@@ -1085,7 +1085,7 @@ class ProblemMarkKnownErrorView(
         service_desk.change_problem
 
     Requires a RootCauseAnalysis to exist and root_cause to be
-    populated — enforced by ProblemService.mark_known_error.
+    populated ΓÇö enforced by ProblemService.mark_known_error.
     """
 
     def post(self, request, pk):
@@ -1121,7 +1121,7 @@ class ProblemCommentView(
 
     Requesters hold no Problem permissions at all (ADR-010,
     Decision 1), so this is effectively Technician/Manager/
-    Administrator only despite the "view" permission name —
+    Administrator only despite the "view" permission name ΓÇö
     consistent with how TicketCommentView uses the view
     permission for Tickets, where Requesters legitimately can
     comment on their own tickets.
@@ -1283,3 +1283,4 @@ class ProblemReopenView(
             messages.error(request, " ".join(exc.messages))
 
         return redirect("service_desk:problem_detail", pk=problem.pk)
+

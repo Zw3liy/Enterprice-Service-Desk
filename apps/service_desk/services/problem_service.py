@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from typing import Any
 
@@ -266,6 +266,7 @@ class ProblemService:
 
     @staticmethod
     @transaction.atomic
+    @staticmethod
     def record_root_cause(
         problem: Problem,
         root_cause: str,
@@ -276,9 +277,21 @@ class ProblemService:
             raise ValidationError("Root cause cannot be empty.")
 
         previous = problem.root_cause
+        value = root_cause.strip()
 
-        problem.root_cause = root_cause.strip()
+        # Ensure every Problem has its dedicated RCA record.
+        ProblemService._ensure_root_cause_analysis(problem)
+
+        # Problem.root_cause remains the value rendered by the
+        # existing Problem detail template.
+        problem.root_cause = value
         problem.save(update_fields=["root_cause", "updated_at"])
+
+        # Keep the dedicated RCA record synchronized with the
+        # Problem-level root cause.
+        rca = RootCauseAnalysis.objects.get(problem=problem)
+        rca.problem_statement = value
+        rca.save(update_fields=["problem_statement", "updated_at"])
 
         ProblemHistory.record(
             problem=problem,
@@ -289,7 +302,6 @@ class ProblemService:
         )
 
         return problem
-
     @staticmethod
     @transaction.atomic
     def record_workaround(

@@ -1,0 +1,99 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div class="enterprise-page">
+
+    <div class="page-header">
+
+        <div>
+            <h1>SLA Detail</h1>
+            <p>Service level commitment and compliance workspace.</p>
+        </div>
+
+    </div>
+
+    <section class="dashboard-grid">
+
+        <article class="card">
+            <h2>Service Level</h2>
+            <p>Configured service level commitment.</p>
+        </article>
+
+        <article class="card">
+            <h2>Response Target</h2>
+            <p>Target response time and current performance.</p>
+        </article>
+
+        <article class="card">
+            <h2>Resolution Target</h2>
+            <p>Target resolution time and current performance.</p>
+        </article>
+
+        <article class="card">
+            <h2>SLA Status</h2>
+            <p>Current compliance state and breach readiness.</p>
+        </article>
+
+    </section>
+
+    <section class="card">
+
+        <div class="card-header">
+            <h2>SLA Timeline</h2>
+        </div>
+
+        <div class="timeline">
+
+            <div class="timeline-item">
+                <strong>Start</strong>
+                <span>Service level clock started.</span>
+            </div>
+
+            <div class="timeline-item">
+                <strong>Response</strong>
+                <span>Response milestone.</span>
+            </div>
+
+            <div class="timeline-item">
+                <strong>Resolution</strong>
+                <span>Resolution milestone.</span>
+            </div>
+
+            <div class="timeline-item">
+                <strong>Compliance</strong>
+                <span>SLA outcome and breach state.</span>
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="card">
+
+        <div class="card-header">
+            <h2>Escalation Readiness</h2>
+        </div>
+
+        <p>
+            Escalation information will be presented here when an SLA
+            approaches or exceeds its configured threshold.
+        </p>
+
+    </section>
+
+    <section class="card">
+
+        <div class="card-header">
+            <h2>SLA History</h2>
+        </div>
+
+        <p>
+            Historical SLA events and status transitions will appear here.
+        </p>
+
+    </section>
+
+</div>
+
+{% endblock %}

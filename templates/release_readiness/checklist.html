@@ -1,0 +1,73 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div class="enterprise-page">
+
+    <div class="page-header">
+        <div>
+            <h1>Production Readiness Checklist</h1>
+            <p>Operational release verification checklist.</p>
+        </div>
+    </div>
+
+    <section class="enterprise-card">
+
+        <h2>Application</h2>
+
+        <ul>
+            <li>Django system check</li>
+            <li>Template integrity</li>
+            <li>Application configuration</li>
+            <li>Static asset readiness</li>
+        </ul>
+
+    </section>
+
+    <section class="enterprise-card">
+
+        <h2>Data</h2>
+
+        <ul>
+            <li>Migration state reviewed</li>
+            <li>Database backup available</li>
+            <li>No uncontrolled schema changes</li>
+            <li>Recovery procedure documented</li>
+        </ul>
+
+    </section>
+
+    <section class="enterprise-card">
+
+        <h2>Security</h2>
+
+        <ul>
+            <li>Authentication reviewed</li>
+            <li>Authorization reviewed</li>
+            <li>Protected ticket surfaces reviewed</li>
+            <li>Secret configuration reviewed</li>
+        </ul>
+
+    </section>
+
+    <section class="enterprise-card">
+
+        <h2>Operations</h2>
+
+        <ul>
+            <li>Incident workflow available</li>
+            <li>Problem workflow available</li>
+            <li>Change workflow available</li>
+            <li>Release workflow available</li>
+            <li>Knowledge workflow available</li>
+            <li>Service request workflow available</li>
+            <li>CMDB workflow available</li>
+            <li>SLA workflow available</li>
+            <li>Reporting workflow available</li>
+        </ul>
+
+    </section>
+
+</div>
+
+{% endblock %}

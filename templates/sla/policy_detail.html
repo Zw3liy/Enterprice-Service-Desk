@@ -1,0 +1,14 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<section class="sla-page">
+    <h1>SLA Policy</h1>
+
+    {% if policy %}
+        <h2>{{ policy.name }}</h2>
+        <p>Duration: {{ policy.duration_minutes }} minutes</p>
+    {% else %}
+        <p>No SLA policy was supplied.</p>
+    {% endif %}
+</section>
+{% endblock %}

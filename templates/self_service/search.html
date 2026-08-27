@@ -1,0 +1,171 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="mb-4">
+
+        <h1>Find an Answer</h1>
+
+        <p class="text-muted">
+            Search approved Service Desk knowledge
+        </p>
+
+    </div>
+
+    <div class="card mb-4">
+
+        <div class="card-body">
+
+            <div class="input-group input-group-lg">
+
+                <input
+                    type="search"
+                    class="form-control"
+                    placeholder="Describe your problem or search for a solution"
+                >
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                >
+                    Search
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-3">
+
+            <div class="card">
+
+                <div class="card-header">
+                    <strong>Filter Results</strong>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Category
+                        </label>
+
+                        <select class="form-select">
+
+                            <option>All Categories</option>
+                            <option>How-To Guides</option>
+                            <option>Troubleshooting</option>
+                            <option>Known Errors</option>
+                            <option>Service Information</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Service
+                        </label>
+
+                        <select class="form-select">
+
+                            <option>All Services</option>
+                            <option>Network</option>
+                            <option>Applications</option>
+                            <option>Hardware</option>
+                            <option>Accounts</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-9">
+
+            <div class="card">
+
+                <div class="card-header">
+
+                    <strong>
+                        Knowledge Results
+                    </strong>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="list-group">
+
+                        <div class="list-group-item">
+
+                            <div class="d-flex justify-content-between">
+
+                                <div>
+
+                                    <a
+                                        href="#"
+                                        class="fw-semibold fs-5"
+                                    >
+                                        No search result loaded
+                                    </a>
+
+                                    <p class="text-muted mb-1">
+                                        Search results from approved knowledge
+                                        will appear here.
+                                    </p>
+
+                                    <span class="badge bg-secondary">
+                                        KNOWLEDGE
+                                    </span>
+
+                                </div>
+
+                                <div class="text-muted small">
+                                    —
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="list-group-item">
+
+                            <a
+                                href="#"
+                                class="fw-semibold"
+                            >
+                                Troubleshooting knowledge
+                            </a>
+
+                            <p class="text-muted mb-0">
+                                Approved troubleshooting guidance.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

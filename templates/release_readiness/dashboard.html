@@ -1,0 +1,44 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div class="enterprise-page">
+
+    <div class="page-header">
+        <div>
+            <h1>Production Readiness</h1>
+            <p>Enterprise Service Desk release gate and operational readiness.</p>
+        </div>
+    </div>
+
+    <section class="dashboard-grid">
+
+        <article class="enterprise-card">
+            <h2>Release Gate</h2>
+            <p>Validate operational readiness before promotion.</p>
+            <a href="{% url 'release_readiness:gate' %}">
+                Open Release Gate
+            </a>
+        </article>
+
+        <article class="enterprise-card">
+            <h2>Readiness Checklist</h2>
+            <p>Review application, security, data and operational checks.</p>
+            <a href="{% url 'release_readiness:checklist' %}">
+                Open Checklist
+            </a>
+        </article>
+
+        <article class="enterprise-card">
+            <h2>Evidence</h2>
+            <p>Review verification evidence collected during the build.</p>
+            <a href="{% url 'release_readiness:evidence' %}">
+                View Evidence
+            </a>
+        </article>
+
+    </section>
+
+</div>
+
+{% endblock %}

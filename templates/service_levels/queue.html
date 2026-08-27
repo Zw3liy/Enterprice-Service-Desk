@@ -1,0 +1,96 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<div class="enterprise-page service-level-queue">
+
+    <div class="page-header">
+        <div>
+            <h1>Service Level Queue</h1>
+            <p>Monitor service commitments and identify SLA risk requiring operational action.</p>
+        </div>
+    </div>
+
+    <section class="enterprise-card">
+
+        <div class="filter-bar">
+
+            <div class="filter-field">
+                <label for="sla-search">Search</label>
+                <input
+                    id="sla-search"
+                    type="search"
+                    name="q"
+                    placeholder="Search service levels..."
+                >
+            </div>
+
+            <div class="filter-field">
+                <label for="sla-status">Status</label>
+                <select id="sla-status" name="status">
+                    <option value="">All statuses</option>
+                    <option value="active">Active</option>
+                    <option value="at-risk">At Risk</option>
+                    <option value="breached">Breached</option>
+                    <option value="suspended">Suspended</option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="sla-risk">Risk</label>
+                <select id="sla-risk" name="risk">
+                    <option value="">All risk levels</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="critical">Critical</option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="sla-service">Service</label>
+                <select id="sla-service" name="service">
+                    <option value="">All services</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="enterprise-table">
+
+                <thead>
+                    <tr>
+                        <th>Service Level</th>
+                        <th>Service</th>
+                        <th>Commitment</th>
+                        <th>Target</th>
+                        <th>Performance</th>
+                        <th>Risk</th>
+                        <th>Status</th>
+                        <th>Owner</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td colspan="8">
+                            No service-level records are currently available.
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="pagination">
+            <span>Pagination-ready queue</span>
+        </div>
+
+    </section>
+
+</div>
+{% endblock %}

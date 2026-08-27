@@ -1,0 +1,383 @@
+﻿# ============================================================
+# ENTERPRISE SERVICE DESK
+# MASTER BUILD 40
+# SERVICE DESK NOTIFICATIONS / COMMUNICATIONS
+#
+# LOCAL BUILD ONLY
+# NON-DESTRUCTIVE
+# ============================================================
+
+$ErrorActionPreference = "Stop"
+
+$projectRoot = (Get-Location).Path
+$timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+
+Write-Host ""
+Write-Host "============================================================" -ForegroundColor Cyan
+Write-Host "ENTERPRISE SERVICE DESK" -ForegroundColor Cyan
+Write-Host "MASTER BUILD 40" -ForegroundColor Cyan
+Write-Host "SERVICE DESK NOTIFICATIONS / COMMUNICATIONS" -ForegroundColor Cyan
+Write-Host "============================================================" -ForegroundColor Cyan
+Write-Host ""
+
+# ============================================================
+# 01 - PREFLIGHT
+# ============================================================
+
+Write-Host "[01/10] PREFLIGHT" -ForegroundColor Cyan
+
+$manage = Join-Path $projectRoot "manage.py"
+
+if (-not (Test-Path -LiteralPath $manage -PathType Leaf)) {
+    throw "manage.py was not found. Current directory: $projectRoot"
+}
+
+Write-Host "Project root: PASS" -ForegroundColor Green
+Write-Host "manage.py:    PASS" -ForegroundColor Green
+Write-Host ""
+
+# ============================================================
+# 02 - LOCAL BUILD BACKUP
+# ============================================================
+
+Write-Host "[02/10] PREPARING LOCAL BUILD BACKUP" -ForegroundColor Cyan
+
+$backupRoot = Join-Path `
+    $projectRoot `
+    ".build_backups\master_build\40\notifications_communications\$timestamp"
+
+New-Item `
+    -ItemType Directory `
+    -Path $backupRoot `
+    -Force | Out-Null
+
+Write-Host "Backup directory: PASS" -ForegroundColor Green
+Write-Host $backupRoot -ForegroundColor DarkGray
+Write-Host ""
+
+# ============================================================
+# 03 - PREPARE NOTIFICATION WORKSPACE
+# ============================================================
+
+Write-Host "[03/10] PREPARING NOTIFICATION WORKSPACE" -ForegroundColor Cyan
+
+$notificationRoot = Join-Path `
+    $projectRoot `
+    "templates\notifications"
+
+New-Item `
+    -ItemType Directory `
+    -Path $notificationRoot `
+    -Force | Out-Null
+
+$dashboard = Join-Path $notificationRoot "dashboard.html"
+$centre    = Join-Path $notificationRoot "centre.html"
+$detail    = Join-Path $notificationRoot "detail.html"
+$compose   = Join-Path $notificationRoot "compose.html"
+
+Write-Host "Notification directory: PASS" -ForegroundColor Green
+Write-Host ""
+
+# ============================================================
+# 04 - NOTIFICATION DASHBOARD
+# ============================================================
+
+Write-Host "[04/10] CREATING NOTIFICATION DASHBOARD" -ForegroundColor Cyan
+
+@'
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h1>Notifications & Communications</h1>
+
+            <p class="text-muted">
+                Service Desk operational communication and notification centre
+            </p>
+
+        </div>
+
+        <span class="badge bg-secondary">
+            COMMUNICATIONS
+        </span>
+
+    </div>
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-3">
+
+            <div class="card h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        Unread Notifications
+                    </div>
+
+                    <div class="display-6">
+                        —
+                    </div>
+
+                    <div class="small text-muted">
+                        Current user notification state
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        Open Communications
+                    </div>
+
+                    <div class="display-6">
+                        —
+                    </div>
+
+                    <div class="small text-muted">
+                        Pending communication activity
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        Ticket Events
+                    </div>
+
+                    <div class="display-6">
+                        —
+                    </div>
+
+                    <div class="small text-muted">
+                        Notification-producing events
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        Delivery Status
+                    </div>
+
+                    <div class="display-6">
+                        —
+                    </div>
+
+                    <div class="small text-muted">
+                        Delivery service readiness
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-8">
+
+            <div class="card">
+
+                <div class="card-header">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <strong>Recent Notifications</strong>
+
+                        <a
+                            href="#"
+                            class="btn btn-sm btn-outline-secondary"
+                        >
+                            View Centre
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="list-group">
+
+                        <div class="list-group-item">
+
+                            <div class="d-flex justify-content-between">
+
+                                <div>
+
+                                    <strong>
+                                        Ticket assignment notification
+                                    </strong>
+
+                                    <div class="text-muted small">
+                                        Notification event awaiting live data
+                                    </div>
+
+                                </div>
+
+                                <span class="badge bg-secondary">
+                                    —
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="list-group-item">
+
+                            <div class="d-flex justify-content-between">
+
+                                <div>
+
+                                    <strong>
+                                        Status change notification
+                                    </strong>
+
+                                    <div class="text-muted small">
+                                        Notification event awaiting live data
+                                    </div>
+
+                                </div>
+
+                                <span class="badge bg-secondary">
+                                    —
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="list-group-item">
+
+                            <div class="d-flex justify-content-between">
+
+                                <div>
+
+                                    <strong>
+                                        Requester communication
+                                    </strong>
+
+                                    <div class="text-muted small">
+                                        Communication event awaiting live data
+                                    </div>
+
+                                </div>
+
+                                <span class="badge bg-secondary">
+                                    —
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-4">
+
+            <div class="card h-100">
+
+                <div class="card-header">
+                    <strong>Communication Channels</strong>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="list-group">
+
+                        <div class="list-group-item d-flex justify-content-between">
+
+                            <span>In-app</span>
+
+                            <span class="badge bg-secondary">
+                                READY
+                            </span>
+
+                        </div>
+
+                        <div class="list-group-item d-flex justify-content-between">
+
+                            <span>Email</span>
+
+                            <span class="badge bg-secondary">
+                                READY
+                            </span>
+
+                        </div>
+
+                        <div class="list-group-item d-flex justify-content-between">
+
+                            <span>Ticket activity</span>
+
+                            <span class="badge bg-secondary">
+                                READY
+                            </span>
+
+                        </div>
+
+                        <div class="list-group-item d-flex justify-content-between">
+
+                            <span>Audit trail</span>
+
+                            <span class="badge bg-secondary">
+                                READY
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

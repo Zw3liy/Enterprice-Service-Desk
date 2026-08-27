@@ -1,0 +1,239 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Change Detail{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="mb-4">
+
+        <div class="d-flex justify-content-between">
+
+            <div>
+                <h1>
+                    {{ change.change_number|default:"Change Request" }}
+                </h1>
+
+                <p class="text-muted">
+                    {{ change.title|default:"Change detail workspace" }}
+                </p>
+            </div>
+
+            <div>
+                <span class="badge bg-secondary">
+                    {{ change.status|default:"Draft" }}
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-8">
+
+            <div class="card mb-4">
+
+                <div class="card-header">
+                    <strong>Change Summary</strong>
+                </div>
+
+                <div class="card-body">
+
+                    <dl class="row">
+
+                        <dt class="col-sm-4">
+                            Description
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            {{ change.description|default:"No description provided." }}
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Change Type
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            {{ change.change_type|default:"Standard" }}
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Risk
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            {{ change.risk|default:"Not assessed" }}
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Owner
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            {{ change.owner|default:"Unassigned" }}
+                        </dd>
+
+                    </dl>
+
+                </div>
+
+            </div>
+
+            <div class="card mb-4">
+
+                <div class="card-header">
+                    <strong>Implementation Plan</strong>
+                </div>
+
+                <div class="card-body">
+
+                    {{ change.implementation_plan|default:"No implementation plan recorded." }}
+
+                </div>
+
+            </div>
+
+            <div class="card mb-4">
+
+                <div class="card-header">
+                    <strong>Backout / Recovery Plan</strong>
+                </div>
+
+                <div class="card-body">
+
+                    {{ change.backout_plan|default:"No recovery plan recorded." }}
+
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <div class="card-header">
+                    <strong>Change History</strong>
+                </div>
+
+                <div class="card-body">
+
+                    {% for event in change.history %}
+
+                    <div class="border-bottom py-3">
+
+                        <div class="fw-semibold">
+                            {{ event.event_type }}
+                        </div>
+
+                        <div class="small text-muted">
+                            {{ event.created_at }}
+                        </div>
+
+                        <div>
+                            {{ event.description }}
+                        </div>
+
+                    </div>
+
+                    {% empty %}
+
+                    <p class="text-muted mb-0">
+                        No change history available.
+                    </p>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-4">
+
+            <div class="card mb-4">
+
+                <div class="card-header">
+                    <strong>Approval</strong>
+                </div>
+
+                <div class="card-body">
+
+                    <p>
+                        Status:
+                        <strong>
+                            {{ change.approval_status|default:"Pending" }}
+                        </strong>
+                    </p>
+
+                    <p class="mb-0">
+                        Approver:
+                        {{ change.approver|default:"Not assigned" }}
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="card mb-4">
+
+                <div class="card-header">
+                    <strong>Schedule</strong>
+                </div>
+
+                <div class="card-body">
+
+                    <p>
+                        Start:
+                        {{ change.scheduled_start|default:"Not scheduled" }}
+                    </p>
+
+                    <p>
+                        End:
+                        {{ change.scheduled_end|default:"Not scheduled" }}
+                    </p>
+
+                    <p class="mb-0">
+                        Maintenance window:
+                        {{ change.maintenance_window|default:"Not defined" }}
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <div class="card-header">
+                    <strong>Related Records</strong>
+                </div>
+
+                <div class="card-body">
+
+                    <p>
+                        Linked incidents:
+                        {{ change.incident_count|default:"0" }}
+                    </p>
+
+                    <p>
+                        Linked problems:
+                        {{ change.problem_count|default:"0" }}
+                    </p>
+
+                    <p class="mb-0">
+                        Related services:
+                        {{ change.service_count|default:"0" }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

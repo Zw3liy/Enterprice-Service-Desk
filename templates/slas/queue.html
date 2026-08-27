@@ -1,0 +1,83 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div class="enterprise-page">
+
+    <div class="page-header">
+        <div>
+            <h1>SLA Queue</h1>
+            <p>Operational queue for service level monitoring.</p>
+        </div>
+    </div>
+
+    <section class="card">
+
+        <div class="toolbar">
+
+            <form method="get">
+
+                <input
+                    type="search"
+                    name="q"
+                    placeholder="Search tickets or SLA records..."
+                    value="{{ request.GET.q }}"
+                >
+
+                <select name="status">
+                    <option value="">All SLA statuses</option>
+                    <option value="active">Active</option>
+                    <option value="at_risk">At Risk</option>
+                    <option value="breached">Breached</option>
+                    <option value="met">Met</option>
+                </select>
+
+                <select name="priority">
+                    <option value="">All priorities</option>
+                    <option value="critical">Critical</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+
+                <button type="submit">Filter</button>
+
+            </form>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Ticket</th>
+                        <th>Service</th>
+                        <th>Priority</th>
+                        <th>Response Target</th>
+                        <th>Resolution Target</th>
+                        <th>SLA Status</th>
+                        <th>Risk</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td colspan="7">
+                            No SLA records are currently available.
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

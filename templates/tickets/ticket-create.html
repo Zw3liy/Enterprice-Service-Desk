@@ -1,0 +1,96 @@
+﻿{% extends "layouts/base.html" %}
+
+{% block title %}Create Ticket{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="mb-4">
+
+        <h1 class="h3 mb-1">Create Ticket</h1>
+
+        <p class="text-muted mb-0">
+            Create a new service desk request.
+        </p>
+
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <form method="post" enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+
+                    <div class="alert alert-danger">
+
+                        {{ form.non_field_errors }}
+
+                    </div>
+
+                {% endif %}
+
+                {% for field in form %}
+
+                    <div class="mb-3">
+
+                        <label
+                            for="{{ field.id_for_label }}"
+                            class="form-label fw-semibold"
+                        >
+                            {{ field.label }}
+                        </label>
+
+                        {{ field }}
+
+                        {% if field.help_text %}
+
+                            <div class="form-text">
+                                {{ field.help_text }}
+                            </div>
+
+                        {% endif %}
+
+                        {% for error in field.errors %}
+
+                            <div class="text-danger small mt-1">
+                                {{ error }}
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endfor %}
+
+                <div class="d-flex gap-2 pt-2">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        Create Ticket
+                    </button>
+
+                    <a
+                        href="{% url 'service_desk:ticket_list' %}"
+                        class="btn btn-outline-secondary"
+                    >
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

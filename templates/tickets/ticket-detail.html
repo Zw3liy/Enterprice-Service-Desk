@@ -1,0 +1,201 @@
+﻿{% extends "layouts/base.html" %}
+
+{% block title %}
+    Ticket {{ ticket.ticket_number|default:ticket.pk }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+
+        <div>
+
+            <div class="text-muted small mb-1">
+                Ticket {{ ticket.ticket_number|default:ticket.pk }}
+            </div>
+
+            <h1 class="h3 mb-1">
+                {{ ticket.title|default:"Untitled ticket" }}
+            </h1>
+
+            <div class="text-muted">
+                Created
+                {% if ticket.created_at %}
+                    {{ ticket.created_at|date:"d M Y H:i" }}
+                {% endif %}
+            </div>
+
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <a
+                href="{% url 'service_desk:ticket_list' %}"
+                class="btn btn-outline-secondary"
+            >
+                Back to Tickets
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm mb-4">
+
+                <div class="card-header bg-white fw-semibold">
+                    Ticket Details
+                </div>
+
+                <div class="card-body">
+
+                    {% if ticket.description %}
+
+                        <div class="mb-0">
+                            {{ ticket.description|linebreaks }}
+                        </div>
+
+                    {% else %}
+
+                        <div class="text-muted">
+                            No description provided.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% if ticket.history.all %}
+
+            <div class="card shadow-sm">
+
+                <div class="card-header bg-white fw-semibold">
+                    History
+                </div>
+
+                <div class="card-body">
+
+                    {% for event in ticket.history.all %}
+
+                        <div class="border-bottom pb-3 mb-3">
+
+                            <div class="fw-semibold">
+                                {{ event.event_type|default:"Ticket event" }}
+                            </div>
+
+                            {% if event.created_at %}
+
+                                <div class="small text-muted">
+                                    {{ event.created_at|date:"d M Y H:i" }}
+                                </div>
+
+                            {% endif %}
+
+                            {% if event.comment %}
+
+                                <div class="mt-2">
+                                    {{ event.comment|linebreaks }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    {% empty %}
+
+                        <div class="text-muted">
+                            No history recorded.
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+        <div class="col-lg-4">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header bg-white fw-semibold">
+                    Ticket Information
+                </div>
+
+                <div class="card-body">
+
+                    <dl class="row mb-0">
+
+                        <dt class="col-5">Status</dt>
+
+                        <dd class="col-7">
+
+                            {% if ticket.status %}
+                                <span class="badge bg-info text-dark">
+                                    {{ ticket.status }}
+                                </span>
+                            {% else %}
+                                —
+                            {% endif %}
+
+                        </dd>
+
+                        <dt class="col-5">Priority</dt>
+
+                        <dd class="col-7">
+
+                            {% if ticket.priority %}
+                                <span class="badge bg-secondary">
+                                    {{ ticket.priority }}
+                                </span>
+                            {% else %}
+                                —
+                            {% endif %}
+
+                        </dd>
+
+                        <dt class="col-5">Requester</dt>
+
+                        <dd class="col-7">
+                            {{ ticket.requester|default:"—" }}
+                        </dd>
+
+                        <dt class="col-5">Assignee</dt>
+
+                        <dd class="col-7">
+                            {{ ticket.assignee|default:"Unassigned" }}
+                        </dd>
+
+                        {% if ticket.updated_at %}
+
+                        <dt class="col-5">Updated</dt>
+
+                        <dd class="col-7">
+                            {{ ticket.updated_at|date:"d M Y H:i" }}
+                        </dd>
+
+                        {% endif %}
+
+                    </dl>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

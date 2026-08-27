@@ -1,0 +1,30 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<section class="sla-page">
+    <h1>SLA Policies</h1>
+
+    {% if policies %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Duration</th>
+                    <th>Active</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for policy in policies %}
+                <tr>
+                    <td>{{ policy.name }}</td>
+                    <td>{{ policy.duration_minutes }} minutes</td>
+                    <td>{{ policy.is_active|default:"-" }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No SLA policies found.</p>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,170 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Change Queue{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="mb-4">
+        <h1>Change Queue</h1>
+        <p class="text-muted">
+            Review, prioritize and monitor operational changes.
+        </p>
+    </div>
+
+    <div class="card mb-4">
+
+        <div class="card-body">
+
+            <form method="get">
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label class="form-label">
+                            Search
+                        </label>
+
+                        <input
+                            type="search"
+                            name="q"
+                            value="{{ request.GET.q }}"
+                            class="form-control"
+                            placeholder="Change number or title"
+                        >
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">
+                            Status
+                        </label>
+
+                        <select
+                            name="status"
+                            class="form-select"
+                        >
+                            <option value="">All statuses</option>
+                            <option value="draft">Draft</option>
+                            <option value="approval">Pending Approval</option>
+                            <option value="scheduled">Scheduled</option>
+                            <option value="implementing">Implementing</option>
+                            <option value="completed">Completed</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">
+                            Risk
+                        </label>
+
+                        <select
+                            name="risk"
+                            class="form-select"
+                        >
+                            <option value="">All risks</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100"
+                        >
+                            Filter
+                        </button>
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="card-header">
+            <strong>Operational Changes</strong>
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover mb-0">
+
+                <thead>
+                    <tr>
+                        <th>Change</th>
+                        <th>Type</th>
+                        <th>Risk</th>
+                        <th>Status</th>
+                        <th>Owner</th>
+                        <th>Window</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for change in changes %}
+
+                    <tr>
+
+                        <td>
+                            <a href="#">
+                                {{ change.change_number|default:change.id }}
+                            </a>
+
+                            <div class="small text-muted">
+                                {{ change.title }}
+                            </div>
+                        </td>
+
+                        <td>
+                            {{ change.change_type|default:"Standard" }}
+                        </td>
+
+                        <td>
+                            {{ change.risk|default:"Not assessed" }}
+                        </td>
+
+                        <td>
+                            {{ change.status|default:"Draft" }}
+                        </td>
+
+                        <td>
+                            {{ change.owner|default:"Unassigned" }}
+                        </td>
+
+                        <td>
+                            {{ change.scheduled_start|default:"Not scheduled" }}
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">
+                            No changes found.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

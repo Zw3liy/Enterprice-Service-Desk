@@ -1,0 +1,103 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>Release Management</h1>
+            <p class="text-muted">
+                Operational release planning, readiness and deployment oversight.
+            </p>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">Planned Releases</h6>
+                    <h2>0</h2>
+                    <span class="text-muted">Scheduled</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">In Preparation</h6>
+                    <h2>0</h2>
+                    <span class="text-muted">Release readiness</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">Ready</h6>
+                    <h2>0</h2>
+                    <span class="text-muted">Deployment ready</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">Completed</h6>
+                    <h2>0</h2>
+                    <span class="text-muted">Released</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="card-header">
+            Release Operational Overview
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Release</th>
+                            <th>Version</th>
+                            <th>Status</th>
+                            <th>Risk</th>
+                            <th>Scheduled</th>
+                            <th>Owner</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                No releases currently registered.
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

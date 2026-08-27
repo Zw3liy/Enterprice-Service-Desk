@@ -1,0 +1,243 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Service Reporting{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-1">Service Reporting</h1>
+            <p class="text-muted mb-0">
+                Operational service desk performance and management metrics.
+            </p>
+        </div>
+
+        <div class="d-flex gap-2">
+            <a href="?range=7d" class="btn btn-outline-secondary btn-sm">7 Days</a>
+            <a href="?range=30d" class="btn btn-outline-secondary btn-sm">30 Days</a>
+            <a href="?range=90d" class="btn btn-outline-secondary btn-sm">90 Days</a>
+        </div>
+    </div>
+
+    <!-- KPI SUMMARY -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Total Tickets</div>
+                    <div class="display-6 fw-semibold">
+                        {{ total_tickets|default:"0" }}
+                    </div>
+                    <div class="small text-muted">
+                        Selected reporting period
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Open Tickets</div>
+                    <div class="display-6 fw-semibold">
+                        {{ open_tickets|default:"0" }}
+                    </div>
+                    <div class="small text-muted">
+                        Currently active
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Resolved Tickets</div>
+                    <div class="display-6 fw-semibold">
+                        {{ resolved_tickets|default:"0" }}
+                    </div>
+                    <div class="small text-muted">
+                        Resolved during period
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted small">SLA Performance</div>
+                    <div class="display-6 fw-semibold">
+                        {{ sla_performance|default:"0" }}%
+                    </div>
+                    <div class="small text-muted">
+                        Within target
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- OPERATIONAL METRICS -->
+
+    <div class="row g-4">
+
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <strong>Ticket Volume</strong>
+                </div>
+                <div class="card-body">
+
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th class="text-end">Value</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td>Created</td>
+                                    <td class="text-end">{{ created_count|default:"0" }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Resolved</td>
+                                    <td class="text-end">{{ resolved_count|default:"0" }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Closed</td>
+                                    <td class="text-end">{{ closed_count|default:"0" }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Reopened</td>
+                                    <td class="text-end">{{ reopened_count|default:"0" }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <strong>Priority Distribution</strong>
+                </div>
+                <div class="card-body">
+
+                    {% if priority_metrics %}
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Priority</th>
+                                        <th class="text-end">Tickets</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in priority_metrics %}
+                                    <tr>
+                                        <td>{{ item.label }}</td>
+                                        <td class="text-end">{{ item.count }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-muted">
+                            No priority metrics available for this period.
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <strong>Status Distribution</strong>
+                </div>
+                <div class="card-body">
+
+                    {% if status_metrics %}
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Status</th>
+                                        <th class="text-end">Tickets</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in status_metrics %}
+                                    <tr>
+                                        <td>{{ item.label }}</td>
+                                        <td class="text-end">{{ item.count }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-muted">
+                            No status metrics available for this period.
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <strong>Queue / Team Workload</strong>
+                </div>
+                <div class="card-body">
+
+                    {% if workload_metrics %}
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Queue / Team</th>
+                                        <th class="text-end">Open</th>
+                                        <th class="text-end">Resolved</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in workload_metrics %}
+                                    <tr>
+                                        <td>{{ item.name }}</td>
+                                        <td class="text-end">{{ item.open|default:"0" }}</td>
+                                        <td class="text-end">{{ item.resolved|default:"0" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-muted">
+                            No workload metrics available.
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,152 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Change Management{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>Change Management</h1>
+            <p class="text-muted">
+                Operational control for planned and emergency changes.
+            </p>
+        </div>
+
+        <a href="#" class="btn btn-primary">
+            Create Change
+        </a>
+    </div>
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Open Changes</div>
+                    <div class="fs-2 fw-bold">
+                        {{ open_changes|default:"0" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Pending Approval</div>
+                    <div class="fs-2 fw-bold">
+                        {{ pending_approval|default:"0" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Scheduled</div>
+                    <div class="fs-2 fw-bold">
+                        {{ scheduled_changes|default:"0" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Emergency</div>
+                    <div class="fs-2 fw-bold">
+                        {{ emergency_changes|default:"0" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="card-header">
+            <strong>Change Overview</strong>
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Change</th>
+                            <th>Type</th>
+                            <th>Risk</th>
+                            <th>Status</th>
+                            <th>Scheduled</th>
+                            <th>Owner</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for change in changes %}
+
+                        <tr>
+
+                            <td>
+                                <a href="#">
+                                    {{ change.change_number|default:change.id }}
+                                </a>
+                                <div class="small text-muted">
+                                    {{ change.title }}
+                                </div>
+                            </td>
+
+                            <td>
+                                {{ change.change_type|default:"Standard" }}
+                            </td>
+
+                            <td>
+                                {{ change.risk|default:"Not assessed" }}
+                            </td>
+
+                            <td>
+                                {{ change.status|default:"Draft" }}
+                            </td>
+
+                            <td>
+                                {{ change.scheduled_start|default:"Not scheduled" }}
+                            </td>
+
+                            <td>
+                                {{ change.owner|default:"Unassigned" }}
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="6" class="text-muted text-center py-4">
+                                No changes currently available.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

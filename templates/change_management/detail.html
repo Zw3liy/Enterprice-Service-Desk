@@ -1,0 +1,259 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="mb-4">
+
+        <h1>Notification Detail</h1>
+
+        <p class="text-muted">
+            Notification event, delivery and communication audit information
+        </p>
+
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-8">
+
+            <div class="card mb-4">
+
+                <div class="card-header">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <strong>Notification Information</strong>
+
+                        <span class="badge bg-secondary">
+                            PENDING
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="card-body">
+
+                    <dl class="row mb-0">
+
+                        <dt class="col-sm-4">
+                            Notification ID
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            —
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Notification Type
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            —
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Recipient
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            —
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Channel
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            —
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Created
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            —
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Read
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            —
+                        </dd>
+
+                    </dl>
+
+                </div>
+
+            </div>
+
+            <div class="card mb-4">
+
+                <div class="card-header">
+                    <strong>Message</strong>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="border rounded p-4 bg-light">
+
+                        <h5>
+                            Notification subject
+                        </h5>
+
+                        <p class="mb-0 text-muted">
+
+                            Notification content will be supplied by the
+                            connected communication service.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <div class="card-header">
+                    <strong>Related Service Desk Event</strong>
+                </div>
+
+                <div class="card-body">
+
+                    <dl class="row mb-0">
+
+                        <dt class="col-sm-4">
+                            Ticket
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            —
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Event
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            —
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Actor
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            —
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Event Time
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            —
+                        </dd>
+
+                    </dl>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-4">
+
+            <div class="card mb-4">
+
+                <div class="card-header">
+                    <strong>Delivery Status</strong>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="list-group">
+
+                        <div class="list-group-item d-flex justify-content-between">
+
+                            <span>Created</span>
+
+                            <span class="badge bg-secondary">
+                                READY
+                            </span>
+
+                        </div>
+
+                        <div class="list-group-item d-flex justify-content-between">
+
+                            <span>Queued</span>
+
+                            <span class="badge bg-secondary">
+                                READY
+                            </span>
+
+                        </div>
+
+                        <div class="list-group-item d-flex justify-content-between">
+
+                            <span>Delivered</span>
+
+                            <span class="badge bg-secondary">
+                                READY
+                            </span>
+
+                        </div>
+
+                        <div class="list-group-item d-flex justify-content-between">
+
+                            <span>Read</span>
+
+                            <span class="badge bg-secondary">
+                                READY
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <div class="card-header">
+                    <strong>Audit</strong>
+                </div>
+
+                <div class="card-body">
+
+                    <p class="text-muted">
+
+                        Notification creation, delivery, read state and
+                        communication events can be recorded here.
+
+                    </p>
+
+                    <span class="badge bg-secondary">
+                        AUDIT READY
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

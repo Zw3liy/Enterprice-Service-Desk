@@ -1,0 +1,115 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1>Release Queue</h1>
+            <p class="text-muted">
+                Search and monitor operational releases.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="card mb-4">
+
+        <div class="card-body">
+
+            <div class="row g-3">
+
+                <div class="col-md-4">
+                    <label class="form-label">Search</label>
+                    <input
+                        type="search"
+                        class="form-control"
+                        placeholder="Release, version or owner">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select class="form-select">
+                        <option>All statuses</option>
+                        <option>Planned</option>
+                        <option>Preparation</option>
+                        <option>Ready</option>
+                        <option>Deployed</option>
+                        <option>Completed</option>
+                        <option>Rolled Back</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Risk</label>
+                    <select class="form-select">
+                        <option>All risk levels</option>
+                        <option>Low</option>
+                        <option>Medium</option>
+                        <option>High</option>
+                        <option>Critical</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Window</label>
+                    <select class="form-select">
+                        <option>All</option>
+                        <option>Today</option>
+                        <option>This week</option>
+                        <option>Upcoming</option>
+                    </select>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="card-header">
+            Operational Release Queue
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Release</th>
+                            <th>Version</th>
+                            <th>Status</th>
+                            <th>Risk</th>
+                            <th>Deployment Window</th>
+                            <th>Owner</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                No release records available.
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

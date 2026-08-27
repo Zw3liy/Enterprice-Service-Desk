@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils.timezone import now
 
 from .department import Department
 from .request_type import RequestType
@@ -103,7 +104,7 @@ class Ticket(models.Model):
     )
 
     created_at = models.DateTimeField(
-        auto_now_add=True,
+        default=now,
     )
 
     updated_at = models.DateTimeField(

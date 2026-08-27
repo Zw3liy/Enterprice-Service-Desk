@@ -1,0 +1,187 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="mb-4">
+
+        <h1>Release Detail</h1>
+
+        <p class="text-muted">
+            Release readiness, deployment planning and operational history.
+        </p>
+
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-8">
+
+            <div class="card mb-4">
+
+                <div class="card-header">
+                    Release Overview
+                </div>
+
+                <div class="card-body">
+
+                    <dl class="row mb-0">
+
+                        <dt class="col-sm-4">Release</dt>
+                        <dd class="col-sm-8">Not assigned</dd>
+
+                        <dt class="col-sm-4">Version</dt>
+                        <dd class="col-sm-8">Not assigned</dd>
+
+                        <dt class="col-sm-4">Status</dt>
+                        <dd class="col-sm-8">Planned</dd>
+
+                        <dt class="col-sm-4">Risk</dt>
+                        <dd class="col-sm-8">Not assessed</dd>
+
+                        <dt class="col-sm-4">Owner</dt>
+                        <dd class="col-sm-8">Not assigned</dd>
+
+                        <dt class="col-sm-4">Deployment Window</dt>
+                        <dd class="col-sm-8">Not scheduled</dd>
+
+                    </dl>
+
+                </div>
+
+            </div>
+
+            <div class="card mb-4">
+
+                <div class="card-header">
+                    Release Readiness
+                </div>
+
+                <div class="card-body">
+
+                    <ul class="list-group list-group-flush">
+
+                        <li class="list-group-item d-flex justify-content-between">
+                            Testing completed
+                            <span class="text-muted">Pending</span>
+                        </li>
+
+                        <li class="list-group-item d-flex justify-content-between">
+                            Change approved
+                            <span class="text-muted">Pending</span>
+                        </li>
+
+                        <li class="list-group-item d-flex justify-content-between">
+                            Deployment plan
+                            <span class="text-muted">Pending</span>
+                        </li>
+
+                        <li class="list-group-item d-flex justify-content-between">
+                            Backout plan
+                            <span class="text-muted">Pending</span>
+                        </li>
+
+                        <li class="list-group-item d-flex justify-content-between">
+                            Stakeholder communication
+                            <span class="text-muted">Pending</span>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+            <div class="card mb-4">
+
+                <div class="card-header">
+                    Deployment Plan
+                </div>
+
+                <div class="card-body">
+
+                    <p class="text-muted">
+                        Deployment steps will be presented here when a release
+                        is operationally configured.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="card mb-4">
+
+                <div class="card-header">
+                    Backout / Recovery Plan
+                </div>
+
+                <div class="card-body">
+
+                    <p class="text-muted">
+                        Recovery procedures will be presented here when defined.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-4">
+
+            <div class="card mb-4">
+
+                <div class="card-header">
+                    Related Changes
+                </div>
+
+                <div class="card-body text-muted">
+                    No related changes recorded.
+                </div>
+
+            </div>
+
+            <div class="card mb-4">
+
+                <div class="card-header">
+                    Related Incidents
+                </div>
+
+                <div class="card-body text-muted">
+                    No related incidents recorded.
+                </div>
+
+            </div>
+
+            <div class="card mb-4">
+
+                <div class="card-header">
+                    Related Problems
+                </div>
+
+                <div class="card-body text-muted">
+                    No related problems recorded.
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <div class="card-header">
+                    Release History
+                </div>
+
+                <div class="card-body text-muted">
+                    No release history recorded.
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
