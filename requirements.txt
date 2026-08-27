@@ -1,4 +1,4 @@
-# Enterprise Service Desk — runtime dependencies.
+# Enterprise Service Desk â€” runtime dependencies.
 #
 # Verified by scanning every first-party import under apps/service_desk/
 # and ticketing/ (see docs/engineering/ROADMAP.md, CI-01): the tested
@@ -7,3 +7,7 @@
 # tested against.
 
 Django==5.2.16
+dj-database-url==2.3.0
+psycopg[binary]==3.2.13
+gunicorn==23.0.0
+whitenoise==6.9.0
