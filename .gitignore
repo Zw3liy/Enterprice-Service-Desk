@@ -16,6 +16,10 @@ db.sqlite3-journal
 # Static build
 staticfiles/
 
+# Uploaded media. Ticket attachments are user data at runtime and
+# test fixtures when the suite runs — neither belongs in Git.
+media/
+
 # Environment variables
 .env
 .env.*

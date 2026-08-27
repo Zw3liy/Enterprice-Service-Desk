@@ -80,10 +80,30 @@ class IncidentDashboardTests(TestCase):
 
     def test_anonymous_user_cannot_access_dashboard(self):
 
-        # TicketPermissionMixin sets raise_exception=True (see
-        # security/mixins.py), so unauthorized access is a hard 403
-        # rather than a redirect to login — matches the behavior of
-        # every other view guarded by this mixin in this module.
+        # ServiceDeskPermissionMixin.handle_no_permission splits the
+        # two failure modes: an anonymous visitor is redirected to the
+        # login page (they have not identified themselves yet), while
+        # an *authenticated* user missing the permission still gets a
+        # hard 403 (asserted below). Either way no ticket data is
+        # served.
+        response = self.client.get("/incidents/")
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/accounts/login/", response["Location"])
+        self.assertNotIn("incidents", getattr(response, "context", {}) or {})
+
+    def test_authenticated_user_without_permission_gets_403(self):
+
+        User.objects.create_user(
+            username="im02_nopermission",
+            password="password123",
+        )
+
+        self.client.login(
+            username="im02_nopermission",
+            password="password123",
+        )
+
         response = self.client.get("/incidents/")
 
         self.assertEqual(response.status_code, 403)

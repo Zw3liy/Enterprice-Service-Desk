@@ -20,7 +20,7 @@ from django.contrib.auth.models import (
 
 from django.contrib.contenttypes.models import ContentType
 
-from apps.service_desk.models import Problem, Ticket
+from apps.service_desk.models import Problem, SLAPolicy, Supplier, Ticket
 
 
 
@@ -37,6 +37,14 @@ class Command(BaseCommand):
 
         problem_content_type = ContentType.objects.get_for_model(
             Problem
+        )
+
+        supplier_content_type = ContentType.objects.get_for_model(
+            Supplier
+        )
+
+        sla_policy_content_type = ContentType.objects.get_for_model(
+            SLAPolicy
         )
 
 
@@ -80,6 +88,55 @@ class Command(BaseCommand):
                 content_type=problem_content_type,
                 codename="delete_problem",
             ),
+
+            # Supplier Management (ITSM-08). Requesters and
+            # Technicians get nothing: supplier records are
+            # commercial data, scoped to Managers (own departments)
+            # and Administrators (all) by
+            # security.policies.get_supplier_queryset.
+            "view_supplier": Permission.objects.get(
+                content_type=supplier_content_type,
+                codename="view_supplier",
+            ),
+
+            "add_supplier": Permission.objects.get(
+                content_type=supplier_content_type,
+                codename="add_supplier",
+            ),
+
+            "change_supplier": Permission.objects.get(
+                content_type=supplier_content_type,
+                codename="change_supplier",
+            ),
+
+            "delete_supplier": Permission.objects.get(
+                content_type=supplier_content_type,
+                codename="delete_supplier",
+            ),
+
+            # SLA policy administration. Technicians work *under* the
+            # SLA (they see their tickets' clocks through the scoped
+            # SLA dashboard, which only needs view_ticket) but do not
+            # get to change the targets they are measured against.
+            "view_slapolicy": Permission.objects.get(
+                content_type=sla_policy_content_type,
+                codename="view_slapolicy",
+            ),
+
+            "add_slapolicy": Permission.objects.get(
+                content_type=sla_policy_content_type,
+                codename="add_slapolicy",
+            ),
+
+            "change_slapolicy": Permission.objects.get(
+                content_type=sla_policy_content_type,
+                codename="change_slapolicy",
+            ),
+
+            "delete_slapolicy": Permission.objects.get(
+                content_type=sla_policy_content_type,
+                codename="delete_slapolicy",
+            ),
         }
 
 
@@ -108,6 +165,12 @@ class Command(BaseCommand):
                 permissions["view_problem"],
                 permissions["add_problem"],
                 permissions["change_problem"],
+                permissions["view_supplier"],
+                permissions["add_supplier"],
+                permissions["change_supplier"],
+                permissions["view_slapolicy"],
+                permissions["add_slapolicy"],
+                permissions["change_slapolicy"],
             ],
 
 
@@ -120,6 +183,14 @@ class Command(BaseCommand):
                 permissions["add_problem"],
                 permissions["change_problem"],
                 permissions["delete_problem"],
+                permissions["view_supplier"],
+                permissions["add_supplier"],
+                permissions["change_supplier"],
+                permissions["delete_supplier"],
+                permissions["view_slapolicy"],
+                permissions["add_slapolicy"],
+                permissions["change_slapolicy"],
+                permissions["delete_slapolicy"],
             ],
 
         }

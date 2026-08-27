@@ -9,6 +9,7 @@ Phase 2.2.4 — Authorization Hardening
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.db.models import Count, Q
 from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -18,12 +19,35 @@ from django.views.generic import (
     ListView,
     CreateView,
     DetailView,
+    UpdateView,
 )
 
-from .models import Problem, Supplier, Ticket, TicketAttachment, TicketHistory
+from .models import (
+    Action,
+    Approval,
+    FishboneFactor,
+    Notification,
+    Problem,
+    RootCauseAnalysis,
+    SLAPolicy,
+    Supplier,
+    Ticket,
+    TicketAttachment,
+    TicketHistory,
+)
 from .forms.ticket_forms import TicketCreateForm
 from .forms.problem_forms import ProblemCreateForm
-from .forms.supplier_forms import SupplierCreateForm
+from .forms.supplier_forms import SupplierCreateForm, SupplierUpdateForm
+from .forms.sla_forms import SLAPolicyForm
+from .forms.rca_forms import (
+    ActionForm,
+    ApprovalDecisionForm,
+    ApprovalRequestForm,
+    EvidenceForm,
+    FishboneFactorForm,
+    FiveWhysStepForm,
+    RCADetailsForm,
+)
 
 from .security.policies import (
     get_problem_queryset,
@@ -31,6 +55,7 @@ from .security.policies import (
     get_ticket_queryset,
 )
 from .security.mixins import (
+    ServiceDeskLoginRequiredMixin,
     TicketPermissionMixin,
     TicketChangePermissionMixin,
     TicketViewPermissionMixin,
@@ -38,15 +63,22 @@ from .security.mixins import (
     ProblemViewPermissionMixin,
     ProblemCreatePermissionMixin,
     ProblemChangePermissionMixin,
+    SupplierChangePermissionMixin,
     SupplierCreatePermissionMixin,
     SupplierViewPermissionMixin,
+    SLAPolicyViewPermissionMixin,
+    SLAPolicyChangePermissionMixin,
 )
 from .selectors.ticket_selector import TicketSelector
 from .selectors.problem_selector import ProblemSelector
 from .selectors.supplier_selector import SupplierSelector
+from .selectors.sla_selector import SLASelector
+from .selectors.notification_selector import NotificationSelector
 from .services.ticket_service import TicketService
 from .services.problem_service import ProblemService
 from .services.supplier_service import SupplierService
+from .services.sla_service import SLAService
+from .services.notification_service import NotificationService
 
 User = get_user_model()
 
@@ -61,9 +93,14 @@ class DashboardView(
     TemplateView
 ):
     """
-    Main dashboard.
+    Main enterprise dashboard.
 
-    Authentication required.
+    Every number and every row rendered here is derived from the
+    RBAC-scoped queryset returned by
+    ``security.policies.get_ticket_queryset`` — the dashboard never
+    reads ``Ticket.objects`` directly, so a Requester can never see
+    another user's counts and a Manager can never see another
+    department's counts.
     """
 
     template_name = "service_desk/dashboard.html"
@@ -71,6 +108,90 @@ class DashboardView(
     permission_required = (
         "service_desk.view_ticket"
     )
+
+    RECENT_TICKET_LIMIT = 10
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+
+        tickets = get_ticket_queryset(self.request.user)
+
+        # Single aggregate query for every status bucket, so the
+        # dashboard costs one round trip rather than one per card.
+        counts = tickets.aggregate(
+            total=Count("pk"),
+            open=Count("pk", filter=Q(status="open")),
+            in_progress=Count("pk", filter=Q(status="in_progress")),
+            pending=Count("pk", filter=Q(status="pending")),
+            resolved=Count("pk", filter=Q(status="resolved")),
+            awaiting_confirmation=Count(
+                "pk", filter=Q(status="awaiting_confirmation")
+            ),
+            closed=Count("pk", filter=Q(status="closed")),
+            unassigned=Count("pk", filter=Q(assigned_to__isnull=True)),
+            high_priority=Count(
+                "pk", filter=Q(priority__in=["high", "urgent"])
+            ),
+        )
+
+        context.update(
+            {
+                "total_tickets": counts["total"],
+                "open_tickets": counts["open"],
+                "in_progress_tickets": counts["in_progress"],
+                "pending_tickets": counts["pending"],
+                "resolved_tickets": counts["resolved"],
+                "awaiting_confirmation_tickets": counts[
+                    "awaiting_confirmation"
+                ],
+                "closed_tickets": counts["closed"],
+                "unassigned_tickets": counts["unassigned"],
+                "high_priority_tickets": counts["high_priority"],
+                "active_tickets": (
+                    counts["open"]
+                    + counts["in_progress"]
+                    + counts["pending"]
+                ),
+                "recent_tickets": tickets.select_related(
+                    "department",
+                    "assigned_to",
+                    "created_by",
+                ).order_by("-created_at")[: self.RECENT_TICKET_LIMIT],
+            }
+        )
+
+        # Problem visibility is a separate policy (ADR-010): Requesters
+        # get nothing, so the Problem card simply renders zero for them.
+        problems = get_problem_queryset(self.request.user)
+
+        context["problem_total"] = problems.count()
+        context["problem_open"] = problems.exclude(
+            status__in=["resolved", "closed"]
+        ).count()
+        context["known_errors"] = problems.filter(
+            is_known_error=True
+        ).count()
+        context["can_view_problems"] = self.request.user.has_perm(
+            "service_desk.view_problem"
+        )
+
+        # SLA indicators, scoped through exactly the same ticket
+        # queryset as every other number on this page.
+        sla_summary = SLASelector.dashboard_summary(tickets)
+
+        context["sla_summary"] = sla_summary
+        context["sla_breached"] = sla_summary["breached"]
+        context["sla_at_risk"] = sla_summary["at_risk"]
+
+        context["unread_notifications"] = (
+            NotificationSelector.unread_count(self.request.user)
+        )
+        context["recent_notifications"] = NotificationSelector.recent(
+            self.request.user, limit=5
+        )
+
+        return context
 
 
 
@@ -716,7 +837,9 @@ class ProblemListView(
 
         context = super().get_context_data(**kwargs)
 
-        context["stats"] = ProblemSelector.dashboard_statistics()
+        context["stats"] = ProblemSelector.dashboard_statistics(
+            self.get_queryset()
+        )
 
         return context
 
@@ -735,18 +858,57 @@ class SupplierListView(
 
     Visibility controlled by:
         security.policies.get_supplier_queryset()
+
+    Supports an active/inactive filter and a free-text search, both
+    applied *after* the RBAC scoping so neither can widen visibility.
     """
 
     model = Supplier
     template_name = "suppliers/list.html"
     context_object_name = "suppliers"
+    paginate_by = 25
     permission_required = (
         "service_desk.view_supplier",
     )
 
 
     def get_queryset(self):
-        return get_supplier_queryset(self.request.user)
+
+        queryset = get_supplier_queryset(
+            self.request.user
+        ).select_related("department")
+
+        status = self.request.GET.get("status", "").strip()
+
+        if status == "active":
+            queryset = queryset.filter(is_active=True)
+        elif status == "inactive":
+            queryset = queryset.filter(is_active=False)
+
+        search = self.request.GET.get("q", "").strip()
+
+        if search:
+            queryset = queryset.filter(
+                Q(name__icontains=search)
+                | Q(contact_name__icontains=search)
+                | Q(contact_email__icontains=search)
+                | Q(description__icontains=search)
+            )
+
+        return queryset.order_by("name")
+
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+
+        context["stats"] = SupplierSelector.scoped_summary(
+            get_supplier_queryset(self.request.user)
+        )
+        context["active_status"] = self.request.GET.get("status", "")
+        context["search_query"] = self.request.GET.get("q", "")
+
+        return context
 
 
 # --------------------------------------------------
@@ -777,12 +939,33 @@ class SupplierCreateView(
     )
 
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+
     def form_valid(self, form):
-        self.object = SupplierService.create_supplier(
-            **form.cleaned_data,
+
+        try:
+            self.object = SupplierService.create_supplier(
+                user=self.request.user,
+                **form.cleaned_data,
+            )
+        except ValidationError as exc:
+            for message in exc.messages:
+                form.add_error(None, message)
+            return self.form_invalid(form)
+
+        messages.success(
+            self.request,
+            f"Supplier '{self.object.name}' created.",
         )
 
-        return redirect(self.get_success_url())
+        return redirect(
+            "service_desk:supplier_detail",
+            pk=self.object.pk,
+        )
 
 
 # --------------------------------------------------
@@ -808,7 +991,142 @@ class SupplierDetailView(
 
 
     def get_queryset(self):
+        return get_supplier_queryset(
+            self.request.user
+        ).select_related("department")
+
+
+# --------------------------------------------------
+# Supplier Update
+
+
+class SupplierUpdateView(
+    SupplierChangePermissionMixin,
+    UpdateView
+):
+    """
+    Supplier update.
+
+    Requires:
+        service_desk.change_supplier
+
+    The object is fetched through the RBAC-scoped queryset, so a
+    Manager cannot reach another department's supplier by guessing
+    a primary key.
+    """
+
+    model = Supplier
+    form_class = SupplierUpdateForm
+    template_name = "suppliers/update.html"
+    context_object_name = "supplier"
+    permission_required = (
+        "service_desk.change_supplier",
+    )
+
+
+    def get_queryset(self):
         return get_supplier_queryset(self.request.user)
+
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+
+    def form_valid(self, form):
+
+        # ModelForm validation has already written the submitted values
+        # onto form.instance (which *is* self.object), so passing that
+        # instance to the service would make its change-detection see
+        # "nothing changed" and skip the save. Re-read the persisted row
+        # so the service compares against real stored state.
+        persisted = Supplier.objects.get(pk=self.object.pk)
+
+        try:
+            self.object = SupplierService.update_supplier(
+                persisted,
+                user=self.request.user,
+                **form.cleaned_data,
+            )
+        except ValidationError as exc:
+            for message in exc.messages:
+                form.add_error(None, message)
+            return self.form_invalid(form)
+
+        messages.success(self.request, "Supplier updated.")
+
+        return redirect(
+            "service_desk:supplier_detail",
+            pk=self.object.pk,
+        )
+
+
+# --------------------------------------------------
+# Supplier Lifecycle
+
+
+class SupplierDeactivateView(
+    SupplierChangePermissionMixin,
+    View
+):
+    """
+    Retire a supplier (active -> inactive).
+
+    Suppliers are never hard-deleted through the UI: existing
+    tickets, contracts and audit records reference them.
+    """
+
+    def post(self, request, pk):
+
+        supplier = get_object_or_404(
+            get_supplier_queryset(request.user),
+            pk=pk,
+        )
+
+        try:
+            SupplierService.deactivate_supplier(
+                supplier,
+                user=request.user,
+            )
+            messages.success(
+                request,
+                f"Supplier '{supplier.name}' deactivated.",
+            )
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return redirect("service_desk:supplier_detail", pk=supplier.pk)
+
+
+class SupplierActivateView(
+    SupplierChangePermissionMixin,
+    View
+):
+    """
+    Reinstate a retired supplier (inactive -> active).
+    """
+
+    def post(self, request, pk):
+
+        supplier = get_object_or_404(
+            get_supplier_queryset(request.user),
+            pk=pk,
+        )
+
+        try:
+            SupplierService.activate_supplier(
+                supplier,
+                user=request.user,
+            )
+            messages.success(
+                request,
+                f"Supplier '{supplier.name}' reactivated.",
+            )
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return redirect("service_desk:supplier_detail", pk=supplier.pk)
 
 
 # --------------------------------------------------
@@ -912,6 +1230,51 @@ class ProblemDetailView(
         context["repeat_incident_candidates"] = (
             ProblemSelector.repeat_incident_detection(self.object)
         )
+
+        # --- RCA authoring surface ---------------------------------
+        rca = context["rca"]
+
+        can_edit = self.request.user.has_perm(
+            "service_desk.change_problem"
+        )
+
+        rca_locked = bool(
+            rca and rca.status in ProblemService.CLOSED_RCA_STATUSES
+        )
+
+        context["rca_locked"] = rca_locked
+        context["can_edit_rca"] = can_edit and not rca_locked
+
+        if rca:
+            context["five_whys"] = rca.five_whys.all()
+            context["fishbone_factors"] = rca.fishbone_factors.all()
+            context["evidence_items"] = rca.evidence.all()
+            context["actions"] = rca.actions.select_related("assigned_to")
+            context["approvals"] = rca.approvals.select_related("approver")
+            context["pending_approval"] = rca.approvals.filter(
+                approver=self.request.user,
+                status="pending",
+            ).first()
+        else:
+            context["five_whys"] = []
+            context["fishbone_factors"] = []
+            context["evidence_items"] = []
+            context["actions"] = []
+            context["approvals"] = []
+            context["pending_approval"] = None
+
+        if context["can_edit_rca"]:
+            context["rca_form"] = RCADetailsForm(instance=rca)
+            context["five_whys_form"] = FiveWhysStepForm()
+            context["fishbone_form"] = FishboneFactorForm()
+            context["evidence_form"] = EvidenceForm()
+            context["action_form"] = ActionForm()
+            context["approval_request_form"] = ApprovalRequestForm()
+
+        if context["pending_approval"]:
+            context["approval_decision_form"] = ApprovalDecisionForm()
+
+        context["action_status_flow"] = ProblemService.ACTION_STATUS_FLOW
 
         return context
 
@@ -1283,3 +1646,549 @@ class ProblemReopenView(
             messages.error(request, " ".join(exc.messages))
 
         return redirect("service_desk:problem_detail", pk=problem.pk)
+
+
+# --------------------------------------------------
+# SLA Management
+# --------------------------------------------------
+
+class SLADashboardView(
+    TicketViewPermissionMixin,
+    TemplateView
+):
+    """
+    Operational SLA view.
+
+    Every clock shown here belongs to a ticket in
+    get_ticket_queryset(request.user), so a Requester sees the SLA
+    state of their own tickets and nothing else, and a Manager sees
+    only their departments'.
+    """
+
+    template_name = "sla/dashboard.html"
+
+    permission_required = (
+        "service_desk.view_ticket"
+    )
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+
+        tickets = get_ticket_queryset(self.request.user)
+
+        context["summary"] = SLASelector.dashboard_summary(tickets)
+        context["breached"] = SLASelector.breached(tickets)[:50]
+        context["at_risk"] = SLASelector.at_risk(tickets)[:50]
+        context["escalations"] = SLASelector.escalations(tickets)
+        context["can_manage_policies"] = self.request.user.has_perm(
+            "service_desk.view_slapolicy"
+        )
+
+        return context
+
+
+class SLAPolicyListView(
+    SLAPolicyViewPermissionMixin,
+    ListView
+):
+    """
+    SLA policy catalogue, scoped by SLASelector.policies_for_user.
+    """
+
+    model = SLAPolicy
+
+    template_name = "sla/policy_list.html"
+
+    context_object_name = "policies"
+
+    permission_required = (
+        "service_desk.view_slapolicy"
+    )
+
+    def get_queryset(self):
+        return SLASelector.policies_for_user(self.request.user)
+
+
+class SLAPolicyCreateView(
+    SLAPolicyChangePermissionMixin,
+    CreateView
+):
+    """
+    Create an SLA policy.
+
+    Requires:
+        service_desk.add_slapolicy
+    """
+
+    model = SLAPolicy
+
+    form_class = SLAPolicyForm
+
+    template_name = "sla/policy_form.html"
+
+    permission_required = (
+        "service_desk.add_slapolicy"
+    )
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+
+        try:
+            SLAService.assert_policy_scope_allowed(
+                self.request.user,
+                form.cleaned_data.get("department"),
+            )
+            self.object = SLAService.create_policy(**form.cleaned_data)
+        except ValidationError as exc:
+            for message in exc.messages:
+                form.add_error(None, message)
+            return self.form_invalid(form)
+
+        messages.success(self.request, "SLA policy created.")
+
+        return redirect("service_desk:sla_policy_list")
+
+
+class SLAPolicyUpdateView(
+    SLAPolicyChangePermissionMixin,
+    UpdateView
+):
+    """
+    Update an SLA policy.
+
+    Editing a policy never retroactively moves the deadlines of
+    tickets already under way — TicketSLA freezes its own dates at
+    attach time (see models/sla.py).
+    """
+
+    model = SLAPolicy
+
+    form_class = SLAPolicyForm
+
+    template_name = "sla/policy_form.html"
+
+    context_object_name = "policy"
+
+    permission_required = (
+        "service_desk.change_slapolicy"
+    )
+
+    def get_queryset(self):
+        return SLASelector.policies_for_user(self.request.user)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+
+        persisted = SLAPolicy.objects.get(pk=self.object.pk)
+
+        try:
+            SLAService.assert_policy_scope_allowed(
+                self.request.user,
+                form.cleaned_data.get("department"),
+            )
+            self.object = SLAService.update_policy(
+                persisted,
+                **form.cleaned_data,
+            )
+        except ValidationError as exc:
+            for message in exc.messages:
+                form.add_error(None, message)
+            return self.form_invalid(form)
+
+        messages.success(self.request, "SLA policy updated.")
+
+        return redirect("service_desk:sla_policy_list")
+
+
+# --------------------------------------------------
+# Notifications
+# --------------------------------------------------
+
+class NotificationListView(
+    ServiceDeskLoginRequiredMixin,
+    ListView
+):
+    """
+    The signed-in user's own notification inbox.
+
+    Deliberately guarded by authentication only, not a model
+    permission: a notification belongs to its recipient, and the
+    queryset is keyed on request.user, so there is nothing here a
+    Requester should be barred from seeing about their own tickets.
+    """
+
+    model = Notification
+
+    template_name = "notifications/list.html"
+
+    context_object_name = "notifications"
+
+    paginate_by = 25
+
+    def get_queryset(self):
+        return NotificationSelector.for_user(self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["unread_count"] = NotificationSelector.unread_count(
+            self.request.user
+        )
+        return context
+
+
+class NotificationReadView(
+    ServiceDeskLoginRequiredMixin,
+    View
+):
+    """
+    Mark one notification read and follow it to its target.
+    """
+
+    def post(self, request, pk):
+
+        notification = get_object_or_404(
+            NotificationSelector.for_user(request.user),
+            pk=pk,
+        )
+
+        NotificationService.mark_read(notification, request.user)
+
+        return redirect(notification.target_url())
+
+
+class NotificationReadAllView(
+    ServiceDeskLoginRequiredMixin,
+    View
+):
+    """
+    Mark every unread notification read.
+    """
+
+    def post(self, request):
+
+        count = NotificationService.mark_all_read(request.user)
+
+        messages.success(
+            request,
+            f"{count} notification(s) marked as read.",
+        )
+
+        return redirect("service_desk:notification_list")
+
+
+# --------------------------------------------------
+# Problem RCA workflows
+#
+# FiveWhys, FishboneFactor, Evidence, Action and Approval were
+# rendered read-only on the Problem detail page with no way to create
+# one outside the Django admin. Each view below is a thin POST handler
+# that validates shape with a form and then delegates every mutation
+# to ProblemService — no view here writes to a model directly.
+# --------------------------------------------------
+
+class ProblemRCAActionMixin(
+    ProblemChangePermissionMixin,
+    View
+):
+    """
+    Shared plumbing for the RCA action views.
+
+    Resolves the problem through get_problem_queryset, so an
+    out-of-scope problem is a 404 for everybody — including a
+    Requester, who has no Problem visibility at all (ADR-010).
+    """
+
+    def get_problem(self, request, pk):
+        return get_object_or_404(
+            get_problem_queryset(request.user),
+            pk=pk,
+        )
+
+    def back(self, problem):
+        return redirect("service_desk:problem_detail", pk=problem.pk)
+
+    def report_form_errors(self, request, form):
+        for field, errors in form.errors.items():
+            label = "" if field == "__all__" else f"{field}: "
+            for error in errors:
+                messages.error(request, f"{label}{error}")
+
+
+class ProblemRCAUpdateView(ProblemRCAActionMixin):
+    """
+    Edit the RCA narrative (method, statement, mitigation, ...).
+    """
+
+    def post(self, request, pk):
+
+        problem = self.get_problem(request, pk)
+        rca = ProblemService.get_or_create_rca(problem, user=request.user)
+
+        form = RCADetailsForm(request.POST, instance=rca)
+
+        if not form.is_valid():
+            self.report_form_errors(request, form)
+            return self.back(problem)
+
+        try:
+            ProblemService.update_rca(
+                RootCauseAnalysis.objects.get(pk=rca.pk),
+                user=request.user,
+                **form.cleaned_data,
+            )
+            messages.success(request, "Root Cause Analysis updated.")
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return self.back(problem)
+
+
+class ProblemFiveWhysAddView(ProblemRCAActionMixin):
+    """
+    Append a step to the Five Whys chain.
+    """
+
+    def post(self, request, pk):
+
+        problem = self.get_problem(request, pk)
+
+        form = FiveWhysStepForm(request.POST)
+
+        if not form.is_valid():
+            self.report_form_errors(request, form)
+            return self.back(problem)
+
+        try:
+            ProblemService.add_five_whys_step(
+                problem,
+                question=form.cleaned_data["question"],
+                answer=form.cleaned_data["answer"],
+                user=request.user,
+            )
+            messages.success(request, "Five Whys step added.")
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return self.back(problem)
+
+
+class ProblemFishboneAddView(ProblemRCAActionMixin):
+    """
+    Record a contributing factor on the Ishikawa diagram.
+    """
+
+    def post(self, request, pk):
+
+        problem = self.get_problem(request, pk)
+
+        form = FishboneFactorForm(request.POST)
+
+        if not form.is_valid():
+            self.report_form_errors(request, form)
+            return self.back(problem)
+
+        try:
+            ProblemService.add_fishbone_factor(
+                problem,
+                category=form.cleaned_data["category"],
+                factor_description=form.cleaned_data["factor_description"],
+                is_root_cause=form.cleaned_data.get("is_root_cause", False),
+                user=request.user,
+            )
+            messages.success(request, "Contributing factor added.")
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return self.back(problem)
+
+
+class ProblemFishboneRootCauseView(ProblemRCAActionMixin):
+    """
+    Flag (or unflag) a factor as the identified root cause.
+    """
+
+    def post(self, request, pk, factor_pk):
+
+        problem = self.get_problem(request, pk)
+
+        factor = get_object_or_404(
+            FishboneFactor,
+            pk=factor_pk,
+            rca__problem=problem,
+        )
+
+        try:
+            ProblemService.set_factor_as_root_cause(
+                factor,
+                user=request.user,
+                is_root_cause=not factor.is_root_cause,
+            )
+            messages.success(request, "Factor updated.")
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return self.back(problem)
+
+
+class ProblemEvidenceAddView(ProblemRCAActionMixin):
+    """
+    Attach supporting evidence to the investigation.
+    """
+
+    def post(self, request, pk):
+
+        problem = self.get_problem(request, pk)
+
+        form = EvidenceForm(request.POST)
+
+        if not form.is_valid():
+            self.report_form_errors(request, form)
+            return self.back(problem)
+
+        try:
+            ProblemService.add_evidence(
+                problem,
+                title=form.cleaned_data["title"],
+                file_or_link=form.cleaned_data["file_or_link"],
+                description=form.cleaned_data.get("description", ""),
+                user=request.user,
+            )
+            messages.success(request, "Evidence recorded.")
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return self.back(problem)
+
+
+class ProblemActionAddView(ProblemRCAActionMixin):
+    """
+    Raise a corrective or preventive action (CAPA).
+    """
+
+    def post(self, request, pk):
+
+        problem = self.get_problem(request, pk)
+
+        form = ActionForm(request.POST)
+
+        if not form.is_valid():
+            self.report_form_errors(request, form)
+            return self.back(problem)
+
+        try:
+            ProblemService.add_action(
+                problem,
+                action_type=form.cleaned_data["action_type"],
+                description=form.cleaned_data["description"],
+                due_date=form.cleaned_data["due_date"],
+                assigned_to=form.cleaned_data.get("assigned_to"),
+                user=request.user,
+            )
+            messages.success(request, "Action raised.")
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return self.back(problem)
+
+
+class ProblemActionStatusView(ProblemRCAActionMixin):
+    """
+    Advance a CAPA through its lifecycle.
+    """
+
+    def post(self, request, pk, action_pk):
+
+        problem = self.get_problem(request, pk)
+
+        action = get_object_or_404(
+            Action,
+            pk=action_pk,
+            rca__problem=problem,
+        )
+
+        try:
+            ProblemService.change_action_status(
+                action,
+                request.POST.get("status", ""),
+                user=request.user,
+            )
+            messages.success(request, "Action updated.")
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return self.back(problem)
+
+
+class ProblemApprovalRequestView(ProblemRCAActionMixin):
+    """
+    Ask a named reviewer to sign the RCA off.
+    """
+
+    def post(self, request, pk):
+
+        problem = self.get_problem(request, pk)
+
+        form = ApprovalRequestForm(request.POST)
+
+        if not form.is_valid():
+            self.report_form_errors(request, form)
+            return self.back(problem)
+
+        try:
+            ProblemService.request_approval(
+                problem,
+                approver=form.cleaned_data["approver"],
+                user=request.user,
+            )
+            messages.success(request, "Sign-off requested.")
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return self.back(problem)
+
+
+class ProblemApprovalDecisionView(ProblemRCAActionMixin):
+    """
+    Record the nominated approver's decision.
+
+    The "only the nominated approver may decide, and only once" rule
+    is enforced in ProblemService.decide_approval, not here.
+    """
+
+    def post(self, request, pk, approval_pk):
+
+        problem = self.get_problem(request, pk)
+
+        approval = get_object_or_404(
+            Approval,
+            pk=approval_pk,
+            rca__problem=problem,
+        )
+
+        form = ApprovalDecisionForm(request.POST)
+
+        if not form.is_valid():
+            self.report_form_errors(request, form)
+            return self.back(problem)
+
+        try:
+            ProblemService.decide_approval(
+                approval,
+                status=form.cleaned_data["status"],
+                comments=form.cleaned_data.get("comments", ""),
+                user=request.user,
+            )
+            messages.success(request, "Decision recorded.")
+        except ValidationError as exc:
+            messages.error(request, " ".join(exc.messages))
+
+        return self.back(problem)

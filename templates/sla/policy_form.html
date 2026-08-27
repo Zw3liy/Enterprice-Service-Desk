@@ -1,17 +1,24 @@
 {% extends "base.html" %}
 
-{% block title %}Create Supplier — Enterprise Service Desk{% endblock %}
+{% block title %}
+{% if policy %}Edit SLA Policy{% else %}New SLA Policy{% endif %} — Enterprise Service Desk
+{% endblock %}
 
 {% block content %}
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb mb-1">
-        <li class="breadcrumb-item"><a href="{% url 'service_desk:supplier_list' %}">Suppliers</a></li>
-        <li class="breadcrumb-item active" aria-current="page">New</li>
+        <li class="breadcrumb-item"><a href="{% url 'service_desk:sla_dashboard' %}">SLA</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'service_desk:sla_policy_list' %}">Policies</a></li>
+        <li class="breadcrumb-item active" aria-current="page">
+            {% if policy %}{{ policy.name }}{% else %}New{% endif %}
+        </li>
     </ol>
 </nav>
 
-<h1 class="h3 fw-bold mb-4">Create Supplier</h1>
+<h1 class="h3 fw-bold mb-4">
+    {% if policy %}Edit SLA Policy{% else %}New SLA Policy{% endif %}
+</h1>
 
 <form method="post" novalidate class="col-12 col-lg-8">
     {% csrf_token %}
@@ -37,8 +44,13 @@
         </div>
     {% endfor %}
 
-    <button type="submit" class="btn btn-primary">Create</button>
-    <a href="{% url 'service_desk:supplier_list' %}" class="btn btn-secondary">Cancel</a>
+    <p class="text-muted small">
+        Editing a policy does not move the deadlines of tickets already in
+        flight — each ticket keeps the terms it was raised under.
+    </p>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{% url 'service_desk:sla_policy_list' %}" class="btn btn-secondary">Cancel</a>
 </form>
 
 {% endblock %}

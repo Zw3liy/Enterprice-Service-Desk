@@ -62,32 +62,217 @@
                             </li>
                         </ul>
 
-                        {% if rca.five_whys.all %}
-                            <h6 class="fw-semibold small text-uppercase text-muted">Five Whys</h6>
+    {% if rca_locked %}
+                            <div class="alert alert-secondary small">
+                                This analysis was {{ rca.get_status_display|lower }} and is now read-only.
+                            </div>
+                        {% endif %}
+
+                        {% if can_edit_rca %}
+                        <details class="mb-3">
+                            <summary class="fw-semibold small text-uppercase text-muted">Edit analysis details</summary>
+                            <form method="post" action="{% url 'service_desk:problem_rca_update' problem.pk %}" class="mt-2">
+                                {% csrf_token %}
+                                {% for field in rca_form %}
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-medium" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                        {{ field }}
+                                    </div>
+                                {% endfor %}
+                                <button type="submit" class="btn btn-outline-primary btn-sm">Save analysis</button>
+                            </form>
+                        </details>
+                        {% endif %}
+
+                        <h6 class="fw-semibold small text-uppercase text-muted">Five Whys</h6>
+                        {% if five_whys %}
                             <ol class="mb-3">
-                                {% for step in rca.five_whys.all %}
+                                {% for step in five_whys %}
                                     <li><strong>{{ step.question }}</strong> — {{ step.answer }}</li>
                                 {% endfor %}
                             </ol>
+                        {% else %}
+                            <p class="text-muted small">No steps recorded yet.</p>
                         {% endif %}
 
-                        {% if rca.fishbone_factors.all %}
-                            <h6 class="fw-semibold small text-uppercase text-muted">Fishbone Factors</h6>
-                            <ul class="mb-3">
-                                {% for factor in rca.fishbone_factors.all %}
-                                    <li>
+                        {% if can_edit_rca %}
+                        <form method="post" action="{% url 'service_desk:problem_five_whys_add' problem.pk %}" class="mb-4">
+                            {% csrf_token %}
+                            {% for field in five_whys_form %}
+                                <div class="mb-2">
+                                    <label class="form-label small fw-medium" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                </div>
+                            {% endfor %}
+                            <button type="submit" class="btn btn-outline-primary btn-sm">Add step</button>
+                        </form>
+                        {% endif %}
+
+                        <h6 class="fw-semibold small text-uppercase text-muted">Fishbone Factors</h6>
+                        {% if fishbone_factors %}
+                            <ul class="list-unstyled mb-3">
+                                {% for factor in fishbone_factors %}
+                                    <li class="mb-2">
                                         <strong>{{ factor.get_category_display }}:</strong>
                                         {{ factor.factor_description }}
                                         {% if factor.is_root_cause %}<span class="badge bg-danger ms-1">Root Cause</span>{% endif %}
+                                        {% if can_edit_rca %}
+                                        <form method="post" action="{% url 'service_desk:problem_fishbone_root_cause' problem.pk factor.pk %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-link btn-sm p-0 ms-1">
+                                                {% if factor.is_root_cause %}Unmark{% else %}Mark as root cause{% endif %}
+                                            </button>
+                                        </form>
+                                        {% endif %}
                                     </li>
                                 {% endfor %}
                             </ul>
+                        {% else %}
+                            <p class="text-muted small">No contributing factors recorded yet.</p>
+                        {% endif %}
+
+                        {% if can_edit_rca %}
+                        <form method="post" action="{% url 'service_desk:problem_fishbone_add' problem.pk %}" class="mb-4">
+                            {% csrf_token %}
+                            {% for field in fishbone_form %}
+                                <div class="mb-2 {% if field.field.widget.input_type == 'checkbox' %}form-check{% endif %}">
+                                    <label class="form-label small fw-medium" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                </div>
+                            {% endfor %}
+                            <button type="submit" class="btn btn-outline-primary btn-sm">Add factor</button>
+                        </form>
+                        {% endif %}
+
+                        <h6 class="fw-semibold small text-uppercase text-muted">Evidence</h6>
+                        {% if evidence_items %}
+                            <ul class="mb-3">
+                                {% for item in evidence_items %}
+                                    <li>
+                                        <strong>{{ item.title }}</strong> — {{ item.file_or_link }}
+                                        {% if item.description %}<span class="text-muted small">({{ item.description }})</span>{% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted small">No evidence attached yet.</p>
+                        {% endif %}
+
+                        {% if can_edit_rca %}
+                        <form method="post" action="{% url 'service_desk:problem_evidence_add' problem.pk %}" class="mb-4">
+                            {% csrf_token %}
+                            {% for field in evidence_form %}
+                                <div class="mb-2">
+                                    <label class="form-label small fw-medium" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                </div>
+                            {% endfor %}
+                            <button type="submit" class="btn btn-outline-primary btn-sm">Add evidence</button>
+                        </form>
+                        {% endif %}
+
+                        <h6 class="fw-semibold small text-uppercase text-muted">Corrective &amp; Preventive Actions</h6>
+                        {% if actions %}
+                            <ul class="list-unstyled mb-3">
+                                {% for action in actions %}
+                                    <li class="border-bottom pb-2 mb-2">
+                                        <span class="badge bg-secondary">{{ action.get_action_type_display }}</span>
+                                        {{ action.description }}
+                                        <div class="text-muted small">
+                                            Due {{ action.due_date }} &middot;
+                                            {% if action.assigned_to %}{{ action.assigned_to.username }}{% else %}Unassigned{% endif %} &middot;
+                                            {{ action.get_status_display }}
+                                        </div>
+                                        {% if can_edit_rca %}
+                                            <form method="post" action="{% url 'service_desk:problem_action_status' problem.pk action.pk %}" class="d-flex gap-2 mt-1">
+                                                {% csrf_token %}
+                                                <select name="status" class="form-select form-select-sm w-auto" aria-label="New action status">
+                                                    <option value="in_progress">In Progress</option>
+                                                    <option value="completed">Completed</option>
+                                                    <option value="cancelled">Cancelled</option>
+                                                </select>
+                                                <button type="submit" class="btn btn-outline-secondary btn-sm">Update</button>
+                                            </form>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted small">No actions raised yet.</p>
+                        {% endif %}
+
+                        {% if can_edit_rca %}
+                        <form method="post" action="{% url 'service_desk:problem_action_add' problem.pk %}" class="mb-4">
+                            {% csrf_token %}
+                            {% for field in action_form %}
+                                <div class="mb-2">
+                                    <label class="form-label small fw-medium" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                </div>
+                            {% endfor %}
+                            <button type="submit" class="btn btn-outline-primary btn-sm">Raise action</button>
+                        </form>
+                        {% endif %}
+
+                        <h6 class="fw-semibold small text-uppercase text-muted">Sign-off</h6>
+                        {% if approvals %}
+                            <ul class="list-unstyled mb-3">
+                                {% for approval in approvals %}
+                                    <li>
+                                        {% if approval.approver %}{{ approval.approver.username }}{% else %}Unassigned{% endif %}
+                                        &mdash;
+                                        <span class="badge {% if approval.status == 'approved' %}bg-success{% elif approval.status == 'rejected' %}bg-danger{% else %}bg-warning text-dark{% endif %}">
+                                            {{ approval.get_status_display }}
+                                        </span>
+                                        {% if approval.comments %}<span class="text-muted small">{{ approval.comments }}</span>{% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted small">No sign-off requested yet.</p>
+                        {% endif %}
+
+                        {% if pending_approval %}
+                        <form method="post" action="{% url 'service_desk:problem_approval_decide' problem.pk pending_approval.pk %}" class="mb-3">
+                            {% csrf_token %}
+                            <p class="small fw-medium mb-1">You have been asked to sign this analysis off.</p>
+                            {% for field in approval_decision_form %}
+                                <div class="mb-2">
+                                    <label class="form-label small fw-medium" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                </div>
+                            {% endfor %}
+                            <button type="submit" class="btn btn-primary btn-sm">Record decision</button>
+                        </form>
+                        {% endif %}
+
+                        {% if can_edit_rca %}
+                        <form method="post" action="{% url 'service_desk:problem_approval_request' problem.pk %}">
+                            {% csrf_token %}
+                            {% for field in approval_request_form %}
+                                <div class="mb-2">
+                                    <label class="form-label small fw-medium" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                </div>
+                            {% endfor %}
+                            <button type="submit" class="btn btn-outline-primary btn-sm">Request sign-off</button>
+                        </form>
                         {% endif %}
                     {% else %}
-                        <p class="text-muted small mb-0">
+                        <p class="text-muted small">
                             No Root Cause Analysis yet — one is created automatically when this problem
                             enters <strong>Investigating</strong>.
                         </p>
+                        {% if can_edit_rca %}
+                        <form method="post" action="{% url 'service_desk:problem_rca_update' problem.pk %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="method" value="five_whys">
+                            <input type="hidden" name="problem_statement" value="{{ problem.title }}">
+                            <button type="submit" class="btn btn-outline-primary btn-sm">
+                                Start Root Cause Analysis
+                            </button>
+                        </form>
+                        {% endif %}
                     {% endif %}
 
                     <hr>

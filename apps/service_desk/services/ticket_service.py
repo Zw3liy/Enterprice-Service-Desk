@@ -49,6 +49,13 @@ class TicketService:
             to_status=ticket.status,
         )
 
+        # Start the SLA clock. No-op when no policy is configured for
+        # this priority/department — SLA tracking is opt-in and a desk
+        # with no policies must keep working exactly as before.
+        from apps.service_desk.services.sla_service import SLAService
+
+        SLAService.attach_to_ticket(ticket)
+
         return ticket
 
     # ==========================================================
@@ -120,6 +127,16 @@ class TicketService:
             user=user,
             old_value=str(previous) if previous else "",
             new_value=technician.get_username(),
+        )
+
+        from apps.service_desk.services.notification_service import (
+            NotificationService,
+        )
+
+        NotificationService.notify_assignment(
+            ticket,
+            assignee=technician,
+            actor=user,
         )
 
         return ticket
@@ -201,6 +218,21 @@ class TicketService:
             to_status=status,
         )
 
+        from apps.service_desk.services.sla_service import SLAService
+
+        SLAService.on_status_change(ticket, current, status)
+
+        from apps.service_desk.services.notification_service import (
+            NotificationService,
+        )
+
+        NotificationService.notify_status_change(
+            ticket,
+            from_status=current,
+            to_status=status,
+            actor=user,
+        )
+
         return ticket
 
     # ==========================================================
@@ -230,6 +262,10 @@ class TicketService:
             old_value=previous,
             new_value=priority,
         )
+
+        from apps.service_desk.services.sla_service import SLAService
+
+        SLAService.recalculate(ticket)
 
         return ticket
 
@@ -361,12 +397,20 @@ class TicketService:
         if not note.strip():
             raise ValidationError("Work note cannot be empty.")
 
-        return TicketHistory.record(
+        entry = TicketHistory.record(
             ticket=ticket,
             event_type=TicketHistory.EVENT_WORK_NOTE,
             user=user,
             comment=note.strip(),
         )
+
+        # A work note is service-desk activity, so it stops the SLA
+        # response clock (a requester comment does not).
+        from apps.service_desk.services.sla_service import SLAService
+
+        SLAService.mark_first_response(ticket)
+
+        return entry
 
     # ==========================================================
     # Close

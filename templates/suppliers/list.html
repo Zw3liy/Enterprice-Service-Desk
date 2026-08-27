@@ -4,24 +4,91 @@
 
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1>Suppliers</h1>
-    <a href="{% url 'service_desk:supplier_create' %}" class="btn btn-primary">New Supplier</a>
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-3">
+    <div>
+        <h1 class="h3 fw-bold mb-1">Suppliers</h1>
+        <p class="text-muted small mb-0">
+            {{ stats.total }} in scope &middot; {{ stats.active }} active &middot; {{ stats.inactive }} inactive
+        </p>
+    </div>
+    {% if perms.service_desk.add_supplier %}
+        <a href="{% url 'service_desk:supplier_create' %}" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-plus me-1" aria-hidden="true"></i> New Supplier
+        </a>
+    {% endif %}
 </div>
+
+<form method="get" class="row g-2 align-items-end mb-3" role="search">
+    <div class="col-12 col-sm-6 col-lg-4">
+        <label for="q" class="form-label small fw-medium">Search</label>
+        <input type="search" id="q" name="q" value="{{ search_query }}"
+               class="form-control form-control-sm"
+               placeholder="Name, contact or description">
+    </div>
+    <div class="col-8 col-sm-4 col-lg-3">
+        <label for="status" class="form-label small fw-medium">Status</label>
+        <select id="status" name="status" class="form-select form-select-sm">
+            <option value="" {% if not active_status %}selected{% endif %}>All</option>
+            <option value="active" {% if active_status == 'active' %}selected{% endif %}>Active</option>
+            <option value="inactive" {% if active_status == 'inactive' %}selected{% endif %}>Inactive</option>
+        </select>
+    </div>
+    <div class="col-4 col-sm-2">
+        <button type="submit" class="btn btn-outline-secondary btn-sm w-100">Filter</button>
+    </div>
+</form>
 
 <div class="list-group">
     {% for supplier in suppliers %}
         <a href="{% url 'service_desk:supplier_detail' supplier.pk %}" class="list-group-item list-group-item-action">
-            <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{ supplier.name }}</h5>
-                <small class="text-muted">{% if supplier.department %}{{ supplier.department.name }}{% endif %}</small>
+            <div class="d-flex w-100 justify-content-between align-items-start gap-2">
+                <h2 class="h6 mb-1">
+                    {{ supplier.name }}
+                    {% if not supplier.is_active %}
+                        <span class="badge bg-secondary ms-1">Inactive</span>
+                    {% endif %}
+                </h2>
+                <small class="text-muted text-nowrap">{% if supplier.department %}{{ supplier.department.name }}{% else %}Unscoped{% endif %}</small>
             </div>
-            <p class="mb-1">{{ supplier.description|default:""|truncatechars:120 }}</p>
-            <small>{{ supplier.contact_name }} — {{ supplier.contact_email }}</small>
+            <p class="mb-1 small text-break">{{ supplier.description|default:""|truncatechars:120 }}</p>
+            <small class="text-muted">
+                {{ supplier.contact_name|default:"No contact" }}
+                {% if supplier.contact_email %}&middot; {{ supplier.contact_email }}{% endif %}
+            </small>
         </a>
     {% empty %}
-        <div class="alert alert-secondary">No suppliers found.</div>
+        <div class="alert alert-secondary mb-0">
+            {% if search_query or active_status %}
+                No suppliers match this filter.
+                <a href="{% url 'service_desk:supplier_list' %}">Clear filters</a>.
+            {% else %}
+                No suppliers found.
+                {% if perms.service_desk.add_supplier %}
+                    <a href="{% url 'service_desk:supplier_create' %}">Add the first one</a>.
+                {% endif %}
+            {% endif %}
+        </div>
     {% endfor %}
 </div>
+
+{% if is_paginated %}
+<nav aria-label="Supplier pages" class="mt-3">
+    <ul class="pagination pagination-sm">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&amp;q={{ search_query }}&amp;status={{ active_status }}">Previous</a>
+            </li>
+        {% endif %}
+        <li class="page-item disabled">
+            <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        </li>
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}&amp;q={{ search_query }}&amp;status={{ active_status }}">Next</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
 
 {% endblock %}

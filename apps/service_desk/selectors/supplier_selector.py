@@ -27,6 +27,27 @@ class SupplierSelector:
         return cls._base_queryset().filter(department_id=department_id)
 
     @classmethod
+    def get_inactive_suppliers(cls) -> QuerySet[Supplier]:
+        return cls._base_queryset().filter(is_active=False)
+
+    @classmethod
+    def scoped_summary(cls, queryset: QuerySet[Supplier]) -> dict:
+        """
+        Active/inactive counts for an already-scoped supplier
+        queryset. Takes the queryset rather than the user so the
+        caller's RBAC scoping is never bypassed here.
+        """
+
+        total = queryset.count()
+        active = queryset.filter(is_active=True).count()
+
+        return {
+            "total": total,
+            "active": active,
+            "inactive": total - active,
+        }
+
+    @classmethod
     def search(cls, query: str) -> QuerySet[Supplier]:
         return cls._base_queryset().filter(
             Q(name__icontains=query)
