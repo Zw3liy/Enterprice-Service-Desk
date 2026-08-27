@@ -1,8 +1,217 @@
-# Future deployment automation.
-# Deployment is outside CI-01 scope.
-#
-# See docs/engineering/ROADMAP.md ("Future - Phase 3: Enterprise modules",
-# Deployment) for where this is tracked. This file intentionally defines
-# no workflow yet - GitHub Actions may show it as an invalid/skipped
-# workflow file in the Actions tab as a result, which is expected: it
-# has no "on"/"jobs" keys on purpose, so it never triggers or runs.
+name: Production Readiness
+
+on:
+  push:
+    branches:
+      - main
+      - "production/**"
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-readiness-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.13"
+
+jobs:
+  postgres-verification:
+    name: PostgreSQL application verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: service_desk_ci
+          POSTGRES_USER: service_desk
+          POSTGRES_PASSWORD: service_desk_ci_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U service_desk -d service_desk_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DJANGO_SETTINGS_MODULE: ticketing.production_settings
+      DJANGO_SECRET_KEY: ci-only-secret-key-not-used-in-production-123456789
+      DJANGO_DEBUG: "false"
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+      DJANGO_CSRF_TRUSTED_ORIGINS: https://localhost
+      DJANGO_SECURE_SSL_REDIRECT: "false"
+      DJANGO_DB_SSL_REQUIRE: "false"
+      DJANGO_SECURE_HSTS_SECONDS: "0"
+      DATABASE_URL: postgresql://service_desk:service_desk_ci_password@127.0.0.1:5432/service_desk_ci
+      DJANGO_STATIC_ROOT: /tmp/service-desk-static
+      DJANGO_MEDIA_ROOT: /tmp/service-desk-media
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install declared dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --requirement requirements.txt
+
+      - name: Run Django system checks
+        run: |
+          python manage.py check
+          python manage.py check --deploy
+
+      - name: Reject migration drift
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Apply migrations from an empty PostgreSQL database
+        run: |
+          python manage.py migrate --noinput
+          python manage.py showmigrations --plan
+
+      - name: Verify service-desk rollback and reapply
+        run: |
+          python manage.py migrate service_desk 0010_notification --noinput
+          python manage.py migrate --noinput
+          python manage.py makemigrations --check --dry-run
+
+      - name: Run complete Django test suite against PostgreSQL
+        run: python manage.py test --verbosity 2
+
+      - name: Verify static collection
+        run: python manage.py collectstatic --noinput
+
+  container-verification:
+    name: Container build and health verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: service_desk_container
+          POSTGRES_USER: service_desk
+          POSTGRES_PASSWORD: service_desk_container_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U service_desk -d service_desk_container"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build production image
+        run: docker build --tag service-desk:${{ github.sha }} .
+
+      - name: Prove image uses a non-root user
+        run: |
+          configured_user="$(docker image inspect \
+            --format='{{.Config.User}}' \
+            service-desk:${{ github.sha }})"
+
+          test -n "$configured_user"
+          test "$configured_user" != "root"
+          test "$configured_user" != "0"
+
+          echo "Container user is configured and non-root."
+
+      - name: Apply migrations through the production image
+        run: |
+          docker run --rm \
+            --network host \
+            --env DJANGO_SETTINGS_MODULE=ticketing.production_settings \
+            --env DJANGO_SECRET_KEY=ci-container-secret-not-for-production-123456789 \
+            --env DJANGO_DEBUG=false \
+            --env DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1 \
+            --env DJANGO_CSRF_TRUSTED_ORIGINS=https://localhost \
+            --env DJANGO_SECURE_SSL_REDIRECT=false \
+            --env DJANGO_DB_SSL_REQUIRE=false \
+            --env DATABASE_URL=postgresql://service_desk:service_desk_container_password@127.0.0.1:5432/service_desk_container \
+            service-desk:${{ github.sha }} \
+            python manage.py migrate --noinput
+
+      - name: Start production container
+        run: |
+          docker run --detach \
+            --name service-desk-web \
+            --network host \
+            --env DJANGO_SETTINGS_MODULE=ticketing.production_settings \
+            --env DJANGO_SECRET_KEY=ci-container-secret-not-for-production-123456789 \
+            --env DJANGO_DEBUG=false \
+            --env DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1 \
+            --env DJANGO_CSRF_TRUSTED_ORIGINS=https://localhost \
+            --env DJANGO_SECURE_SSL_REDIRECT=false \
+            --env DJANGO_DB_SSL_REQUIRE=false \
+            --env DATABASE_URL=postgresql://service_desk:service_desk_container_password@127.0.0.1:5432/service_desk_container \
+            service-desk:${{ github.sha }}
+
+      - name: Verify liveness and readiness
+        run: |
+          healthy=false
+
+          for attempt in $(seq 1 30); do
+            if curl \
+              --fail \
+              --silent \
+              --show-error \
+              http://127.0.0.1:8000/health/live/ \
+              && curl \
+              --fail \
+              --silent \
+              --show-error \
+              http://127.0.0.1:8000/health/ready/; then
+              healthy=true
+              break
+            fi
+
+            sleep 2
+          done
+
+          if [ "$healthy" != "true" ]; then
+            docker logs service-desk-web
+            exit 1
+          fi
+
+      - name: Verify runtime process is non-root
+        run: |
+          runtime_user="$(docker exec service-desk-web id -u)"
+          test "$runtime_user" != "0"
+
+      - name: Stop smoke-test container
+        if: always()
+        run: |
+          docker logs service-desk-web || true
+          docker rm --force service-desk-web || true
+
+  deployment-gate:
+    name: Deployment configuration gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs:
+      - postgres-verification
+      - container-verification
+
+    steps:
+      - name: Confirm staging artifact readiness
+        run: |
+          echo "Application, PostgreSQL migrations and container are verified."
+          echo "No live deployment is performed without an approved environment."
+          echo "Configure a protected staging environment before adding deployment credentials."
