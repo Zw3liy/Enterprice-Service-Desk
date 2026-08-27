@@ -41,3 +41,117 @@ deployment/logs/
 deployment/releases/AI_Agentina/.env
 AI_Agentina/*Key*
 *API key*
+
+# ENTERPRISE SERVICE DESK GENERATED-ARTIFACT EXCLUSIONS
+# Generated diagnostic, recovery and master-build material.
+# These rules preserve files locally; they do not delete anything.
+
+# Python runtime caches and local environments
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local databases and runtime output
+*.sqlite3-journal
+*.log
+*_test_output.txt
+application_test_output.txt
+im04_test_output.txt
+
+# Agent-local metadata
+.agent.md
+.agentina_graph.json
+.agentina_memory.json
+
+# Generated build and evidence trees
+/build/
+/build_evidence/
+/ENTERPRISE_SERVICE_DESK_COMPLETION_EVIDENCE/
+/master_build_reports/
+/MASTER31_ARTIFACTS/
+/MASTER32_ARTIFACTS/
+/MASTER31/
+/docs/master_build_*/
+/docs/master_build_backups/
+/docs/master_build_reports/
+/reports/MASTER_BUILD/
+/reports/MASTER_BUILD_*/
+/_diagnostics/
+
+# Repair, quarantine and backup trees
+.build_backups/
+.repair_backups/
+.repair_backups*/
+.repair_backups/
+.repair_backups*/
+repair_backups/
+*repair_backup*/
+*repair_backups*/
+*recovery_backup*/
+*namespace_repair_backup*/
+*integration_backup*/
+*test_repair_backup*/
+*ui_repair_backup*/
+*ui_audit*/
+*zero_byte_template_backup*/
+*protected_surface*/
+*.before_*
+*.bak_*
+*.build*_backup*
+*QUARANTINE*/
+*quarantine*/
+
+# Generated master-build and recovery scripts at repository root
+/MASTER*.ps1
+/ASTER*.ps1
+/verify_*.ps1
+/Stage*-Environment*.ps1
+/Stage*-Environment*.py
+/run_audit.py
+/run_tests_sla.sh
+/build_next.py
+/MASTER31*
+/MASTER32*
+/MASTER950*
+/MASTER_BUILD_*
+/MASTER_COMBINED_*
+/MASTER_FINAL_*
+/MASTER_PROTECTED_*
+/MASTER_RECREATE_*
+/MASTER_REPAIR_*
+/MASTER_STAGE*
+
+# Generated reports and evidence files
+/MASTER31_ARTIFACTS/
+/MASTER32_ARTIFACTS/
+/MASTER31/
+/MASTER32/
+/MASTER950/
+/diagnostics/SLA_IMPORT_REPAIR/
+/build/architecture_evidence/
+/build/evidence/
+
+# Accidental malformed root files
+/0
+/1
+/2
+/dict
+/int
+/str
+/None
+/Path
+/list[dict]
+/tatus
+/apps.service_desk.selectors.sla_selector
+/apps.service_desk.services.sla_service
+/New Text Document.txt
+
+# Local completion tickets and transient records
+/BUILD_CONTEXT_TICKET.txt
+/BUILD_PLAN.md
