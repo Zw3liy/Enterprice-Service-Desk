@@ -16,28 +16,28 @@ step). An out-of-date `SESSION_STATE.md` is itself a defect — treat it as one 
 |---|---|
 | **Project Name** | Enterprise Service Desk |
 | **Repository** | `https://github.com/Zw3liy/Enterprice-Service-Desk.git` |
-| **Current Branch** | `feature/incident-management-dashboard` |
+| **Current Branch** | `arena/01a04293-enterprice-service-desk` (previous session: `feature/incident-management-dashboard`) |
 | **Default Branch** | `main` |
 | **Current Version** | No formal semantic version tag on current HEAD. Nearest tag is `fe12-rollback`; last real release tag in history is `v1.0.1-frontend-stabilized`, well upstream of this branch. Treat this branch as unreleased/pre-tag work. |
-| **Last Updated** | 2026-08-07 |
+| **Last Updated** | 2026-08-27 |
 
 ## Current Engineering Phase
 
 | | |
 |---|---|
-| **Current Milestone** | IM-04 — Work Notes, Attachments, Requester Confirmation (DONE) |
-| **Current Sprint** | All approved milestones complete. The execution order (record → PM-03 → IM-04) is fully delivered. |
-| **Current Objective** | All items in the repository owner's explicit execution order are complete. Next priorities should be drawn from ITSM_ROADMAP.md P1/P2. |
-| **Overall Repository Health** | **Improving, still mixed.** Core `service_desk` app is healthy (`manage.py check` clean, 80/80 tests passing, migrations in sync, zero drift). `ticketing/settings.py` no longer hardcodes secrets/DEBUG/hosts (SEC-01). CI runs on every push/PR (CI-01) from a real `requirements.txt` (DEP-01). The `models.py`/`views.py` file-collision hazard is resolved (ARCH-01). RBAC has `get_problem_queryset` (Requester: none) and Technicians see unassigned tickets too (ADR-010, RBAC-01). Problem Management is fully reachable end-to-end (PM-03). Incident Management is fully complete including work notes, attachments, and requester confirmation (IM-04). Surrounding repository still has scaffolding debt (~59 unregistered apps, unchanged — a separate, larger scope decision). Full detail: [ARCHITECTURE.md](ARCHITECTURE.md). |
+| **Current Milestone** | Production-completion sweep: DASH-01, ITSM-08 completion, SLA-01, NOTIFY-01, PM-04, NAV-01, SEC-02 (all DONE) |
+| **Current Sprint** | Production-completion sweep complete: dashboard, Supplier completion, SLA, notifications, Problem RCA authoring, navigation and the security regression sweep are all delivered and verified. |
+| **Current Objective** | ITSM_ROADMAP.md P1 items 2 and 3 (SLA Management, Notification Features) are now DONE. Remaining priorities: Service Request Management, then P2 (Reporting, Knowledge, CMDB). Deployment work is tracked separately in PRODUCTION_READINESS.md. |
+| **Overall Repository Health** | **Good, with known scaffolding debt.** Core `service_desk` app is healthy (`manage.py check` clean, 234/234 tests passing, migrations in sync, zero drift). `ticketing/settings.py` no longer hardcodes secrets/DEBUG/hosts (SEC-01). CI runs on every push/PR (CI-01) from a real `requirements.txt` (DEP-01). The `models.py`/`views.py` file-collision hazard is resolved (ARCH-01). RBAC has `get_problem_queryset` (Requester: none) and Technicians see unassigned tickets too (ADR-010, RBAC-01). Problem Management is fully reachable end-to-end (PM-03). Incident Management is fully complete including work notes, attachments, and requester confirmation (IM-04). SLA Management, the notification boundary and Problem RCA authoring landed in the 2026-08-27 sweep (see below), and every module is now reachable from the sidebar. Surrounding repository still has scaffolding debt (~59 unregistered apps, unchanged — a separate, larger scope decision). Full detail: [ARCHITECTURE.md](ARCHITECTURE.md). |
 
 ## Git Status
 
 | | |
 |---|---|
-| **Current Branch** | `feature/incident-management-dashboard` |
-| **Working Tree Status** | PM-03 changes about to be committed locally as of this update (see Unpushed Commits) |
-| **Ahead / Behind Origin** | 10 / 0 before this session's PM-03 commit, verified via `git rev-list --left-right --count` |
-| **Latest Commit prior to this update** | `98ea39b` — "ADR-010 record and implement Problem/Technician visibility decisions" |
+| **Current Branch** | `arena/01a04293-enterprice-service-desk` |
+| **Working Tree Status** | Clean at each checkpoint; every commit in the 2026-08-27 sweep was pushed as it landed. |
+| **Ahead / Behind Origin** | 0 / 0 — the branch is pushed after every commit. |
+| **Latest Commit prior to this update** | `040dc7c` — "ITSM-08: implement Supplier Management foundation" (the `main` baseline this sweep branched from) |
 
 **Note on process continuity:** this session was interrupted mid-write while finishing SEC-01's documentation
 (caught mid-edit of this file's own predecessor state). The repository owner committed the SEC-01 code
@@ -46,6 +46,28 @@ write. Both were verified against the actual repository before continuing — no
 prompt's claimed baseline — per this file's own "never assume, always verify" rule.
 
 **How to re-check:** `git status`, `git rev-list --left-right --count origin/feature/incident-management-dashboard...HEAD`, `git log --oneline -10`.
+
+## Session 2026-08-27 — Production Completion Sweep
+
+Branched from `main` at `040dc7c` ("ITSM-08: implement Supplier Management foundation"). Baseline was
+re-verified before any change: `check` clean, zero migration drift, **85/85 tests passing**.
+
+| Milestone | What it actually did |
+|---|---|
+| **DASH-01** | `DashboardView` was a bare `TemplateView` — every metric its template rendered resolved to nothing, so the product's landing page showed zeros for every role. Now derives all counts and recent tickets from `get_ticket_queryset(user)` and Problem counters from `get_problem_queryset(user)`. **Security fix found while writing the tests:** `ServiceDeskPermissionMixin` returned 403 to *anonymous* users instead of redirecting to login; `handle_no_permission` now splits the two paths, and `RoleRequiredMixin`/`AdministratorRequiredMixin` are fixed the same way. |
+| **ITSM-08 completion** | Supplier update view, active/inactive lifecycle, department-scoping enforcement in the service layer (a Manager could previously file a supplier under a department they do not manage, then lose sight of it), scoped list search/filter/counters, and Manager/Administrator supplier permissions in `create_roles`. |
+| **SLA-01** | Real SLA management: `SLAPolicy`, `TicketSLA`, `SLAEscalation` (migration `0009`), `SLAService`, `SLASelector`, the idempotent `process_sla` command, a scoped SLA dashboard and policy administration. Deadlines are frozen at attach time so editing a policy cannot retroactively breach live tickets. |
+| **NOTIFY-01** | In-app-first notification boundary (`Notification`, migration `0010`) wired into assignment, status change, confirmation, SLA warning/breach and Problem sign-off. Email is an optional env-driven mirror that fails safe; no credential is committed. |
+| **PM-04** | The five RCA models (FiveWhys, FishboneFactor, Evidence, Action, Approval) were read-only with no way to author one outside the Django admin. Full service layer, forms, nine POST-only views and detail-page UI, with a CAPA lifecycle and an approval that locks the analysis. Also fixed `ProblemSelector.dashboard_statistics`, which counted every Problem in the table regardless of viewer. |
+| **NAV-01** | Five modules were unreachable from the sidebar. Navigation rebuilt with permission gating, `aria-current`, a working navbar collapse and an unread badge. Removed three dead templates with reference-count evidence: `templates/navbar.html`, `templates/sidebar.html` (duplicates of `includes/`), `templates/tickets/edit.html`. |
+| **SEC-02** | Cross-scope attachment download (including the pk-swap variant), CSRF enforcement across 17 state-changing endpoints, error-disclosure checks and a repository-wide committed-secret scan. |
+
+**Final verification:** `check` clean · `makemigrations --check --dry-run` clean · **234/234 tests
+passing** · `check --deploy` 2 explained warnings. See
+[PRODUCTION_READINESS.md](PRODUCTION_READINESS.md) for the full picture including the honest list of
+what is *not* done.
+
+---
 
 ## Completed Engineering Milestones
 
