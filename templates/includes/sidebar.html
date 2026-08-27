@@ -2,34 +2,110 @@
 
     <div class="position-sticky">
 
-        <h5 class="mb-3">
+        <h2 class="h5 mb-3">
             Service Desk
-        </h5>
+        </h2>
 
         <hr>
 
         <ul class="nav flex-column">
 
             <li class="nav-item">
-                <a class="nav-link"
-                   href="{% url 'service_desk:dashboard' %}">
-                    Dashboard
+                <a class="nav-link{% if request.resolver_match.url_name == 'dashboard' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:dashboard' %}"
+                   {% if request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-gauge-high me-2" aria-hidden="true"></i>Dashboard
+                </a>
+            </li>
+
+            {% if perms.service_desk.view_ticket %}
+            <li class="nav-item">
+                <a class="nav-link{% if request.resolver_match.url_name == 'ticket_list' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:ticket_list' %}"
+                   {% if request.resolver_match.url_name == 'ticket_list' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-ticket me-2" aria-hidden="true"></i>Tickets
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link"
-                   href="{% url 'service_desk:ticket_list' %}">
-                    Tickets
+                <a class="nav-link{% if request.resolver_match.url_name == 'incident_dashboard' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:incident_dashboard' %}"
+                   {% if request.resolver_match.url_name == 'incident_dashboard' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-fire me-2" aria-hidden="true"></i>Incidents
                 </a>
             </li>
+            {% endif %}
 
+            {% if perms.service_desk.add_ticket %}
             <li class="nav-item">
-                <a class="nav-link"
-                   href="{% url 'service_desk:ticket_create' %}">
-                    Create Ticket
+                <a class="nav-link{% if request.resolver_match.url_name == 'ticket_create' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:ticket_create' %}"
+                   {% if request.resolver_match.url_name == 'ticket_create' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-plus me-2" aria-hidden="true"></i>Create Ticket
                 </a>
             </li>
+            {% endif %}
+
+            {% if perms.service_desk.view_problem %}
+            <li class="nav-item">
+                <a class="nav-link{% if request.resolver_match.url_name == 'problem_list' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:problem_list' %}"
+                   {% if request.resolver_match.url_name == 'problem_list' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-magnifying-glass me-2" aria-hidden="true"></i>Problems
+                </a>
+            </li>
+            {% endif %}
+
+            {% if perms.service_desk.view_supplier %}
+            <li class="nav-item">
+                <a class="nav-link{% if request.resolver_match.url_name == 'supplier_list' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:supplier_list' %}"
+                   {% if request.resolver_match.url_name == 'supplier_list' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-truck-field me-2" aria-hidden="true"></i>Suppliers
+                </a>
+            </li>
+            {% endif %}
+
+            {% if perms.service_desk.view_ticket %}
+            <li class="nav-item">
+                <a class="nav-link{% if request.resolver_match.url_name == 'sla_dashboard' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:sla_dashboard' %}"
+                   {% if request.resolver_match.url_name == 'sla_dashboard' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-stopwatch me-2" aria-hidden="true"></i>SLA
+                </a>
+            </li>
+            {% endif %}
+
+            {% if perms.service_desk.view_slapolicy %}
+            <li class="nav-item">
+                <a class="nav-link ps-4 small{% if request.resolver_match.url_name == 'sla_policy_list' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:sla_policy_list' %}"
+                   {% if request.resolver_match.url_name == 'sla_policy_list' %}aria-current="page"{% endif %}>
+                    SLA Policies
+                </a>
+            </li>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link{% if request.resolver_match.url_name == 'notification_list' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:notification_list' %}"
+                   {% if request.resolver_match.url_name == 'notification_list' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-bell me-2" aria-hidden="true"></i>Notifications
+                    {% if nav_unread_notifications %}
+                        <span class="badge rounded-pill bg-danger ms-1">{{ nav_unread_notifications }}</span>
+                    {% endif %}
+                </a>
+            </li>
+            {% endif %}
+
+            {% if user.is_staff %}
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/">
+                    <i class="fa-solid fa-screwdriver-wrench me-2" aria-hidden="true"></i>Administration
+                </a>
+            </li>
+            {% endif %}
 
         </ul>
 
