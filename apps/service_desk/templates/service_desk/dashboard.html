@@ -119,21 +119,25 @@ Enterprise Service Desk Dashboard
                 </div>
             </div>
         </div>
-        {% if sla_summary %}
+    </div>
+    {% endif %}
+
+    <div class="row g-3 mb-4">
         <div class="col-12 col-lg-4">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-body">
                     <h2 class="h6 text-muted text-uppercase small mb-2">SLA</h2>
                     <p class="mb-1"><strong>{{ sla_summary.tracked }}</strong> tracked</p>
                     <p class="mb-1 text-warning"><strong>{{ sla_at_risk }}</strong> at risk</p>
-                    <p class="mb-0 text-danger"><strong>{{ sla_breached }}</strong> breached</p>
+                    <p class="mb-1 text-danger"><strong>{{ sla_breached }}</strong> breached</p>
+                    {% if sla_summary.untracked %}
+                        <p class="mb-1 text-muted small">{{ sla_summary.untracked }} without a policy</p>
+                    {% endif %}
                     <a class="small" href="{% url 'service_desk:sla_dashboard' %}">SLA dashboard</a>
                 </div>
             </div>
         </div>
-        {% endif %}
     </div>
-    {% endif %}
 
     <div class="card shadow-sm border-0">
 

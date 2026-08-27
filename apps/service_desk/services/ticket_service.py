@@ -49,6 +49,13 @@ class TicketService:
             to_status=ticket.status,
         )
 
+        # Start the SLA clock. No-op when no policy is configured for
+        # this priority/department — SLA tracking is opt-in and a desk
+        # with no policies must keep working exactly as before.
+        from apps.service_desk.services.sla_service import SLAService
+
+        SLAService.attach_to_ticket(ticket)
+
         return ticket
 
     # ==========================================================
@@ -201,6 +208,10 @@ class TicketService:
             to_status=status,
         )
 
+        from apps.service_desk.services.sla_service import SLAService
+
+        SLAService.on_status_change(ticket, current, status)
+
         return ticket
 
     # ==========================================================
@@ -230,6 +241,10 @@ class TicketService:
             old_value=previous,
             new_value=priority,
         )
+
+        from apps.service_desk.services.sla_service import SLAService
+
+        SLAService.recalculate(ticket)
 
         return ticket
 
@@ -361,12 +376,20 @@ class TicketService:
         if not note.strip():
             raise ValidationError("Work note cannot be empty.")
 
-        return TicketHistory.record(
+        entry = TicketHistory.record(
             ticket=ticket,
             event_type=TicketHistory.EVENT_WORK_NOTE,
             user=user,
             comment=note.strip(),
         )
+
+        # A work note is service-desk activity, so it stops the SLA
+        # response clock (a requester comment does not).
+        from apps.service_desk.services.sla_service import SLAService
+
+        SLAService.mark_first_response(ticket)
+
+        return entry
 
     # ==========================================================
     # Close

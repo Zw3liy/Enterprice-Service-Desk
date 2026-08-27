@@ -291,6 +291,35 @@ class SupplierChangePermissionMixin(
 
 
 # =====================================================
+# SLA Permissions
+# =====================================================
+
+
+class SLAPolicyViewPermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    SLA policy viewing permission.
+    """
+
+    permission_required = (
+        "service_desk.view_slapolicy"
+    )
+
+
+class SLAPolicyChangePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    SLA policy creation/update permission.
+    """
+
+    permission_required = (
+        "service_desk.change_slapolicy"
+    )
+
+
+# =====================================================
 # Role Enforcement
 # =====================================================
 

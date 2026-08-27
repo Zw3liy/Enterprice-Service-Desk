@@ -22,10 +22,18 @@ from django.views.generic import (
     UpdateView,
 )
 
-from .models import Problem, Supplier, Ticket, TicketAttachment, TicketHistory
+from .models import (
+    Problem,
+    SLAPolicy,
+    Supplier,
+    Ticket,
+    TicketAttachment,
+    TicketHistory,
+)
 from .forms.ticket_forms import TicketCreateForm
 from .forms.problem_forms import ProblemCreateForm
 from .forms.supplier_forms import SupplierCreateForm, SupplierUpdateForm
+from .forms.sla_forms import SLAPolicyForm
 
 from .security.policies import (
     get_problem_queryset,
@@ -43,13 +51,17 @@ from .security.mixins import (
     SupplierChangePermissionMixin,
     SupplierCreatePermissionMixin,
     SupplierViewPermissionMixin,
+    SLAPolicyViewPermissionMixin,
+    SLAPolicyChangePermissionMixin,
 )
 from .selectors.ticket_selector import TicketSelector
 from .selectors.problem_selector import ProblemSelector
 from .selectors.supplier_selector import SupplierSelector
+from .selectors.sla_selector import SLASelector
 from .services.ticket_service import TicketService
 from .services.problem_service import ProblemService
 from .services.supplier_service import SupplierService
+from .services.sla_service import SLAService
 
 User = get_user_model()
 
@@ -147,8 +159,13 @@ class DashboardView(
             "service_desk.view_problem"
         )
 
-        # SLA indicators are added by the SLA phase (see
-        # SLASelector.dashboard_summary) once SLA tracking exists.
+        # SLA indicators, scoped through exactly the same ticket
+        # queryset as every other number on this page.
+        sla_summary = SLASelector.dashboard_summary(tickets)
+
+        context["sla_summary"] = sla_summary
+        context["sla_breached"] = sla_summary["breached"]
+        context["sla_at_risk"] = sla_summary["at_risk"]
 
         return context
 
@@ -1558,3 +1575,164 @@ class ProblemReopenView(
             messages.error(request, " ".join(exc.messages))
 
         return redirect("service_desk:problem_detail", pk=problem.pk)
+
+
+# --------------------------------------------------
+# SLA Management
+# --------------------------------------------------
+
+class SLADashboardView(
+    TicketViewPermissionMixin,
+    TemplateView
+):
+    """
+    Operational SLA view.
+
+    Every clock shown here belongs to a ticket in
+    get_ticket_queryset(request.user), so a Requester sees the SLA
+    state of their own tickets and nothing else, and a Manager sees
+    only their departments'.
+    """
+
+    template_name = "sla/dashboard.html"
+
+    permission_required = (
+        "service_desk.view_ticket"
+    )
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+
+        tickets = get_ticket_queryset(self.request.user)
+
+        context["summary"] = SLASelector.dashboard_summary(tickets)
+        context["breached"] = SLASelector.breached(tickets)[:50]
+        context["at_risk"] = SLASelector.at_risk(tickets)[:50]
+        context["escalations"] = SLASelector.escalations(tickets)
+        context["can_manage_policies"] = self.request.user.has_perm(
+            "service_desk.view_slapolicy"
+        )
+
+        return context
+
+
+class SLAPolicyListView(
+    SLAPolicyViewPermissionMixin,
+    ListView
+):
+    """
+    SLA policy catalogue, scoped by SLASelector.policies_for_user.
+    """
+
+    model = SLAPolicy
+
+    template_name = "sla/policy_list.html"
+
+    context_object_name = "policies"
+
+    permission_required = (
+        "service_desk.view_slapolicy"
+    )
+
+    def get_queryset(self):
+        return SLASelector.policies_for_user(self.request.user)
+
+
+class SLAPolicyCreateView(
+    SLAPolicyChangePermissionMixin,
+    CreateView
+):
+    """
+    Create an SLA policy.
+
+    Requires:
+        service_desk.add_slapolicy
+    """
+
+    model = SLAPolicy
+
+    form_class = SLAPolicyForm
+
+    template_name = "sla/policy_form.html"
+
+    permission_required = (
+        "service_desk.add_slapolicy"
+    )
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+
+        try:
+            SLAService.assert_policy_scope_allowed(
+                self.request.user,
+                form.cleaned_data.get("department"),
+            )
+            self.object = SLAService.create_policy(**form.cleaned_data)
+        except ValidationError as exc:
+            for message in exc.messages:
+                form.add_error(None, message)
+            return self.form_invalid(form)
+
+        messages.success(self.request, "SLA policy created.")
+
+        return redirect("service_desk:sla_policy_list")
+
+
+class SLAPolicyUpdateView(
+    SLAPolicyChangePermissionMixin,
+    UpdateView
+):
+    """
+    Update an SLA policy.
+
+    Editing a policy never retroactively moves the deadlines of
+    tickets already under way — TicketSLA freezes its own dates at
+    attach time (see models/sla.py).
+    """
+
+    model = SLAPolicy
+
+    form_class = SLAPolicyForm
+
+    template_name = "sla/policy_form.html"
+
+    context_object_name = "policy"
+
+    permission_required = (
+        "service_desk.change_slapolicy"
+    )
+
+    def get_queryset(self):
+        return SLASelector.policies_for_user(self.request.user)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+
+        persisted = SLAPolicy.objects.get(pk=self.object.pk)
+
+        try:
+            SLAService.assert_policy_scope_allowed(
+                self.request.user,
+                form.cleaned_data.get("department"),
+            )
+            self.object = SLAService.update_policy(
+                persisted,
+                **form.cleaned_data,
+            )
+        except ValidationError as exc:
+            for message in exc.messages:
+                form.add_error(None, message)
+            return self.form_invalid(form)
+
+        messages.success(self.request, "SLA policy updated.")
+
+        return redirect("service_desk:sla_policy_list")

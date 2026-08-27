@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if policy %}Edit SLA Policy{% else %}New SLA Policy{% endif %} — Enterprise Service Desk
+{% endblock %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item"><a href="{% url 'service_desk:sla_dashboard' %}">SLA</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'service_desk:sla_policy_list' %}">Policies</a></li>
+        <li class="breadcrumb-item active" aria-current="page">
+            {% if policy %}{{ policy.name }}{% else %}New{% endif %}
+        </li>
+    </ol>
+</nav>
+
+<h1 class="h3 fw-bold mb-4">
+    {% if policy %}Edit SLA Policy{% else %}New SLA Policy{% endif %}
+</h1>
+
+<form method="post" novalidate class="col-12 col-lg-8">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}
+                <p class="mb-0">{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% for field in form %}
+        <div class="mb-3">
+            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+            {% endif %}
+            {% for error in field.errors %}
+                <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+
+    <p class="text-muted small">
+        Editing a policy does not move the deadlines of tickets already in
+        flight — each ticket keeps the terms it was raised under.
+    </p>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{% url 'service_desk:sla_policy_list' %}" class="btn btn-secondary">Cancel</a>
+</form>
+
+{% endblock %}

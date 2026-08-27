@@ -1,6 +1,14 @@
 from django.contrib import admin
 
-from .models import Department, RequestType, Ticket, Supplier
+from .models import (
+    Department,
+    RequestType,
+    SLAEscalation,
+    SLAPolicy,
+    Supplier,
+    Ticket,
+    TicketSLA,
+)
 
 
 @admin.register(Department)
@@ -93,4 +101,68 @@ class SupplierAdmin(admin.ModelAdmin):
     )
     ordering = (
         "name",
+    )
+
+@admin.register(SLAPolicy)
+class SLAPolicyAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "priority",
+        "department",
+        "response_minutes",
+        "resolution_minutes",
+        "warning_threshold_percent",
+        "is_active",
+    )
+
+    list_filter = (
+        "priority",
+        "department",
+        "is_active",
+    )
+
+    search_fields = (
+        "name",
+    )
+
+
+@admin.register(TicketSLA)
+class TicketSLAAdmin(admin.ModelAdmin):
+    list_display = (
+        "ticket",
+        "policy",
+        "response_due_at",
+        "resolution_due_at",
+        "first_responded_at",
+        "resolved_at",
+        "response_breached",
+        "resolution_breached",
+        "paused",
+    )
+
+    list_filter = (
+        "response_breached",
+        "resolution_breached",
+        "paused",
+    )
+
+    raw_id_fields = (
+        "ticket",
+    )
+
+
+@admin.register(SLAEscalation)
+class SLAEscalationAdmin(admin.ModelAdmin):
+    list_display = (
+        "ticket_sla",
+        "kind",
+        "created_at",
+    )
+
+    list_filter = (
+        "kind",
+    )
+
+    raw_id_fields = (
+        "ticket_sla",
     )
