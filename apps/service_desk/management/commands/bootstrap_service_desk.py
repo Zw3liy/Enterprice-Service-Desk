@@ -251,6 +251,29 @@ class BootstrapResult:
             "errors": list(self.errors),
         }
 
+    def __bool__(self) -> bool:
+        """
+        Always falsy, deliberately.
+
+        ``Command.handle()`` returns this object so a direct/
+        programmatic caller (this command's own test suite calls
+        ``handle()`` directly) can inspect exactly what happened.
+        ``BaseCommand.execute()`` treats any truthy ``handle()``
+        return value as a string to write to stdout
+        (``self.stdout.write(output)``) — a real, reproducible crash
+        (``AttributeError: 'BootstrapResult' object has no attribute
+        'endswith'``) when this command is actually run via the CLI or
+        ``call_command()``, found by running it through a real Docker
+        container, not by the test suite (which sidesteps ``execute()``
+        entirely by calling ``handle()`` directly). Making this object
+        falsy is what makes ``execute()``'s ``if output:`` guard skip
+        that write while ``execute()`` still returns the real object
+        unchanged to whatever called it — the richer contract survives
+        for tests, and the CLI stops crashing after a successful run.
+        """
+
+        return False
+
 
 class Command(BaseCommand):
     help = (

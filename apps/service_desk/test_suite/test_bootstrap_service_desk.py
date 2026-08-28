@@ -88,6 +88,35 @@ class BootstrapServiceDeskTests(TestCase):
         self.assertEqual(result.request_types["created"], len(REQUEST_TYPES))
         self.assertEqual(result.sla_policies["created"], len(SLA_POLICIES))
 
+    def test_real_invocation_through_call_command_does_not_crash(self):
+        """
+        Regression for a real bug found by running this command in an
+        actual Docker container (not by this test suite, which — as
+        the comment on ``_run()`` above documents — has always called
+        ``handle()`` directly, sidestepping ``BaseCommand.execute()``
+        entirely). ``execute()`` writes any truthy ``handle()`` return
+        value to stdout via ``.endswith()``; ``BootstrapResult`` was
+        truthy, so every *real* invocation (this exact `call_command`
+        path, or the actual CLI) crashed with ``AttributeError:
+        'BootstrapResult' object has no attribute 'endswith'`` —
+        immediately after successfully completing the bootstrap,
+        making a real deployment script's ``&&`` chain after this
+        command never run. Fixed by making ``BootstrapResult.__bool__``
+        always ``False``, so ``execute()``'s ``if output:`` guard skips
+        the write while still returning the real object to
+        ``call_command``'s own caller.
+        """
+
+        output = call_command(
+            "bootstrap_service_desk", skip_users=True
+        )
+
+        self.assertEqual(Department.objects.count(), len(DEPARTMENTS))
+        # execute() still returns the real BootstrapResult to
+        # call_command's caller — only the crashing stdout-write of a
+        # non-string value was ever the bug.
+        self.assertEqual(output.departments["created"], len(DEPARTMENTS))
+
     def test_request_types_are_active(self):
         self._run(skip_users=True)
         self.assertTrue(
