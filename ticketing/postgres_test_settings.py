@@ -16,6 +16,14 @@ SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
 SECURE_HSTS_SECONDS = 0
 
+# Fast, throwaway hasher for CI-only test-database users — see
+# ticketing/test_settings.py for the full rationale (same fix,
+# applied here too since this settings module is what the
+# PostgreSQL CI job actually runs the suite under).
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.MD5PasswordHasher",
+]
+
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",

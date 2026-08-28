@@ -16,28 +16,28 @@ step). An out-of-date `SESSION_STATE.md` is itself a defect — treat it as one 
 |---|---|
 | **Project Name** | Enterprise Service Desk |
 | **Repository** | `https://github.com/Zw3liy/Enterprice-Service-Desk.git` |
-| **Current Branch** | `arena/01a04293-enterprice-service-desk` (previous session: `feature/incident-management-dashboard`) |
+| **Current Branch** | `feature/service-desk-enterprise-completion-20260828-170022` (branched from verified `origin/main` at `f5aeccf`, PR #7 merged) |
 | **Default Branch** | `main` |
 | **Current Version** | No formal semantic version tag on current HEAD. Nearest tag is `fe12-rollback`; last real release tag in history is `v1.0.1-frontend-stabilized`, well upstream of this branch. Treat this branch as unreleased/pre-tag work. |
-| **Last Updated** | 2026-08-27 |
+| **Last Updated** | 2026-08-28 |
 
 ## Current Engineering Phase
 
 | | |
 |---|---|
-| **Current Milestone** | Production-completion sweep: DASH-01, ITSM-08 completion, SLA-01, NOTIFY-01, PM-04, NAV-01, SEC-02 (all DONE) |
-| **Current Sprint** | Production-completion sweep complete: dashboard, Supplier completion, SLA, notifications, Problem RCA authoring, navigation and the security regression sweep are all delivered and verified. |
-| **Current Objective** | ITSM_ROADMAP.md P1 items 2 and 3 (SLA Management, Notification Features) are now DONE. Remaining priorities: Service Request Management, then P2 (Reporting, Knowledge, CMDB). Deployment work is tracked separately in PRODUCTION_READINESS.md. |
-| **Overall Repository Health** | **Good, with known scaffolding debt.** Core `service_desk` app is healthy (`manage.py check` clean, 234/234 tests passing, migrations in sync, zero drift). `ticketing/settings.py` no longer hardcodes secrets/DEBUG/hosts (SEC-01). CI runs on every push/PR (CI-01) from a real `requirements.txt` (DEP-01). The `models.py`/`views.py` file-collision hazard is resolved (ARCH-01). RBAC has `get_problem_queryset` (Requester: none) and Technicians see unassigned tickets too (ADR-010, RBAC-01). Problem Management is fully reachable end-to-end (PM-03). Incident Management is fully complete including work notes, attachments, and requester confirmation (IM-04). SLA Management, the notification boundary and Problem RCA authoring landed in the 2026-08-27 sweep (see below), and every module is now reachable from the sidebar. Surrounding repository still has scaffolding debt (~59 unregistered apps, unchanged — a separate, larger scope decision). Full detail: [ARCHITECTURE.md](ARCHITECTURE.md). |
+| **Current Milestone** | Enterprise Completion Program, Phase 1 — verified baseline + shared foundations (ADR-011). Next: Phase 2, Service Catalogue / Service Request Management. |
+| **Current Sprint** | Building Service Request Management, Change Management, Release Management, CMDB, Knowledge Management, Reporting/Analytics, SLA scheduler monitoring, and audit/RBAC/operations hardening per the mission's 10-phase plan. |
+| **Current Objective** | ITSM_ROADMAP.md P1 (SLA, Notifications) is DONE, confirmed by re-inspection this session (see below — the roadmap doc itself is dated 2026-08-07 and stale on this point; SESSION_STATE's own 2026-08-27 entry is current). P2/P3 (Service Request, Change, Release, CMDB, Knowledge, Reporting) begins now. |
+| **Overall Repository Health** | **Good, with known scaffolding debt.** Re-verified this session, not assumed from prior docs: `manage.py check` clean, `makemigrations --check --dry-run` clean (`service_desk` 0001-0011 in sync), **296/296 tests passing** (up from the stale 234/234 figure — PR #7 added `test_route_rbac_matrix.py` and `test_ticket_creation.py` after that count was recorded). `ticketing/settings.py` remains env-driven (SEC-01); `ticketing/production_settings.py`, `postgres_test_settings.py`, `health_views.py`, `Dockerfile` and `compose.yaml` already exist and are real (contrary to this file's older entries below, which predate them — see the 2026-08-28 session note). CI (`django-tests.yml`, `security-scan.yml`, `deployment.yml`) all run real checks; `deployment.yml` is **not** a no-op — it is a full PostgreSQL migration/rollback/reapply + test-suite gate plus a Docker build/health/non-root smoke test, confirmed by reading the file directly. RBAC has `get_problem_queryset`/`get_supplier_queryset` plus `get_ticket_queryset` (ADR-010, RBAC-01). Problem, Incident, Supplier, SLA and Notification modules are fully reachable end-to-end. Surrounding repository still has scaffolding debt (~128 unregistered `apps/*` directories plus empty template stubs under `templates/{cmdb,knowledge,reporting,...}` — re-confirmed empty this session, still a separate scope decision, not touched). Full detail: [ARCHITECTURE.md](ARCHITECTURE.md), [ADR-011](ADR/ADR-011-Completion-Program-Foundations.md). |
 
 ## Git Status
 
 | | |
 |---|---|
-| **Current Branch** | `arena/01a04293-enterprice-service-desk` |
-| **Working Tree Status** | Clean at each checkpoint; every commit in the 2026-08-27 sweep was pushed as it landed. |
-| **Ahead / Behind Origin** | 0 / 0 — the branch is pushed after every commit. |
-| **Latest Commit prior to this update** | `040dc7c` — "ITSM-08: implement Supplier Management foundation" (the `main` baseline this sweep branched from) |
+| **Current Branch** | `feature/service-desk-enterprise-completion-20260828-170022` |
+| **Working Tree Status** | Clean at each checkpoint; pushed after each phase per this mission's explicit instruction. |
+| **Ahead / Behind Origin** | Kept at 0 behind `origin/<this branch>` — pushed after every checkpoint commit. |
+| **Latest Commit prior to this update** | `f5aeccf` — PR #7 merge (the verified `main` baseline this program branched from) |
 
 **Note on process continuity:** this session was interrupted mid-write while finishing SEC-01's documentation
 (caught mid-edit of this file's own predecessor state). The repository owner committed the SEC-01 code
@@ -66,6 +66,48 @@ re-verified before any change: `check` clean, zero migration drift, **85/85 test
 passing** · `check --deploy` 2 explained warnings. See
 [PRODUCTION_READINESS.md](PRODUCTION_READINESS.md) for the full picture including the honest list of
 what is *not* done.
+
+**Not reflected in this entry (see the 2026-08-28 entry below):** PR #7 (`4be2b4e`, `cffc542`, `d37c1d1`,
+`ff35ee1`) landed after this sweep — idempotent `bootstrap_service_desk` master-data command, hardened
+`TicketCreateForm`/attachment handling, and route-RBAC/ticket-lifecycle regression coverage. This file was
+not updated for that PR at the time; corrected now rather than left stale.
+
+## Session 2026-08-28 — Enterprise Completion Program, Phase 1 (Foundations)
+
+Branched `feature/service-desk-enterprise-completion-20260828-170022` from verified `origin/main` at
+`f5aeccf` (PR #7 merged — confirmed via `gh pr list`, PR #5 confirmed CLOSED/obsolete and not touched, a
+stray stash tagged `pre-pr7-incomplete-configur-20260828-142112` confirmed present and **not applied**, two
+stale local `service-desk-completion-*` branches confirmed pointing at a pre-PR7 commit already absorbed
+into `main` — nothing to recover from either).
+
+**Discovery, verified by inspection rather than trusted from docs:** `ITSM_ROADMAP.md` (2026-08-07) and
+this file's older entries undercount current state — SLA/Notifications are DONE (contradicts
+ITSM_ROADMAP's stale "MISSING" row), and `deployment.yml` is a full PostgreSQL + Docker verification
+pipeline, not the documented no-op ARCHITECTURE.md/ROADMAP.md describe. Re-confirmed all ~128 unregistered
+`apps/*` directories and every scaffold template under `templates/{cmdb,knowledge,reporting,reports,itil,
+self_service,customer_portal,workflow}/` are still 0 bytes — none reused.
+
+**Found and fixed a real blocker to doing this work at all:** `python manage.py test` (default settings)
+did not complete a single pass in 19+ minutes on this machine — traced to Django's default PBKDF2 hasher
+(~0.6s/hash measured directly) multiplied across the suite's many per-test RBAC user fixtures, not a hang
+(confirmed via incremental `--verbosity 2` output). Fixed per ADR-011 Decision 1: added
+`ticketing/test_settings.py` (fast `MD5PasswordHasher`, everything else inherited from `ticketing.settings`
+unchanged), applied the same override to `ticketing/postgres_test_settings.py`, and updated both CI
+workflows to use the fast settings module with `--parallel auto`. Verified effect: 296/296 tests in
+8-11 seconds locally, down from a run that hadn't finished after 19+ minutes.
+
+Recorded ADR-011 (test performance infra + the new-capability module layout every subsequent phase of this
+program follows — flat per-capability `*_views.py` files alongside the existing `views.py`, mirroring the
+established per-capability `services/`/`selectors/`/`forms/` pattern; no new `apps/service_desk` subpackage,
+no dead-scaffolding reuse).
+
+**Baseline re-verified and recorded:** `check` clean · `makemigrations --check --dry-run` clean ·
+`showmigrations --plan` shows `service_desk` 0001-0011 applied in order · **296/296 tests passing**
+(`DJANGO_SETTINGS_MODULE=ticketing.test_settings python manage.py test --parallel auto`). This is the
+verified starting point for every subsequent phase of the Enterprise Completion Program.
+
+Pushed the branch and opened a draft PR before implementation, per the mission's explicit instruction to do
+so early — see the PR for live, truthful status as each phase lands.
 
 ---
 
@@ -153,6 +195,7 @@ trusting this section once further commits land — it will go stale the moment 
 
 - **ADR-009 — Problem Management Architecture** *(ACCEPTED)*: Problem Management lives inside `apps/service_desk`; one Problem owns exactly one RCA via `problem.rca`. Implemented in `8d30023`/`4c7a37c`.
 - **ADR-010 — Visibility and IM-04 Scope Decisions** *(ACCEPTED)*: Requesters cannot access Problems; Technicians see assigned + unassigned tickets; IM-04 (Work Notes, Attachments, Requester Confirmation) all approved for implementation, with technical shape recorded for each. See [ADR/ADR-010-Visibility-and-IM-04-Scope-Decisions.md](ADR/ADR-010-Visibility-and-IM-04-Scope-Decisions.md).
+- **ADR-011 — Enterprise Completion Program Foundations** *(ACCEPTED)*: fast test-only password hasher (`ticketing/test_settings.py`, mirrored in `postgres_test_settings.py`) fixing a 19+ minute non-completing test run down to 8-11s; new-capability module layout (flat per-capability `*_views.py` alongside `views.py`, matching the existing `services/`/`selectors/`/`forms/` per-file pattern) for every module this program adds. See [ADR/ADR-011-Completion-Program-Foundations.md](ADR/ADR-011-Completion-Program-Foundations.md).
 
 ## Next Recommended Tasks
 

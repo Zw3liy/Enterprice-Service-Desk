@@ -28,4 +28,6 @@ jobs:
         run: python manage.py makemigrations --check --dry-run
 
       - name: Run test suite
-        run: python manage.py test
+        env:
+          DJANGO_SETTINGS_MODULE: ticketing.test_settings
+        run: python manage.py test --parallel auto
