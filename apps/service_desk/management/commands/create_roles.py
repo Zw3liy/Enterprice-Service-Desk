@@ -24,6 +24,7 @@ from apps.service_desk.models import (
     CatalogItem,
     Change,
     Problem,
+    Release,
     ServiceRequest,
     SLAPolicy,
     Supplier,
@@ -65,6 +66,10 @@ class Command(BaseCommand):
 
         change_content_type = ContentType.objects.get_for_model(
             Change
+        )
+
+        release_content_type = ContentType.objects.get_for_model(
+            Release
         )
 
 
@@ -228,6 +233,28 @@ class Command(BaseCommand):
                 content_type=change_content_type,
                 codename="delete_change",
             ),
+
+            # Release Management. Requesters get nothing — same
+            # rationale as Change Management.
+            "view_release": Permission.objects.get(
+                content_type=release_content_type,
+                codename="view_release",
+            ),
+
+            "add_release": Permission.objects.get(
+                content_type=release_content_type,
+                codename="add_release",
+            ),
+
+            "change_release": Permission.objects.get(
+                content_type=release_content_type,
+                codename="change_release",
+            ),
+
+            "delete_release": Permission.objects.get(
+                content_type=release_content_type,
+                codename="delete_release",
+            ),
         }
 
 
@@ -259,6 +286,8 @@ class Command(BaseCommand):
                 permissions["view_change"],
                 permissions["add_change"],
                 permissions["change_change"],
+                permissions["view_release"],
+                permissions["change_release"],
             ],
 
 
@@ -285,6 +314,9 @@ class Command(BaseCommand):
                 permissions["view_change"],
                 permissions["add_change"],
                 permissions["change_change"],
+                permissions["view_release"],
+                permissions["add_release"],
+                permissions["change_release"],
             ],
 
 
@@ -317,6 +349,10 @@ class Command(BaseCommand):
                 permissions["add_change"],
                 permissions["change_change"],
                 permissions["delete_change"],
+                permissions["view_release"],
+                permissions["add_release"],
+                permissions["change_release"],
+                permissions["delete_release"],
             ],
 
         }

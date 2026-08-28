@@ -197,6 +197,37 @@ covering both the success path and the failure→rollback path.
 **Verified:** `check` clean · `makemigrations --check --dry-run` clean · **378/378 tests passing**
 (347 baseline + 31 new — one test doubles as the RBAC-fix regression above).
 
+### Phase 4 — Release Management (complete)
+
+New models: `Release` (name, version, environment — development/staging/production, department, owner,
+`changes` M2M, deployment/validation/rollback plans, schedule window, outcome, 8-state status),
+`ReleaseApproval`, `ReleaseHistory`. Migration `0014` (additive only — three new tables).
+
+`Release.CHANGE_ELIGIBLE_STATUSES` is the mission's "approved eligibility boundary" for linking a
+`Change`: only a change that has cleared CAB approval (`approved`/`scheduled`/`implementing`/
+`validation`/`completed`) may be linked — `ReleaseService.link_change` enforces this directly, not left
+to the UI to filter (the eligible-changes dropdown in the template is a usability narrowing on top, same
+pattern as `CatalogItemForm`'s department narrowing). `ReleaseService.STATUS_FLOW`: draft → approved →
+scheduled → deploying → validation → completed, with a failed → rolled_back off-ramp. Scheduling checks
+for overlapping windows against other scheduled/deploying releases in the same department *and*
+environment (a staging and a production release with the same window don't conflict with each other).
+
+Approval requires Manager/Administrator and rejects the release's own owner (separation of duties, same
+shape as Change Management). Deployment-stage transitions are restricted to the owner, a manager, or an
+administrator.
+
+RBAC (`get_release_queryset`): Requester excluded entirely; Manager department-scoped; Administrator
+unrestricted; Technician sees releases they own. New flat `release_views.py` (14 views), 15 URL routes,
+sidebar entry, `Release*PermissionMixin` set, extended `create_roles.py`, 4 templates. 26 new tests
+(`test_release_management.py`): the eligibility boundary (unapproved and rejected changes both refused),
+separation of duties, schedule-conflict detection including the environment-doesn't-conflict-across
+case, RBAC scoping, cross-scope 404, anonymous redirect, POST-only, CSRF, and full lifecycle through
+real views (including a manager creating a release, failing to self-approve, reassigning ownership, and
+completing the deploy → validate → complete path).
+
+**Verified:** `check` clean · `makemigrations --check --dry-run` clean · **404/404 tests passing**
+(378 baseline + 26 new).
+
 ---
 
 ## Completed Engineering Milestones

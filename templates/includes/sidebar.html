@@ -96,6 +96,16 @@
             </li>
             {% endif %}
 
+            {% if perms.service_desk.view_release %}
+            <li class="nav-item">
+                <a class="nav-link{% if request.resolver_match.url_name == 'release_list' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:release_list' %}"
+                   {% if request.resolver_match.url_name == 'release_list' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-rocket me-2" aria-hidden="true"></i>Releases
+                </a>
+            </li>
+            {% endif %}
+
             {% if perms.service_desk.view_ticket %}
             <li class="nav-item">
                 <a class="nav-link{% if request.resolver_match.url_name == 'sla_dashboard' %} active fw-semibold{% endif %}"

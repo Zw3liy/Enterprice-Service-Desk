@@ -500,6 +500,67 @@ class ChangeChangePermissionMixin(
 
 
 # =====================================================
+# Release Permissions
+# =====================================================
+
+
+class ReleasePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Base release access permission.
+
+    Default permission:
+        view_release
+    """
+
+    permission_required = (
+        "service_desk.view_release"
+    )
+
+
+class ReleaseViewPermissionMixin(
+    ReleasePermissionMixin
+):
+    """
+    Release viewing permission.
+    """
+
+    permission_required = (
+        "service_desk.view_release"
+    )
+
+
+class ReleaseCreatePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Release creation permission.
+    """
+
+    permission_required = (
+        "service_desk.add_release"
+    )
+
+
+class ReleaseChangePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Release workflow-transition permission.
+
+    Covers approve/schedule/link-change/unlink-change/assign-owner/
+    deploy/validate/complete/fail/rollback — every transition
+    additionally re-checks the specific actor rule it needs at the
+    service layer; this mixin only gates "staff of some kind".
+    """
+
+    permission_required = (
+        "service_desk.change_release"
+    )
+
+
+# =====================================================
 # Role Enforcement
 # =====================================================
 

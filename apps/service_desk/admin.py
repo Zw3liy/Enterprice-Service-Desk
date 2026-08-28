@@ -7,6 +7,8 @@ from .models import (
     Department,
     RequestType,
     Notification,
+    Release,
+    ReleaseApproval,
     ServiceCategory,
     ServiceRequest,
     ServiceRequestApproval,
@@ -333,5 +335,57 @@ class ChangeApprovalAdmin(admin.ModelAdmin):
     )
     raw_id_fields = (
         "change",
+        "actor",
+    )
+
+
+@admin.register(Release)
+class ReleaseAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "name",
+        "version",
+        "environment",
+        "department",
+        "status",
+        "owner",
+        "created_at",
+    )
+    list_filter = (
+        "environment",
+        "status",
+        "department",
+    )
+    search_fields = (
+        "name",
+        "version",
+    )
+    autocomplete_fields = (
+        "department",
+    )
+    raw_id_fields = (
+        "owner",
+    )
+    filter_horizontal = (
+        "changes",
+    )
+    ordering = (
+        "-created_at",
+    )
+
+
+@admin.register(ReleaseApproval)
+class ReleaseApprovalAdmin(admin.ModelAdmin):
+    list_display = (
+        "release",
+        "actor",
+        "decision",
+        "decided_at",
+    )
+    list_filter = (
+        "decision",
+    )
+    raw_id_fields = (
+        "release",
         "actor",
     )

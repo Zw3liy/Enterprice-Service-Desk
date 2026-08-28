@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from . import catalog_views
 from . import change_views
+from . import release_views
 
 app_name = 'service_desk'
 
@@ -91,4 +92,20 @@ urlpatterns = [
     path('changes/<int:pk>/fail/', change_views.ChangeFailView.as_view(), name='change_fail'),
     path('changes/<int:pk>/rollback/', change_views.ChangeRollbackView.as_view(), name='change_rollback'),
     path('changes/<int:pk>/comment/', change_views.ChangeCommentView.as_view(), name='change_comment'),
+
+    # Release Management
+    path('releases/', release_views.ReleaseListView.as_view(), name='release_list'),
+    path('releases/new/', release_views.ReleaseCreateView.as_view(), name='release_create'),
+    path('releases/<int:pk>/', release_views.ReleaseDetailView.as_view(), name='release_detail'),
+    path('releases/<int:pk>/approve/', release_views.ReleaseApproveView.as_view(), name='release_approve'),
+    path('releases/<int:pk>/schedule/', release_views.ReleaseScheduleView.as_view(), name='release_schedule'),
+    path('releases/<int:pk>/link-change/', release_views.ReleaseLinkChangeView.as_view(), name='release_link_change'),
+    path('releases/<int:pk>/unlink-change/<int:change_pk>/', release_views.ReleaseUnlinkChangeView.as_view(), name='release_unlink_change'),
+    path('releases/<int:pk>/assign-owner/', release_views.ReleaseAssignOwnerView.as_view(), name='release_assign_owner'),
+    path('releases/<int:pk>/deploy/', release_views.ReleaseStartDeploymentView.as_view(), name='release_deploy'),
+    path('releases/<int:pk>/validate/', release_views.ReleaseRequestValidationView.as_view(), name='release_validate'),
+    path('releases/<int:pk>/complete/', release_views.ReleaseCompleteView.as_view(), name='release_complete'),
+    path('releases/<int:pk>/fail/', release_views.ReleaseFailView.as_view(), name='release_fail'),
+    path('releases/<int:pk>/rollback/', release_views.ReleaseRollbackView.as_view(), name='release_rollback'),
+    path('releases/<int:pk>/comment/', release_views.ReleaseCommentView.as_view(), name='release_comment'),
 ]

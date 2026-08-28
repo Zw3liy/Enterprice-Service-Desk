@@ -87,6 +87,8 @@ class URLAndTemplateIntegrityTests(TestCase):
             Change,
             ChangeApproval,
             Notification,
+            Release,
+            ReleaseApproval,
             ServiceCategory,
             ServiceRequest,
             ServiceRequestApproval,
@@ -109,6 +111,8 @@ class URLAndTemplateIntegrityTests(TestCase):
             ServiceRequestApproval,
             Change,
             ChangeApproval,
+            Release,
+            ReleaseApproval,
         ):
             with self.subTest(model=model.__name__):
                 self.assertIn(model, admin.site._registry)
@@ -182,6 +186,9 @@ class NavigationRenderingTests(TestCase):
                     "view_change",
                     "add_change",
                     "change_change",
+                    "view_release",
+                    "add_release",
+                    "change_release",
                 ]
             )
         )
@@ -228,6 +235,7 @@ class NavigationRenderingTests(TestCase):
             "catalog_item_list",
             "service_request_list",
             "change_list",
+            "release_list",
         ):
             with self.subTest(url=name):
                 self.assertContains(
@@ -253,6 +261,7 @@ class NavigationRenderingTests(TestCase):
             "catalog_item_list",
             "service_request_list",
             "change_list",
+            "release_list",
         ):
             with self.subTest(url=name):
                 response = self.client.get(reverse(f"service_desk:{name}"))

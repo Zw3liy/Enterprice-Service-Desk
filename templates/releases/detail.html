@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block title %}{{ release }} — Releases{% endblock %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item"><a href="{% url 'service_desk:release_list' %}">Releases</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ release }}</li>
+    </ol>
+</nav>
+
+<h1 class="h3 fw-bold mb-4">
+    {{ release }}
+    <span class="badge bg-info text-dark ms-1">{{ release.get_status_display }}</span>
+    <span class="badge bg-secondary ms-1">{{ release.get_environment_display }}</span>
+</h1>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-3">Department</dt>
+                    <dd class="col-sm-9">{{ release.department|default:"—" }}</dd>
+
+                    <dt class="col-sm-3">Owner</dt>
+                    <dd class="col-sm-9">{{ release.owner|default:"Unassigned" }}</dd>
+
+                    <dt class="col-sm-3">Schedule</dt>
+                    <dd class="col-sm-9">
+                        {% if release.scheduled_start %}{{ release.scheduled_start|date:"M d, Y H:i" }} &rarr; {{ release.scheduled_end|date:"M d, Y H:i" }}{% else %}Not scheduled{% endif %}
+                    </dd>
+
+                    <dt class="col-sm-3">Deployment plan</dt>
+                    <dd class="col-sm-9 text-break">{{ release.deployment_plan|default:"—" }}</dd>
+
+                    <dt class="col-sm-3">Validation plan</dt>
+                    <dd class="col-sm-9 text-break">{{ release.validation_plan|default:"—" }}</dd>
+
+                    <dt class="col-sm-3">Rollback plan</dt>
+                    <dd class="col-sm-9 text-break">{{ release.rollback_plan|default:"—" }}</dd>
+
+                    {% if release.outcome %}
+                    <dt class="col-sm-3">Outcome</dt>
+                    <dd class="col-sm-9 text-break">{{ release.outcome }}</dd>
+                    {% endif %}
+                </dl>
+            </div>
+        </div>
+
+        <h2 class="h5">Linked Changes</h2>
+        <ul class="list-group mb-3">
+            {% for change in linked_changes %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <a href="{% url 'service_desk:change_detail' change.pk %}">{{ change.title }}</a>
+                    {% if perms.service_desk.change_release %}
+                        <form method="post" action="{% url 'service_desk:release_unlink_change' release.pk change.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Unlink</button>
+                        </form>
+                    {% endif %}
+                </li>
+            {% empty %}
+                <li class="list-group-item text-muted small">No changes linked yet.</li>
+            {% endfor %}
+        </ul>
+
+        {% if perms.service_desk.change_release and eligible_changes %}
+        <form method="post" action="{% url 'service_desk:release_link_change' release.pk %}" class="mb-4">
+            {% csrf_token %}
+            <label for="change_id" class="form-label small fw-medium">Link an approved change</label>
+            <div class="d-flex gap-2">
+                <select name="change_id" id="change_id" class="form-select form-select-sm">
+                    {% for change in eligible_changes %}
+                        <option value="{{ change.pk }}">{{ change.title }} ({{ change.get_status_display }})</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-outline-primary btn-sm">Link</button>
+            </div>
+        </form>
+        {% endif %}
+
+        <h2 class="h5">Approvals</h2>
+        <ul class="list-group mb-4">
+            {% for approval in approvals %}
+                <li class="list-group-item">
+                    <strong>{{ approval.get_decision_display }}</strong> by {{ approval.actor|default:"—" }}
+                    on {{ approval.decided_at|date:"M d, Y H:i" }}
+                </li>
+            {% empty %}
+                <li class="list-group-item text-muted small">No approval decisions yet.</li>
+            {% endfor %}
+        </ul>
+
+        <h2 class="h5">History</h2>
+        <ul class="list-group mb-4">
+            {% for entry in history %}
+                <li class="list-group-item">
+                    <strong>{{ entry.get_event_type_display }}</strong>
+                    by {{ entry.performed_by|default:"—" }}
+                    on {{ entry.created_at|date:"M d, Y H:i" }}
+                    {% if entry.comment %}<div class="small text-muted">{{ entry.comment }}</div>{% endif %}
+                </li>
+            {% empty %}
+                <li class="list-group-item text-muted small">No history yet.</li>
+            {% endfor %}
+        </ul>
+
+        {% if perms.service_desk.change_release %}
+        <form method="post" action="{% url 'service_desk:release_comment' release.pk %}">
+            {% csrf_token %}
+            <label for="comment" class="form-label small fw-medium">Add comment</label>
+            <textarea name="comment" id="comment" class="form-control form-control-sm mb-2" rows="2"></textarea>
+            <button type="submit" class="btn btn-outline-secondary btn-sm">Comment</button>
+        </form>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-4">
+        {% if perms.service_desk.change_release %}
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h2 class="h6 mb-3">Workflow</h2>
+
+                {% if release.status == "draft" %}
+                    <form method="post" action="{% url 'service_desk:release_approve' release.pk %}" class="mb-2">
+                        {% csrf_token %}
+                        <textarea name="comment" class="form-control form-control-sm mb-2" rows="2" placeholder="Optional comment"></textarea>
+                        <button type="submit" class="btn btn-success btn-sm w-100">Approve</button>
+                    </form>
+                {% endif %}
+
+                {% if release.status == "approved" %}
+                    <a href="{% url 'service_desk:release_schedule' release.pk %}" class="btn btn-primary btn-sm w-100 mb-2">Schedule</a>
+                {% endif %}
+
+                <form method="post" action="{% url 'service_desk:release_assign_owner' release.pk %}" class="mb-2">
+                    {% csrf_token %}
+                    <label for="owner_id" class="form-label small fw-medium">Assign Owner</label>
+                    <div class="d-flex gap-2">
+                        <select name="owner_id" id="owner_id" class="form-select form-select-sm">
+                            {% for candidate in available_owners %}
+                                <option value="{{ candidate.pk }}" {% if release.owner_id == candidate.pk %}selected{% endif %}>{{ candidate.username }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-outline-primary btn-sm">Assign</button>
+                    </div>
+                </form>
+
+                {% if release.status == "scheduled" %}
+                    <form method="post" action="{% url 'service_desk:release_deploy' release.pk %}" class="mb-2">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-primary btn-sm w-100">Start Deployment</button>
+                    </form>
+                {% endif %}
+
+                {% if release.status == "deploying" %}
+                    <form method="post" action="{% url 'service_desk:release_validate' release.pk %}" class="mb-2">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-primary btn-sm w-100">Move to Validation</button>
+                    </form>
+                {% endif %}
+
+                {% if release.status == "validation" %}
+                    <form method="post" action="{% url 'service_desk:release_complete' release.pk %}" class="mb-2">
+                        {% csrf_token %}
+                        <input type="text" name="outcome" class="form-control form-control-sm mb-2" placeholder="Outcome notes (optional)">
+                        <button type="submit" class="btn btn-success btn-sm w-100">Mark Completed</button>
+                    </form>
+                {% endif %}
+
+                {% if release.status == "deploying" or release.status == "validation" %}
+                    <form method="post" action="{% url 'service_desk:release_fail' release.pk %}" class="mb-2">
+                        {% csrf_token %}
+                        <textarea name="reason" class="form-control form-control-sm mb-2" rows="2" placeholder="Failure reason (required)" required></textarea>
+                        <button type="submit" class="btn btn-outline-danger btn-sm w-100">Mark Failed</button>
+                    </form>
+                {% endif %}
+
+                {% if release.status == "failed" %}
+                    <form method="post" action="{% url 'service_desk:release_rollback' release.pk %}">
+                        {% csrf_token %}
+                        <textarea name="reason" class="form-control form-control-sm mb-2" rows="2" placeholder="Rollback reason (required)" required></textarea>
+                        <button type="submit" class="btn btn-outline-danger btn-sm w-100">Roll Back</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

@@ -11,7 +11,7 @@ Phase 2.2 Authorization Hardening
 from django.contrib.auth.models import Group
 from django.db.models import Q
 
-from apps.service_desk.models import CatalogItem, Change, Problem, ServiceRequest, Supplier, Ticket
+from apps.service_desk.models import CatalogItem, Change, Problem, Release, ServiceRequest, Supplier, Ticket
 
 
 
@@ -318,3 +318,39 @@ def get_change_queryset(user):
         )
 
     return Change.objects.none()
+
+
+
+def get_release_queryset(user):
+    """
+    Object level release visibility.
+
+    Administrator:
+        all releases
+
+    Manager:
+        department-scoped
+
+    Technician:
+        releases they own
+
+    Requester:
+        none — same rationale as Change Management: internal IT
+        governance, not requester-facing.
+    """
+
+    if not user.is_authenticated:
+        return Release.objects.none()
+
+    if is_administrator(user):
+        return Release.objects.all()
+
+    if is_manager(user):
+        return Release.objects.filter(
+            department__in=user.managed_departments.all()
+        )
+
+    if is_technician(user):
+        return Release.objects.filter(owner=user)
+
+    return Release.objects.none()
