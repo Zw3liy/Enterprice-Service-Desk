@@ -23,6 +23,7 @@ from .service_catalog import (
     ServiceRequestApproval,
     ServiceRequestHistory,
 )
+from .change import Change, ChangeApproval, ChangeHistory
 
 __all__ = [
     "Department",
@@ -48,4 +49,7 @@ __all__ = [
     "ServiceRequest",
     "ServiceRequestApproval",
     "ServiceRequestHistory",
+    "Change",
+    "ChangeApproval",
+    "ChangeHistory",
 ]

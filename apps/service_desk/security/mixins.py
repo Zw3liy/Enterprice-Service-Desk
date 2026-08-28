@@ -438,6 +438,68 @@ class ServiceRequestChangePermissionMixin(
 
 
 # =====================================================
+# Change Permissions
+# =====================================================
+
+
+class ChangePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Base change access permission.
+
+    Default permission:
+        view_change
+    """
+
+    permission_required = (
+        "service_desk.view_change"
+    )
+
+
+class ChangeViewPermissionMixin(
+    ChangePermissionMixin
+):
+    """
+    Change viewing permission.
+    """
+
+    permission_required = (
+        "service_desk.view_change"
+    )
+
+
+class ChangeCreatePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Change creation permission.
+    """
+
+    permission_required = (
+        "service_desk.add_change"
+    )
+
+
+class ChangeChangePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Change workflow-transition permission.
+
+    Covers submit/assess/approve/reject/schedule/implement/validate/
+    complete/fail/rollback — every transition additionally re-checks
+    the specific actor rule it needs (e.g. approval separation of
+    duties) at the service layer; this mixin only gates "staff of
+    some kind".
+    """
+
+    permission_required = (
+        "service_desk.change_change"
+    )
+
+
+# =====================================================
 # Role Enforcement
 # =====================================================
 

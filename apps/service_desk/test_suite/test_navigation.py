@@ -84,6 +84,8 @@ class URLAndTemplateIntegrityTests(TestCase):
 
         from apps.service_desk.models import (
             CatalogItem,
+            Change,
+            ChangeApproval,
             Notification,
             ServiceCategory,
             ServiceRequest,
@@ -105,6 +107,8 @@ class URLAndTemplateIntegrityTests(TestCase):
             CatalogItem,
             ServiceRequest,
             ServiceRequestApproval,
+            Change,
+            ChangeApproval,
         ):
             with self.subTest(model=model.__name__):
                 self.assertIn(model, admin.site._registry)
@@ -175,6 +179,9 @@ class NavigationRenderingTests(TestCase):
                     "change_catalogitem",
                     "view_servicerequest",
                     "change_servicerequest",
+                    "view_change",
+                    "add_change",
+                    "change_change",
                 ]
             )
         )
@@ -220,6 +227,7 @@ class NavigationRenderingTests(TestCase):
             "notification_list",
             "catalog_item_list",
             "service_request_list",
+            "change_list",
         ):
             with self.subTest(url=name):
                 self.assertContains(
@@ -244,6 +252,7 @@ class NavigationRenderingTests(TestCase):
             "notification_list",
             "catalog_item_list",
             "service_request_list",
+            "change_list",
         ):
             with self.subTest(url=name):
                 response = self.client.get(reverse(f"service_desk:{name}"))

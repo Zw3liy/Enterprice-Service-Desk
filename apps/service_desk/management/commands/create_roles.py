@@ -22,6 +22,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from apps.service_desk.models import (
     CatalogItem,
+    Change,
     Problem,
     ServiceRequest,
     SLAPolicy,
@@ -60,6 +61,10 @@ class Command(BaseCommand):
 
         service_request_content_type = ContentType.objects.get_for_model(
             ServiceRequest
+        )
+
+        change_content_type = ContentType.objects.get_for_model(
+            Change
         )
 
 
@@ -199,6 +204,30 @@ class Command(BaseCommand):
                 content_type=service_request_content_type,
                 codename="delete_servicerequest",
             ),
+
+            # Change Management. Requesters get nothing at all — an
+            # internal IT governance process, mirroring ADR-010,
+            # Decision 1's Problem Management precedent (see
+            # security.policies.get_change_queryset).
+            "view_change": Permission.objects.get(
+                content_type=change_content_type,
+                codename="view_change",
+            ),
+
+            "add_change": Permission.objects.get(
+                content_type=change_content_type,
+                codename="add_change",
+            ),
+
+            "change_change": Permission.objects.get(
+                content_type=change_content_type,
+                codename="change_change",
+            ),
+
+            "delete_change": Permission.objects.get(
+                content_type=change_content_type,
+                codename="delete_change",
+            ),
         }
 
 
@@ -227,6 +256,9 @@ class Command(BaseCommand):
                 permissions["view_catalogitem"],
                 permissions["view_servicerequest"],
                 permissions["change_servicerequest"],
+                permissions["view_change"],
+                permissions["add_change"],
+                permissions["change_change"],
             ],
 
 
@@ -250,6 +282,9 @@ class Command(BaseCommand):
                 permissions["change_catalogitem"],
                 permissions["view_servicerequest"],
                 permissions["change_servicerequest"],
+                permissions["view_change"],
+                permissions["add_change"],
+                permissions["change_change"],
             ],
 
 
@@ -278,6 +313,10 @@ class Command(BaseCommand):
                 permissions["add_servicerequest"],
                 permissions["change_servicerequest"],
                 permissions["delete_servicerequest"],
+                permissions["view_change"],
+                permissions["add_change"],
+                permissions["change_change"],
+                permissions["delete_change"],
             ],
 
         }

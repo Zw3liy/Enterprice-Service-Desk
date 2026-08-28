@@ -11,7 +11,7 @@ Phase 2.2 Authorization Hardening
 from django.contrib.auth.models import Group
 from django.db.models import Q
 
-from apps.service_desk.models import CatalogItem, Problem, ServiceRequest, Supplier, Ticket
+from apps.service_desk.models import CatalogItem, Change, Problem, ServiceRequest, Supplier, Ticket
 
 
 
@@ -272,3 +272,49 @@ def get_service_request_queryset(user):
     return ServiceRequest.objects.filter(
         ticket__in=get_ticket_queryset(user)
     )
+
+
+
+def get_change_queryset(user):
+    """
+    Object level change visibility.
+
+    Administrator:
+        all changes
+
+    Manager:
+        department-scoped
+
+    Technician:
+        changes they requested or are assigned to implement. Unlike
+        Ticket's queue-based unassigned visibility, a Change has no
+        self-assignment/claim concept (an implementer is nominated at
+        approval/scheduling time) — but the Technician who *raised*
+        a change must still be able to see and submit it before
+        anyone has assigned an implementer, or they could never
+        progress their own request past "draft".
+
+    Requester:
+        none — Change Management is an internal IT governance
+        process, not requester-facing (mirrors ADR-010, Decision 1's
+        Problem Management precedent; requester-facing catalogue
+        requests are Service Request Management instead).
+    """
+
+    if not user.is_authenticated:
+        return Change.objects.none()
+
+    if is_administrator(user):
+        return Change.objects.all()
+
+    if is_manager(user):
+        return Change.objects.filter(
+            department__in=user.managed_departments.all()
+        )
+
+    if is_technician(user):
+        return Change.objects.filter(
+            Q(requested_by=user) | Q(assigned_to=user)
+        )
+
+    return Change.objects.none()

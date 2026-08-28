@@ -86,6 +86,16 @@
             </li>
             {% endif %}
 
+            {% if perms.service_desk.view_change %}
+            <li class="nav-item">
+                <a class="nav-link{% if request.resolver_match.url_name == 'change_list' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:change_list' %}"
+                   {% if request.resolver_match.url_name == 'change_list' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-arrows-rotate me-2" aria-hidden="true"></i>Changes
+                </a>
+            </li>
+            {% endif %}
+
             {% if perms.service_desk.view_ticket %}
             <li class="nav-item">
                 <a class="nav-link{% if request.resolver_match.url_name == 'sla_dashboard' %} active fw-semibold{% endif %}"

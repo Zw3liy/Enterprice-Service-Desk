@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from . import catalog_views
+from . import change_views
 
 app_name = 'service_desk'
 
@@ -73,4 +74,21 @@ urlpatterns = [
     path('requests/<int:pk>/fulfilling/', catalog_views.ServiceRequestMarkFulfillingView.as_view(), name='service_request_fulfilling'),
     path('requests/<int:pk>/fulfilled/', catalog_views.ServiceRequestMarkFulfilledView.as_view(), name='service_request_fulfilled'),
     path('requests/<int:pk>/cancel/', catalog_views.ServiceRequestCancelView.as_view(), name='service_request_cancel'),
+
+    # Change Management
+    path('changes/', change_views.ChangeListView.as_view(), name='change_list'),
+    path('changes/new/', change_views.ChangeCreateView.as_view(), name='change_create'),
+    path('changes/<int:pk>/', change_views.ChangeDetailView.as_view(), name='change_detail'),
+    path('changes/<int:pk>/submit/', change_views.ChangeSubmitView.as_view(), name='change_submit'),
+    path('changes/<int:pk>/assess/', change_views.ChangeAssessView.as_view(), name='change_assess'),
+    path('changes/<int:pk>/approve/', change_views.ChangeApproveView.as_view(), name='change_approve'),
+    path('changes/<int:pk>/reject/', change_views.ChangeRejectView.as_view(), name='change_reject'),
+    path('changes/<int:pk>/schedule/', change_views.ChangeScheduleView.as_view(), name='change_schedule'),
+    path('changes/<int:pk>/assign/', change_views.ChangeAssignView.as_view(), name='change_assign'),
+    path('changes/<int:pk>/implement/', change_views.ChangeStartImplementationView.as_view(), name='change_implement'),
+    path('changes/<int:pk>/validate/', change_views.ChangeRequestValidationView.as_view(), name='change_validate'),
+    path('changes/<int:pk>/complete/', change_views.ChangeCompleteView.as_view(), name='change_complete'),
+    path('changes/<int:pk>/fail/', change_views.ChangeFailView.as_view(), name='change_fail'),
+    path('changes/<int:pk>/rollback/', change_views.ChangeRollbackView.as_view(), name='change_rollback'),
+    path('changes/<int:pk>/comment/', change_views.ChangeCommentView.as_view(), name='change_comment'),
 ]

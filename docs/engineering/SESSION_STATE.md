@@ -156,6 +156,47 @@ duplicating that coverage in the new file.
 **Verified:** `check` clean · `makemigrations --check --dry-run` clean · **347/347 tests passing**
 (296 baseline + 51 new).
 
+### Phase 3 — Change Management (complete)
+
+New models: `Change` (title, description, change type — standard/normal/emergency, department,
+requested_by, assigned_to as implementer, impact/urgency, calculated `risk_level`, implementation/test/
+rollback plans, schedule window, 11-state status), `ChangeApproval` (append-only CAB decision: actor,
+decision, comment, timestamp), `ChangeHistory` (audit trail mirroring `TicketHistory`'s shape). Migration
+`0013` (additive only — three new tables).
+
+`ChangeService.STATUS_FLOW` enforces the boundary the mission specified: draft → submitted →
+assessed → approved → scheduled → implementing → validation → completed, with rejected/failed/
+rolled_back off-ramps at the appropriate points; illegal transitions raise `ValidationError`.
+Risk is *calculated* from impact × urgency via a fixed matrix at assessment time — "calculated or
+governed risk level" per the mission spec (calculated by default, CAB approval is the governance step).
+Scheduling checks for overlapping windows against other scheduled/implementing changes in the same
+department and rejects conflicts (`ChangeSelector.get_scheduled_conflicts`).
+
+Separation of duties: `_assert_may_decide` rejects an approver who is either the requester or the
+assigned implementer, and independently requires Manager/Administrator — a Technician holding
+`change_change` (needed to submit/implement their own work) cannot approve *any* change, not just their
+own. `_assert_may_implement` restricts implementation/validation/failure/rollback transitions to the
+assignee, a manager, or an administrator.
+
+RBAC (`get_change_queryset`): Requester excluded entirely (mirrors ADR-010, Decision 1's Problem
+Management precedent — Change Management is internal IT governance, not requester-facing); Manager
+department-scoped; Administrator unrestricted; Technician sees changes they requested *or* are assigned
+to — **a real gap found and fixed while writing tests**: an assigned-only rule would have let a
+Technician raise a change and then be unable to see or submit it until someone else assigned an
+implementer.
+
+New flat `change_views.py` (15 views) per ADR-011, 16 URL routes, one sidebar entry
+(`view_change`-gated), `Change*PermissionMixin` set, extended `create_roles.py` (Requester: none;
+Technician: view/add/change; Manager/Administrator: full). 5 templates under `templates/changes/`.
+32 new tests (`test_change_management.py`): risk calculation, every illegal-transition rejection,
+schedule-conflict rejection (and confirmation that non-overlapping schedules in the same department are
+allowed), the two separation-of-duties checks, RBAC scoping including the Technician-visibility fix
+above, cross-scope 404, anonymous redirect, POST-only, CSRF, and full lifecycle through real views
+covering both the success path and the failure→rollback path.
+
+**Verified:** `check` clean · `makemigrations --check --dry-run` clean · **378/378 tests passing**
+(347 baseline + 31 new — one test doubles as the RBAC-fix regression above).
+
 ---
 
 ## Completed Engineering Milestones

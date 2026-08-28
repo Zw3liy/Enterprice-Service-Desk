@@ -2,6 +2,8 @@ from django.contrib import admin
 
 from .models import (
     CatalogItem,
+    Change,
+    ChangeApproval,
     Department,
     RequestType,
     Notification,
@@ -280,5 +282,56 @@ class ServiceRequestApprovalAdmin(admin.ModelAdmin):
     )
     raw_id_fields = (
         "service_request",
+        "actor",
+    )
+
+
+@admin.register(Change)
+class ChangeAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "title",
+        "change_type",
+        "department",
+        "risk_level",
+        "status",
+        "assigned_to",
+        "created_at",
+    )
+    list_filter = (
+        "change_type",
+        "status",
+        "risk_level",
+        "department",
+    )
+    search_fields = (
+        "title",
+        "description",
+    )
+    autocomplete_fields = (
+        "department",
+    )
+    raw_id_fields = (
+        "requested_by",
+        "assigned_to",
+    )
+    ordering = (
+        "-created_at",
+    )
+
+
+@admin.register(ChangeApproval)
+class ChangeApprovalAdmin(admin.ModelAdmin):
+    list_display = (
+        "change",
+        "actor",
+        "decision",
+        "decided_at",
+    )
+    list_filter = (
+        "decision",
+    )
+    raw_id_fields = (
+        "change",
         "actor",
     )
