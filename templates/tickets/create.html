@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block title %}Create Ticket — Enterprise Service Desk{% endblock %}
+
 {% block content %}
 <div class="container-fluid py-4">
     <!-- Header / Breadcrumbs -->
@@ -12,7 +14,7 @@
                     <li class="breadcrumb-item active" aria-current="page">New Ticket</li>
                 </ol>
             </nav>
-            <h2 class="h3 fw-bold mb-0">Create New Support Ticket</h2>
+            <h1 class="h3 fw-bold mb-0">Create New Support Ticket</h1>
         </div>
     </div>
 
@@ -21,10 +23,31 @@
         <div class="col-12 col-xl-10 col-xxl-8">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white py-3 border-bottom">
-                    <h5 class="card-title mb-0 fw-semibold text-primary">Ticket Details</h5>
+                    <h2 class="h5 card-title mb-0 fw-semibold text-primary">Ticket Details</h2>
                 </div>
                 <div class="card-body p-4">
-                    <form method="post" enctype="multipart/form-data" novalidate>
+
+                    {% if no_active_request_types %}
+                    <div class="alert alert-warning" role="status">
+                        <strong>No active request types are configured.</strong>
+                        Ticket creation is unavailable until an administrator
+                        bootstraps master data
+                        (<code>python manage.py bootstrap_service_desk</code>).
+                    </div>
+                    {% endif %}
+
+                    {% if no_departments %}
+                    <div class="alert alert-warning" role="status">
+                        <strong>No departments are configured.</strong>
+                        You can still open a ticket, but it will not be
+                        routed to a department until master data is loaded.
+                    </div>
+                    {% endif %}
+
+                    <form method="post"
+                          enctype="multipart/form-data"
+                          novalidate
+                          {% if no_active_request_types %}aria-disabled="true"{% endif %}>
                         {% csrf_token %}
 
                         <!-- Display Non-Field / Global Errors -->
@@ -39,86 +62,108 @@
                         <div class="row g-3">
                             <!-- Title Field (Full Width) -->
                             <div class="col-12">
-                                <label for="{{ form.title.id_for_label }}" class="form-label fw-medium">Title <span class="text-danger">*</span></label>
+                                <label for="{{ form.title.id_for_label }}" class="form-label fw-medium">
+                                    Title <span class="text-danger" aria-hidden="true">*</span>
+                                </label>
                                 {{ form.title }}
                                 {% if form.title.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.title.errors.0 }}</div>
-                                {% endif %}
-                                {% if form.title.help_text %}
-                                    <div class="form-text">{{ form.title.help_text }}</div>
+                                    <div class="invalid-feedback d-block" role="alert">{{ form.title.errors.0 }}</div>
                                 {% endif %}
                             </div>
 
-                            <!-- Request Type (Column 1 on Desktop, Full Width on Mobile) -->
-                            {% if form.request_type %}
+                            <!-- Request Type -->
                             <div class="col-12 col-md-6">
-                                <label for="{{ form.request_type.id_for_label }}" class="form-label fw-medium">Request Type</label>
+                                <label for="{{ form.request_type.id_for_label }}" class="form-label fw-medium">
+                                    Request Type <span class="text-danger" aria-hidden="true">*</span>
+                                </label>
                                 {{ form.request_type }}
                                 {% if form.request_type.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.request_type.errors.0 }}</div>
+                                    <div class="invalid-feedback d-block" role="alert">{{ form.request_type.errors.0 }}</div>
                                 {% endif %}
                             </div>
-                            {% endif %}
 
-                            <!-- Priority (Column 2 on Desktop, Full Width on Mobile) -->
+                            <!-- Priority -->
                             <div class="col-12 col-md-6">
-                                <label for="{{ form.priority.id_for_label }}" class="form-label fw-medium">Priority <span class="text-danger">*</span></label>
+                                <label for="{{ form.priority.id_for_label }}" class="form-label fw-medium">
+                                    Priority <span class="text-danger" aria-hidden="true">*</span>
+                                </label>
                                 {{ form.priority }}
                                 {% if form.priority.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.priority.errors.0 }}</div>
+                                    <div class="invalid-feedback d-block" role="alert">{{ form.priority.errors.0 }}</div>
                                 {% endif %}
                             </div>
 
-                            <!-- Urgency (Column 1 on Desktop) -->
+                            <!-- Urgency -->
                             <div class="col-12 col-md-6">
-                                <label for="{{ form.urgency.id_for_label }}" class="form-label fw-medium">Urgency <span class="text-danger">*</span></label>
+                                <label for="{{ form.urgency.id_for_label }}" class="form-label fw-medium">
+                                    Urgency <span class="text-danger" aria-hidden="true">*</span>
+                                </label>
                                 {{ form.urgency }}
                                 {% if form.urgency.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.urgency.errors.0 }}</div>
+                                    <div class="invalid-feedback d-block" role="alert">{{ form.urgency.errors.0 }}</div>
                                 {% endif %}
                             </div>
 
-                            <!-- Assigned Department / Impact (Column 2 on Desktop) -->
-                            {% if form.department %}
+                            <!-- Department -->
                             <div class="col-12 col-md-6">
-                                <label for="{{ form.department.id_for_label }}" class="form-label fw-medium">Department</label>
+                                <label for="{{ form.department.id_for_label }}" class="form-label fw-medium">
+                                    Department
+                                </label>
                                 {{ form.department }}
                                 {% if form.department.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.department.errors.0 }}</div>
+                                    <div class="invalid-feedback d-block" role="alert">{{ form.department.errors.0 }}</div>
                                 {% endif %}
                             </div>
-                            {% endif %}
 
-                            <!-- Description (Full Width) -->
+                            <!-- Description -->
                             <div class="col-12">
-                                <label for="{{ form.description.id_for_label }}" class="form-label fw-medium">Description <span class="text-danger">*</span></label>
+                                <label for="{{ form.description.id_for_label }}" class="form-label fw-medium">
+                                    Description <span class="text-danger" aria-hidden="true">*</span>
+                                </label>
                                 {{ form.description }}
                                 {% if form.description.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.description.errors.0 }}</div>
-                                {% endif %}
-                                {% if form.description.help_text %}
-                                    <div class="form-text">{{ form.description.help_text }}</div>
+                                    <div class="invalid-feedback d-block" role="alert">{{ form.description.errors.0 }}</div>
                                 {% endif %}
                             </div>
 
-                            <!-- Tags (Full Width) -->
+                            <!-- Tags -->
                             <div class="col-12">
                                 <label for="{{ form.tags.id_for_label }}" class="form-label fw-medium">Tags</label>
                                 {{ form.tags }}
                                 {% if form.tags.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.tags.errors.0 }}</div>
+                                    <div class="invalid-feedback d-block" role="alert">{{ form.tags.errors.0 }}</div>
                                 {% endif %}
-                                {% if form.tags.help_text %}
-                                    <div class="form-text">{{ form.tags.help_text }}</div>
+                                <div class="form-text">Comma-separated labels (for example: network, vpn, printer).</div>
+                            </div>
+
+                            <!-- Optional attachment -->
+                            {% if form.attachment %}
+                            <div class="col-12">
+                                <label for="{{ form.attachment.id_for_label }}" class="form-label fw-medium">
+                                    Attachment
+                                </label>
+                                {{ form.attachment }}
+                                {% if form.attachment.errors %}
+                                    <div class="invalid-feedback d-block" role="alert">{{ form.attachment.errors.0 }}</div>
+                                {% endif %}
+                                {% if form.attachment.help_text %}
+                                    <div class="form-text">{{ form.attachment.help_text }}</div>
                                 {% endif %}
                             </div>
+                            {% endif %}
                         </div>
 
-                        <!-- Action Buttons Row -->
+                        <!-- Action Buttons -->
                         <div class="d-flex flex-column flex-sm-row justify-content-end gap-2 mt-4 pt-3 border-top">
-                            <a href="{% url 'service_desk:ticket_list' %}" class="btn btn-outline-secondary px-4 order-2 order-sm-1">Cancel</a>
-                            <button type="submit" class="btn btn-primary px-4 order-1 order-sm-2">
-                                <i class="fa-solid fa-plus me-1"></i> Submit Ticket
+                            <a href="{% url 'service_desk:ticket_list' %}"
+                               class="btn btn-outline-secondary px-4 order-2 order-sm-1">
+                                Cancel
+                            </a>
+                            <button type="submit"
+                                    class="btn btn-primary px-4 order-1 order-sm-2"
+                                    {% if no_active_request_types %}disabled aria-disabled="true"{% endif %}>
+                                <i class="fa-solid fa-plus me-1" aria-hidden="true"></i>
+                                <span class="submit-label">Submit Ticket</span>
                             </button>
                         </div>
                     </form>

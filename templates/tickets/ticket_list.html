@@ -108,7 +108,7 @@ Ticket Queue
 
                                 {% if ticket.created_by %}
 
-                                    {{ ticket.created_by.username }}
+                                    {% if ticket.created_by %}{{ ticket.created_by.username }}{% else %}—{% endif %}
 
                                 {% else %}
 

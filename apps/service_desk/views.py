@@ -260,6 +260,9 @@ class TicketCreateView(
 
     Automatically assigns:
         created_by = logged in user
+
+    Ownership, assignment and status cannot be supplied by the client —
+    only the declared form fields reach TicketService.create_ticket.
     """
 
     model = Ticket
@@ -280,11 +283,57 @@ class TicketCreateView(
     )
 
 
-    def form_valid(self, form):
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
 
-        self.object = TicketService.create_ticket(
-            created_by=self.request.user,
-            **form.cleaned_data,
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = context.get("form")
+        context["no_active_request_types"] = bool(
+            getattr(form, "no_active_request_types", False)
+        )
+        context["no_departments"] = bool(
+            getattr(form, "no_departments", False)
+        )
+        return context
+
+
+    def form_valid(self, form):
+        # Never accept client-supplied ownership or lifecycle fields.
+        payload = {
+            key: form.cleaned_data[key]
+            for key in (
+                "title",
+                "description",
+                "priority",
+                "urgency",
+                "department",
+                "request_type",
+                "tags",
+            )
+            if key in form.cleaned_data
+        }
+
+        attachment = form.cleaned_data.get("attachment")
+        if attachment is not None:
+            payload["attachment"] = attachment
+
+        try:
+            self.object = TicketService.create_ticket(
+                created_by=self.request.user,
+                **payload,
+            )
+        except ValidationError as exc:
+            for message in exc.messages:
+                form.add_error(None, message)
+            return self.form_invalid(form)
+
+        messages.success(
+            self.request,
+            f"Ticket #{self.object.pk} created successfully.",
         )
 
         return redirect(self.get_success_url())
