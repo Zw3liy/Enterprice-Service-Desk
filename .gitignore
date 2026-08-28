@@ -20,6 +20,10 @@ staticfiles/
 # test fixtures when the suite runs — neither belongs in Git.
 media/
 
+# Database backups (backup_database's default output directory).
+# Contains real application data — never belongs in version control.
+backups/
+
 # Environment variables
 .env
 .env.*

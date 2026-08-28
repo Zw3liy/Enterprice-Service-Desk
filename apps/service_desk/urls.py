@@ -6,6 +6,7 @@ from . import release_views
 from . import cmdb_views
 from . import knowledge_views
 from . import reporting_views
+from . import operations_views
 
 app_name = 'service_desk'
 
@@ -146,4 +147,7 @@ urlpatterns = [
     path('reports/export/releases/', reporting_views.ReleaseExportView.as_view(), name='reporting_export_releases'),
     path('reports/export/cmdb/', reporting_views.ConfigurationItemExportView.as_view(), name='reporting_export_cmdb'),
     path('reports/export/knowledge/', reporting_views.KnowledgeArticleExportView.as_view(), name='reporting_export_knowledge'),
+
+    # Operations (Administrator only)
+    path('operations/', operations_views.OperationsView.as_view(), name='operations_dashboard'),
 ]

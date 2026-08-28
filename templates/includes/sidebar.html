@@ -169,6 +169,16 @@
             </li>
             {% endif %}
 
+            {% if user.is_superuser %}
+            <li class="nav-item">
+                <a class="nav-link{% if request.resolver_match.url_name == 'operations_dashboard' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:operations_dashboard' %}"
+                   {% if request.resolver_match.url_name == 'operations_dashboard' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-gauge me-2" aria-hidden="true"></i>Operations
+                </a>
+            </li>
+            {% endif %}
+
             {% if user.is_staff %}
             <li class="nav-item">
                 <a class="nav-link" href="/admin/">

@@ -411,6 +411,48 @@ building a fifth copy of the permission matrix:
 **Verified:** `check` clean · `makemigrations --check --dry-run` clean · **492/492 tests passing**
 (485 baseline + 7 new).
 
+### Phase 10 — Operations, backup/recovery, production documentation (complete)
+
+No new models. New management commands `backup_database` (timestamped, verified-non-empty JSON
+`dumpdata` of users/groups/`service_desk`, excluding `auth.permission`/`contenttypes` which `migrate`/
+`create_roles` regenerate deterministically) and `verify_backup` (restores a backup into a brand-new,
+throwaway SQLite database inside a `tempfile.TemporaryDirectory()` it creates and deletes itself, reports
+row counts, then discards it — never touches `settings.DATABASES["default"]`, whatever that points to).
+
+**Two real bugs found and fixed while manually exercising these commands, before any automated test was
+written:** (1) `verify_backup`'s `handle()` originally returned a dict — Django's own `execute()` writes a
+non-`None` return value to stdout and crashes calling `.endswith()` on it when run as a real CLI
+invocation (only surfaced by actually running the command, not by `call_command` in a test, which
+tolerates non-string returns). (2) Testing `verify_backup` via in-process `call_command` inside a
+`TestCase` fights Django's own connection-guard instrumentation (it re-validates every database alias
+against a frozen `cls.databases` snapshot taken at class setup, before the dynamic alias exists) — the
+tests for this command run it as a genuine subprocess instead, which is both simpler and more faithful
+to what the command actually is: a CLI tool that manages its own connection lifecycle.
+
+New `OperationsView` (Administrator/superuser-only — `AdministratorRequiredMixin`, not a `Manager`-
+reachable page like every other dashboard in this program): Django/database/migration status, email
+configuration summary, the 10 most recent SLA runs (same data as the SLA dashboard's panel), and the 10
+most recent backup files with size/timestamp. Entirely read-only — nothing on the page executes a backup,
+a migration, or any other mutating operation.
+
+New `docs/operations/BACKUP_AND_RECOVERY.md`: what's backed up vs. backed up separately (media/
+attachments are files, not database rows), JSON vs. native `pg_dump` and when to use each, scheduling
+(cron/systemd/Windows Task Scheduler/containers, mirroring `SLA_SCHEDULING.md`'s patterns and explicit
+warning against a second in-container loop), a documented retention policy and RPO/RTO defaults, and the
+actual production restore procedure — explicitly marked as manual and never automatic, since this
+repository's own tooling only ever restores into a disposable, throwaway database for verification.
+
+16 new tests (`test_operations.py`): timestamped/non-empty backup naming and content, an empty database
+still producing a valid (non-empty-file) backup rather than being treated as a failure, a `dumpdata`
+failure leaving no partial file, `verify_backup` rejecting a missing/empty/non-JSON/non-list backup, a
+real backup restoring with correct counts, confirmation the live database is untouched after a
+`verify_backup` run, confirmation no dynamic alias survives even a trivial empty-backup run, and
+`OperationsView` RBAC (anonymous redirect, Manager/Technician 403, Administrator 200, sidebar link
+visible only to superusers).
+
+**Verified:** `check` clean · `makemigrations --check --dry-run` clean · **508/508 tests passing**
+(492 baseline + 16 new).
+
 ---
 
 ## Completed Engineering Milestones
