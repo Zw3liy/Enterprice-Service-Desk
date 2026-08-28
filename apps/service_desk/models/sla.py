@@ -370,3 +370,63 @@ class SLAEscalation(models.Model):
     @property
     def is_breach(self):
         return self.kind in self.BREACH_KINDS
+
+
+class SLARunLog(models.Model):
+    """
+    One execution record for the ``process_sla`` scheduled command.
+
+    Gives operators the "last run, processed records, warnings,
+    breaches, failures and duration" visibility the command itself
+    cannot show once it has exited and its stdout is gone — this is
+    what a monitoring dashboard or an alert on "no successful run in
+    N minutes" would query. Written by the command itself
+    (``process_sla.py``), never by request-handling code.
+    """
+
+    started_at = models.DateTimeField()
+
+    finished_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    processed_count = models.PositiveIntegerField(
+        default=0,
+    )
+
+    warnings_count = models.PositiveIntegerField(
+        default=0,
+    )
+
+    breaches_count = models.PositiveIntegerField(
+        default=0,
+    )
+
+    succeeded = models.BooleanField(
+        default=False,
+    )
+
+    error_message = models.TextField(
+        blank=True,
+        default="",
+    )
+
+    class Meta:
+        ordering = ["-started_at"]
+        verbose_name = "SLA Run Log"
+        verbose_name_plural = "SLA Run Logs"
+        indexes = [
+            models.Index(fields=["started_at"]),
+            models.Index(fields=["succeeded"]),
+        ]
+
+    def __str__(self):
+        status = "OK" if self.succeeded else "FAILED"
+        return f"SLA run {self.started_at:%Y-%m-%d %H:%M} — {status}"
+
+    @property
+    def duration_seconds(self):
+        if self.finished_at is None:
+            return None
+        return (self.finished_at - self.started_at).total_seconds()

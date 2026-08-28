@@ -336,6 +336,45 @@ small and a 20-row-larger export).
 **Verified:** `check` clean · `makemigrations --check --dry-run` clean · **479/479 tests passing**
 (463 baseline + 16 new).
 
+### Phase 8 — SLA scheduler monitoring and email hardening (complete)
+
+**Discovery first, not assumed:** the existing SLA/email implementation (SLA-01/NOTIFY-01, 2026-08-27
+sweep) already satisfied most of this phase's mission requirements before this session touched
+anything — verified by reading the code, not re-built: `SLAEscalation` already has
+`UniqueConstraint(fields=["ticket_sla", "kind"])` backing `get_or_create` (duplicate-escalation
+prevention, race-safe at the database level, not just application logic); `process_sla` was already a
+plain management command with no background thread; `NotificationService`'s one log line
+(`logger.exception`) already logs only the notification ID and recipient address, never message content
+or credentials; a test-suitable console/locmem email backend was already configured. Only two concrete
+gaps remained: run monitoring, and consolidated scheduling/verification documentation.
+
+New model `SLARunLog` (started_at, finished_at, processed_count, warnings_count, breaches_count,
+succeeded, error_message) — migration `0017`, additive only. `process_sla` now writes one row per
+non-dry-run execution: on success, processed/warning/breach counts and duration; on any exception, the
+error message is recorded and the exception is **re-raised** afterward, so an external scheduler still
+sees a non-zero exit code and can alert independently of this table. The dry-run path is unchanged
+(writes nothing, as before) since it makes no real assessment to log. The SLA dashboard
+(`SLADashboardView`) gained a "Scheduler Health" panel showing the 10 most recent runs, visible only to
+whoever can already manage SLA policies (Manager/Administrator) — a Requester's dashboard is unaffected.
+
+New `docs/operations/SLA_SCHEDULING.md`: Windows Task Scheduler (`schtasks`/GUI), cron, systemd timer
+(preferred on systemd hosts), and container-compatible scheduling (Kubernetes CronJob with
+`concurrencyPolicy: Forbid`, or host cron driving `docker compose run`) — each with the explicit warning
+against adding a second `command:` to the long-running web container to "also" run `process_sla` in a
+loop, which would reintroduce the exact unmanaged-background-thread problem a one-shot command avoids.
+New `docs/operations/EMAIL_CONFIGURATION.md` consolidates the required environment variables (already in
+`.env.example`, not duplicated content, cross-referenced) and a verification procedure using Django's
+built-in `sendtestemail` command plus a real in-app event check.
+
+9 new tests added to the existing `test_sla_management.py` (not a new file — this is monitoring *of* the
+existing SLA module, not a new module): run-log creation on success (including the zero-due-clocks case),
+no run-log on dry-run, failure recording plus re-raise (mocked `SLAService.process_due` failure), and
+scheduler-health-panel visibility scoped to policy-managing roles only.
+
+**Verified:** `check` clean · `makemigrations --check --dry-run` clean · **485/485 tests passing**
+(479 baseline + 9 new — before/after run counts, not "new module" counts, since this phase extended an
+existing module's tests rather than adding a new test file).
+
 ---
 
 ## Completed Engineering Milestones

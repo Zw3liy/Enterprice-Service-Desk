@@ -18,6 +18,53 @@
     {% endif %}
 </div>
 
+{% if can_manage_policies %}
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+        <h2 class="h6 mb-3">Scheduler Health — <code>process_sla</code></h2>
+        {% if recent_sla_runs %}
+        <div class="table-responsive">
+        <table class="table table-sm mb-0">
+            <thead>
+                <tr>
+                    <th>Started</th>
+                    <th>Duration</th>
+                    <th>Processed</th>
+                    <th>Warnings</th>
+                    <th>Breaches</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for run in recent_sla_runs %}
+                <tr>
+                    <td>{{ run.started_at|date:"M d, Y H:i:s" }}</td>
+                    <td>{% if run.duration_seconds %}{{ run.duration_seconds|floatformat:2 }}s{% else %}—{% endif %}</td>
+                    <td>{{ run.processed_count }}</td>
+                    <td>{{ run.warnings_count }}</td>
+                    <td>{{ run.breaches_count }}</td>
+                    <td>
+                        {% if run.succeeded %}
+                            <span class="badge bg-success">OK</span>
+                        {% else %}
+                            <span class="badge bg-danger" title="{{ run.error_message }}">FAILED</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        {% else %}
+        <p class="text-muted small mb-0">
+            No <code>process_sla</code> runs recorded yet. See
+            docs/operations/SLA_SCHEDULING.md for how to schedule it.
+        </p>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
 <div class="row g-3 mb-4">
     <div class="col-6 col-lg-3">
         <div class="card shadow-sm border-0 h-100">

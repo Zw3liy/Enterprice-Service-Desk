@@ -14,7 +14,7 @@ from .root_cause_analysis import (
     Approval,
 )
 from .supplier import Supplier
-from .sla import SLAEscalation, SLAPolicy, TicketSLA
+from .sla import SLAEscalation, SLAPolicy, SLARunLog, TicketSLA
 from .notification import Notification
 from .service_catalog import (
     CatalogItem,
@@ -51,6 +51,7 @@ __all__ = [
     "SLAPolicy",
     "TicketSLA",
     "SLAEscalation",
+    "SLARunLog",
     "Notification",
     "ServiceCategory",
     "CatalogItem",

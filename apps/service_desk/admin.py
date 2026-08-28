@@ -19,6 +19,7 @@ from .models import (
     ServiceRequestApproval,
     SLAEscalation,
     SLAPolicy,
+    SLARunLog,
     Supplier,
     Ticket,
     TicketSLA,
@@ -179,6 +180,24 @@ class SLAEscalationAdmin(admin.ModelAdmin):
 
     raw_id_fields = (
         "ticket_sla",
+    )
+
+
+@admin.register(SLARunLog)
+class SLARunLogAdmin(admin.ModelAdmin):
+    list_display = (
+        "started_at",
+        "finished_at",
+        "processed_count",
+        "warnings_count",
+        "breaches_count",
+        "succeeded",
+    )
+    list_filter = (
+        "succeeded",
+    )
+    ordering = (
+        "-started_at",
     )
 
 
