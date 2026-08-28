@@ -5,6 +5,7 @@ from . import change_views
 from . import release_views
 from . import cmdb_views
 from . import knowledge_views
+from . import reporting_views
 
 app_name = 'service_desk'
 
@@ -136,4 +137,13 @@ urlpatterns = [
     path('knowledge/<int:pk>/archive/', knowledge_views.KnowledgeArticleArchiveView.as_view(), name='knowledge_archive'),
     path('knowledge/<int:pk>/revise/', knowledge_views.KnowledgeArticleStartRevisionView.as_view(), name='knowledge_start_revision'),
     path('knowledge/<int:pk>/feedback/', knowledge_views.KnowledgeArticleFeedbackView.as_view(), name='knowledge_feedback'),
+
+    # Reporting and Analytics
+    path('reports/', reporting_views.ReportingDashboardView.as_view(), name='reporting_dashboard'),
+    path('reports/export/tickets/', reporting_views.TicketExportView.as_view(), name='reporting_export_tickets'),
+    path('reports/export/service-requests/', reporting_views.ServiceRequestExportView.as_view(), name='reporting_export_service_requests'),
+    path('reports/export/changes/', reporting_views.ChangeExportView.as_view(), name='reporting_export_changes'),
+    path('reports/export/releases/', reporting_views.ReleaseExportView.as_view(), name='reporting_export_releases'),
+    path('reports/export/cmdb/', reporting_views.ConfigurationItemExportView.as_view(), name='reporting_export_cmdb'),
+    path('reports/export/knowledge/', reporting_views.KnowledgeArticleExportView.as_view(), name='reporting_export_knowledge'),
 ]

@@ -303,6 +303,39 @@ archive).
 **Verified:** `check` clean · `makemigrations --check --dry-run` clean · **463/463 tests passing**
 (434 baseline + 29 new).
 
+### Phase 7 — Reporting and Analytics (complete)
+
+No new models — this phase is read-only aggregation over the six domains already built, using their
+existing RBAC-scoped queryset functions (`get_ticket_queryset`, `get_change_queryset`, ...) directly.
+There is deliberately no separate, wider "reporting" data path: `ReportingDashboardView` computes each
+section only if the viewer holds that module's own `view_*` permission, and every export view resolves
+records through the exact same scoped queryset its module's list view uses — the mission's "exports must
+use the same scoped querysets as the UI" requirement, satisfied by construction rather than by a parallel
+check. All figures are live query results computed at render time; the dashboard is labelled "Live data
+as of {timestamp}" since there is no historical-snapshot store anywhere in this codebase to distinguish
+it from.
+
+`services/reporting_service.py`: `sanitize_csv_cell` neutralises spreadsheet-formula injection (the
+OWASP-recommended mitigation — a cell starting with `=`, `+`, `-`, `@`, tab or carriage-return gets a
+leading `'`, which every major spreadsheet treats as "force plain text"); `stream_csv` uses
+`StreamingHttpResponse` with a generator over `queryset.iterator()` so export size is bounded by network
+transfer, not server memory, and `select_related` on every export view's queryset keeps per-row cost
+constant rather than N+1; `parse_date_range` turns `date_from`/`date_to` query params into a shared,
+reusable filter.
+
+New flat `reporting_views.py`: one dashboard view plus six CSV export views (tickets, service requests,
+changes, releases, CMDB, knowledge), 7 URL routes, one sidebar entry visible to every authenticated user
+(each section/export self-gates on its own module's permission). 16 new tests (`test_reporting.py`):
+formula-injection neutralisation for every trigger character, dashboard scoping (Requester sees only
+their own record counts, Manager only their department's, further narrowed by the department/date
+filters), export-matches-UI-scope (an out-of-scope record never appears in a CSV), a malicious title
+surviving into the CSV only in its neutralised form, unauthorized export rejected with 403 (not a
+silently empty file), and a comparison-based N+1 regression test (query count does not grow between a
+small and a 20-row-larger export).
+
+**Verified:** `check` clean · `makemigrations --check --dry-run` clean · **479/479 tests passing**
+(463 baseline + 16 new).
+
 ---
 
 ## Completed Engineering Milestones

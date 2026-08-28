@@ -254,6 +254,7 @@ class NavigationRenderingTests(TestCase):
             "release_list",
             "cmdb_item_list",
             "knowledge_list",
+            "reporting_dashboard",
         ):
             with self.subTest(url=name):
                 self.assertContains(
@@ -282,6 +283,7 @@ class NavigationRenderingTests(TestCase):
             "release_list",
             "cmdb_item_list",
             "knowledge_list",
+            "reporting_dashboard",
         ):
             with self.subTest(url=name):
                 response = self.client.get(reverse(f"service_desk:{name}"))

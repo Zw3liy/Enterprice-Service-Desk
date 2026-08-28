@@ -148,6 +148,16 @@
 
             {% if user.is_authenticated %}
             <li class="nav-item">
+                <a class="nav-link{% if request.resolver_match.url_name == 'reporting_dashboard' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:reporting_dashboard' %}"
+                   {% if request.resolver_match.url_name == 'reporting_dashboard' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-chart-line me-2" aria-hidden="true"></i>Reports
+                </a>
+            </li>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+            <li class="nav-item">
                 <a class="nav-link{% if request.resolver_match.url_name == 'notification_list' %} active fw-semibold{% endif %}"
                    href="{% url 'service_desk:notification_list' %}"
                    {% if request.resolver_match.url_name == 'notification_list' %}aria-current="page"{% endif %}>
