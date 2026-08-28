@@ -375,6 +375,42 @@ scheduler-health-panel visibility scoped to policy-managing roles only.
 (479 baseline + 9 new — before/after run counts, not "new module" counts, since this phase extended an
 existing module's tests rather than adding a new test file).
 
+### Phase 9 — Audit, RBAC and integrated acceptance (complete)
+
+No new production code. Every module built in Phases 2-8 already carries its own audit-history model,
+RBAC selector, and a dedicated test file proving anonymous redirect/403/cross-scope-404/POST-only/CSRF
+for that module in isolation — that per-module RBAC coverage is not repeated here. What this phase adds
+is the one thing genuinely missing: proof that the *seams between modules* hold for a real role journey,
+plus an explicit audit-immutability check.
+
+New `test_integrated_acceptance.py`, using the real `create_roles` bootstrap (not a hand-rolled
+permission set, so this exercises the same RBAC configuration a real deployment runs) rather than
+building a fifth copy of the permission matrix:
+
+- **Requester journey** — raise a ticket, browse the catalogue, submit and auto-approve a service
+  request, read a published knowledge article and leave feedback, see only their own ticket count on
+  Reports, confirmed locked out of Change/Release/CMDB (403).
+- **Technician journey** — self-assign a ticket, add a work note, link it to a CMDB item, raise a change
+  and see it before anyone assigns an implementer (the Phase 3 RBAC fix, exercised end-to-end here),
+  author a knowledge article, confirmed unable to approve their own change (separation of duties) even
+  while holding the broader workflow permission, confirmed no supplier access at all.
+- **Manager journey** — assess and approve a change, create a release and link the now-eligible change to
+  it (the Phase 4 eligibility boundary), manage a CMDB relationship in their department, confirmed 404
+  (not 403) on another department's ticket, department-filtered report and matching CSV export.
+- **Administrator journey** — cross-department ticket access, full change approval authority — **found
+  while writing this test, not a bug**: separation of duties rejects self-approval unconditionally,
+  including for Administrators, so the journey has a different user raise the change for the admin to
+  approve, which is the correct security posture, not a gap to work around.
+- **`AuditImmutabilityTests`** — no URL route in `urls.py` targets anything resembling a history/audit
+  model (checked by pattern, not by enumeration, so it stays correct as new modules are added); no
+  reversible update/delete route exists for `TicketHistory`; no history model (checked via
+  `ChangeHistory` as the representative shape every history model added in this program follows) exposes
+  an `update_*`/`edit_*`/`revise_*` method — the only way any of them are ever written is
+  `<Model>Service` calling `<History>.record()`.
+
+**Verified:** `check` clean · `makemigrations --check --dry-run` clean · **492/492 tests passing**
+(485 baseline + 7 new).
+
 ---
 
 ## Completed Engineering Milestones
