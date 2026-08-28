@@ -399,6 +399,13 @@ class TicketWorkflowViewTests(TestCase):
         add_ticket = Permission.objects.get(codename="add_ticket")
         self.requester.user_permissions.add(add_ticket)
 
+        from apps.service_desk.models import RequestType
+
+        request_type = RequestType.objects.create(
+            name="IM-03 Service Request",
+            is_active=True,
+        )
+
         self.client.login(
             username="im03_requester",
             password="password123",
@@ -411,6 +418,8 @@ class TicketWorkflowViewTests(TestCase):
                 "description": "Created via TicketService.create_ticket",
                 "priority": "medium",
                 "urgency": "medium",
+                "request_type": str(request_type.pk),
+                "department": str(self.department.pk),
                 "tags": "",
             },
         )
@@ -420,6 +429,7 @@ class TicketWorkflowViewTests(TestCase):
         ticket = Ticket.objects.get(title="New service-layer ticket")
 
         self.assertEqual(ticket.created_by, self.requester)
+        self.assertEqual(ticket.request_type, request_type)
 
         self.assertTrue(
             ticket.history.filter(

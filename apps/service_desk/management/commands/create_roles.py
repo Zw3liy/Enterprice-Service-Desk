@@ -150,8 +150,11 @@ class Command(BaseCommand):
             ],
 
 
+            # Technicians may open tickets on behalf of end users
+            # (phone/walk-up intake) in addition to working assigned ones.
             "Technician": [
                 permissions["view"],
+                permissions["add"],
                 permissions["change"],
                 permissions["view_problem"],
                 permissions["add_problem"],
@@ -159,8 +162,11 @@ class Command(BaseCommand):
             ],
 
 
+            # Managers inherit technician ticket powers plus supplier/SLA
+            # administration for the departments they manage.
             "Manager": [
                 permissions["view"],
+                permissions["add"],
                 permissions["change"],
                 permissions["view_problem"],
                 permissions["add_problem"],

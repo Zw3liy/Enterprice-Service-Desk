@@ -39,6 +39,29 @@ class TicketService:
     def create_ticket(**data: Any) -> Ticket:
         user = data.get("created_by")
 
+        # Optional initial attachment — pulled out so it never reaches
+        # Ticket.objects.create as a model field.
+        attachment_file = data.pop("attachment", None)
+        attachment_description = data.pop("attachment_description", "") or ""
+
+        # Defence in depth: strip any client-smuggled ownership or
+        # lifecycle fields even if a future call site forgets to filter.
+        forbidden = {
+            "assigned_to",
+            "status",
+            "id",
+            "pk",
+            "created_at",
+            "updated_at",
+        }
+        for key in list(data.keys()):
+            if key in forbidden:
+                data.pop(key)
+
+        # created_by is always the authenticated actor when provided.
+        if user is not None:
+            data["created_by"] = user
+
         ticket = Ticket.objects.create(**data)
 
         TicketHistory.record(
@@ -55,6 +78,15 @@ class TicketService:
         from apps.service_desk.services.sla_service import SLAService
 
         SLAService.attach_to_ticket(ticket)
+
+        if attachment_file is not None:
+            # Same atomic block: a storage failure rolls the ticket back.
+            TicketService.add_attachment(
+                ticket,
+                attachment_file,
+                user=user,
+                description=attachment_description,
+            )
 
         return ticket
 
@@ -491,14 +523,26 @@ class TicketService:
 
         Validates the file extension against the allowlist and
         enforces the size cap (TicketAttachment constants).
+        Sanitises the original filename before storage.
         Records the upload in the ticket's audit trail using
         the existing EVENT_ATTACHMENT event type.
         """
 
+        from apps.service_desk.forms.ticket_forms import (
+            sanitize_attachment_filename,
+        )
         from apps.service_desk.models import TicketAttachment
 
-        # Validate extension
-        filename = getattr(file, "name", "")
+        raw_name = getattr(file, "name", "") or ""
+        filename = sanitize_attachment_filename(raw_name)
+
+        # Keep the storage backend's name in sync with the sanitised value
+        # so path-traversal payloads never reach disk.
+        try:
+            file.name = filename
+        except AttributeError:
+            pass
+
         if filename and "." in filename:
             ext = filename.rsplit(".", 1)[-1].lower()
         else:
@@ -511,10 +555,18 @@ class TicketService:
                 f"Allowed extensions: {allowed}"
             )
 
-        # Validate size
-        file.seek(0, 2)  # seek to end
-        size = file.tell()
-        file.seek(0)  # rewind
+        # Validate size. Prefer the upload's declared size when present
+        # (Django UploadedFile) and fall back to a seek/tell probe.
+        size = getattr(file, "size", None)
+        if size is None:
+            file.seek(0, 2)
+            size = file.tell()
+            file.seek(0)
+        else:
+            try:
+                file.seek(0)
+            except Exception:
+                pass
 
         if size > TicketAttachment.MAX_FILE_SIZE_BYTES:
             max_mb = TicketAttachment.MAX_FILE_SIZE_BYTES // (1024 * 1024)
@@ -522,14 +574,19 @@ class TicketService:
                 f"File size exceeds the {max_mb} MB limit."
             )
 
-        attachment = TicketAttachment.objects.create(
-            ticket=ticket,
-            file=file,
-            description=description.strip(),
-            uploaded_by=user,
-            original_filename=filename,
-            file_size=size,
-        )
+        try:
+            attachment = TicketAttachment.objects.create(
+                ticket=ticket,
+                file=file,
+                description=(description or "").strip(),
+                uploaded_by=user,
+                original_filename=filename,
+                file_size=size,
+            )
+        except Exception as exc:
+            raise ValidationError(
+                "The attachment could not be stored. Please try again."
+            ) from exc
 
         TicketHistory.record(
             ticket=ticket,

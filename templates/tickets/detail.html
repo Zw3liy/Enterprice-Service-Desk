@@ -174,7 +174,7 @@
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0">
                             <span class="text-muted small">Requester</span>
-                            <span class="fw-medium text-end text-truncate ms-2">{{ ticket.created_by.get_full_name|default:ticket.created_by.username }}</span>
+                            <span class="fw-medium text-end text-truncate ms-2">{% if ticket.created_by %}{{ ticket.created_by.get_full_name|default:ticket.created_by.username }}{% else %}—{% endif %}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0">
                             <span class="text-muted small">Assigned To</span>
