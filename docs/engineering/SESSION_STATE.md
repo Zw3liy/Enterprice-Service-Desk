@@ -16,28 +16,28 @@ step). An out-of-date `SESSION_STATE.md` is itself a defect — treat it as one 
 |---|---|
 | **Project Name** | Enterprise Service Desk |
 | **Repository** | `https://github.com/Zw3liy/Enterprice-Service-Desk.git` |
-| **Current Branch** | `arena/01a04293-enterprice-service-desk` (previous session: `feature/incident-management-dashboard`) |
+| **Current Branch** | `feature/service-desk-enterprise-completion-20260828-170022` (branched from verified `origin/main` at `f5aeccf`, PR #7 merged) |
 | **Default Branch** | `main` |
 | **Current Version** | No formal semantic version tag on current HEAD. Nearest tag is `fe12-rollback`; last real release tag in history is `v1.0.1-frontend-stabilized`, well upstream of this branch. Treat this branch as unreleased/pre-tag work. |
-| **Last Updated** | 2026-08-27 |
+| **Last Updated** | 2026-08-28 |
 
 ## Current Engineering Phase
 
 | | |
 |---|---|
-| **Current Milestone** | Production-completion sweep: DASH-01, ITSM-08 completion, SLA-01, NOTIFY-01, PM-04, NAV-01, SEC-02 (all DONE) |
-| **Current Sprint** | Production-completion sweep complete: dashboard, Supplier completion, SLA, notifications, Problem RCA authoring, navigation and the security regression sweep are all delivered and verified. |
-| **Current Objective** | ITSM_ROADMAP.md P1 items 2 and 3 (SLA Management, Notification Features) are now DONE. Remaining priorities: Service Request Management, then P2 (Reporting, Knowledge, CMDB). Deployment work is tracked separately in PRODUCTION_READINESS.md. |
-| **Overall Repository Health** | **Good, with known scaffolding debt.** Core `service_desk` app is healthy (`manage.py check` clean, 234/234 tests passing, migrations in sync, zero drift). `ticketing/settings.py` no longer hardcodes secrets/DEBUG/hosts (SEC-01). CI runs on every push/PR (CI-01) from a real `requirements.txt` (DEP-01). The `models.py`/`views.py` file-collision hazard is resolved (ARCH-01). RBAC has `get_problem_queryset` (Requester: none) and Technicians see unassigned tickets too (ADR-010, RBAC-01). Problem Management is fully reachable end-to-end (PM-03). Incident Management is fully complete including work notes, attachments, and requester confirmation (IM-04). SLA Management, the notification boundary and Problem RCA authoring landed in the 2026-08-27 sweep (see below), and every module is now reachable from the sidebar. Surrounding repository still has scaffolding debt (~59 unregistered apps, unchanged — a separate, larger scope decision). Full detail: [ARCHITECTURE.md](ARCHITECTURE.md). |
+| **Current Milestone** | Enterprise Completion Program, Phase 1 — verified baseline + shared foundations (ADR-011). Next: Phase 2, Service Catalogue / Service Request Management. |
+| **Current Sprint** | Building Service Request Management, Change Management, Release Management, CMDB, Knowledge Management, Reporting/Analytics, SLA scheduler monitoring, and audit/RBAC/operations hardening per the mission's 10-phase plan. |
+| **Current Objective** | ITSM_ROADMAP.md P1 (SLA, Notifications) is DONE, confirmed by re-inspection this session (see below — the roadmap doc itself is dated 2026-08-07 and stale on this point; SESSION_STATE's own 2026-08-27 entry is current). P2/P3 (Service Request, Change, Release, CMDB, Knowledge, Reporting) begins now. |
+| **Overall Repository Health** | **Good, with known scaffolding debt.** Re-verified this session, not assumed from prior docs: `manage.py check` clean, `makemigrations --check --dry-run` clean (`service_desk` 0001-0011 in sync), **296/296 tests passing** (up from the stale 234/234 figure — PR #7 added `test_route_rbac_matrix.py` and `test_ticket_creation.py` after that count was recorded). `ticketing/settings.py` remains env-driven (SEC-01); `ticketing/production_settings.py`, `postgres_test_settings.py`, `health_views.py`, `Dockerfile` and `compose.yaml` already exist and are real (contrary to this file's older entries below, which predate them — see the 2026-08-28 session note). CI (`django-tests.yml`, `security-scan.yml`, `deployment.yml`) all run real checks; `deployment.yml` is **not** a no-op — it is a full PostgreSQL migration/rollback/reapply + test-suite gate plus a Docker build/health/non-root smoke test, confirmed by reading the file directly. RBAC has `get_problem_queryset`/`get_supplier_queryset` plus `get_ticket_queryset` (ADR-010, RBAC-01). Problem, Incident, Supplier, SLA and Notification modules are fully reachable end-to-end. Surrounding repository still has scaffolding debt (~128 unregistered `apps/*` directories plus empty template stubs under `templates/{cmdb,knowledge,reporting,...}` — re-confirmed empty this session, still a separate scope decision, not touched). Full detail: [ARCHITECTURE.md](ARCHITECTURE.md), [ADR-011](ADR/ADR-011-Completion-Program-Foundations.md). |
 
 ## Git Status
 
 | | |
 |---|---|
-| **Current Branch** | `arena/01a04293-enterprice-service-desk` |
-| **Working Tree Status** | Clean at each checkpoint; every commit in the 2026-08-27 sweep was pushed as it landed. |
-| **Ahead / Behind Origin** | 0 / 0 — the branch is pushed after every commit. |
-| **Latest Commit prior to this update** | `040dc7c` — "ITSM-08: implement Supplier Management foundation" (the `main` baseline this sweep branched from) |
+| **Current Branch** | `feature/service-desk-enterprise-completion-20260828-170022` |
+| **Working Tree Status** | Clean at each checkpoint; pushed after each phase per this mission's explicit instruction. |
+| **Ahead / Behind Origin** | Kept at 0 behind `origin/<this branch>` — pushed after every checkpoint commit. |
+| **Latest Commit prior to this update** | `f5aeccf` — PR #7 merge (the verified `main` baseline this program branched from) |
 
 **Note on process continuity:** this session was interrupted mid-write while finishing SEC-01's documentation
 (caught mid-edit of this file's own predecessor state). The repository owner committed the SEC-01 code
@@ -66,6 +66,392 @@ re-verified before any change: `check` clean, zero migration drift, **85/85 test
 passing** · `check --deploy` 2 explained warnings. See
 [PRODUCTION_READINESS.md](PRODUCTION_READINESS.md) for the full picture including the honest list of
 what is *not* done.
+
+**Not reflected in this entry (see the 2026-08-28 entry below):** PR #7 (`4be2b4e`, `cffc542`, `d37c1d1`,
+`ff35ee1`) landed after this sweep — idempotent `bootstrap_service_desk` master-data command, hardened
+`TicketCreateForm`/attachment handling, and route-RBAC/ticket-lifecycle regression coverage. This file was
+not updated for that PR at the time; corrected now rather than left stale.
+
+## Session 2026-08-28 — Enterprise Completion Program, Phase 1 (Foundations)
+
+Branched `feature/service-desk-enterprise-completion-20260828-170022` from verified `origin/main` at
+`f5aeccf` (PR #7 merged — confirmed via `gh pr list`, PR #5 confirmed CLOSED/obsolete and not touched, a
+stray stash tagged `pre-pr7-incomplete-configur-20260828-142112` confirmed present and **not applied**, two
+stale local `service-desk-completion-*` branches confirmed pointing at a pre-PR7 commit already absorbed
+into `main` — nothing to recover from either).
+
+**Discovery, verified by inspection rather than trusted from docs:** `ITSM_ROADMAP.md` (2026-08-07) and
+this file's older entries undercount current state — SLA/Notifications are DONE (contradicts
+ITSM_ROADMAP's stale "MISSING" row), and `deployment.yml` is a full PostgreSQL + Docker verification
+pipeline, not the documented no-op ARCHITECTURE.md/ROADMAP.md describe. Re-confirmed all ~128 unregistered
+`apps/*` directories and every scaffold template under `templates/{cmdb,knowledge,reporting,reports,itil,
+self_service,customer_portal,workflow}/` are still 0 bytes — none reused.
+
+**Found and fixed a real blocker to doing this work at all:** `python manage.py test` (default settings)
+did not complete a single pass in 19+ minutes on this machine — traced to Django's default PBKDF2 hasher
+(~0.6s/hash measured directly) multiplied across the suite's many per-test RBAC user fixtures, not a hang
+(confirmed via incremental `--verbosity 2` output). Fixed per ADR-011 Decision 1: added
+`ticketing/test_settings.py` (fast `MD5PasswordHasher`, everything else inherited from `ticketing.settings`
+unchanged), applied the same override to `ticketing/postgres_test_settings.py`, and updated both CI
+workflows to use the fast settings module with `--parallel auto`. Verified effect: 296/296 tests in
+8-11 seconds locally, down from a run that hadn't finished after 19+ minutes.
+
+Recorded ADR-011 (test performance infra + the new-capability module layout every subsequent phase of this
+program follows — flat per-capability `*_views.py` files alongside the existing `views.py`, mirroring the
+established per-capability `services/`/`selectors/`/`forms/` pattern; no new `apps/service_desk` subpackage,
+no dead-scaffolding reuse).
+
+**Baseline re-verified and recorded:** `check` clean · `makemigrations --check --dry-run` clean ·
+`showmigrations --plan` shows `service_desk` 0001-0011 applied in order · **296/296 tests passing**
+(`DJANGO_SETTINGS_MODULE=ticketing.test_settings python manage.py test --parallel auto`). This is the
+verified starting point for every subsequent phase of the Enterprise Completion Program.
+
+Pushed the branch and opened a draft PR before implementation, per the mission's explicit instruction to do
+so early — see the PR for live, truthful status as each phase lands.
+
+### Phase 2 — Service Catalogue and Service Request Management (complete)
+
+New models: `ServiceCategory` (admin-managed reference data, mirroring `Department`/`RequestType` —
+no dedicated app views), `CatalogItem` (browsable offering with category, fulfilment department,
+approval requirement, default priority, expected delivery days, active/inactive lifecycle),
+`ServiceRequest` (wraps exactly one `Ticket` via `OneToOneField` — see ADR-011, Decision 2:
+visibility is derived entirely from `get_ticket_queryset`, not reimplemented), `ServiceRequestApproval`
+(append-only decision record: actor, decision, comment, timestamp), `ServiceRequestHistory` (audit trail
+mirroring `TicketHistory`/`ProblemHistory`'s shape and `record()` classmethod). Migration `0012` (additive
+only — new tables plus a `choices=`-only `AlterField` on `Notification.kind` for three new notification
+kinds).
+
+New service layer: `CatalogService` (item CRUD/lifecycle, with `assert_department_allowed` enforced
+independently of `CatalogItemForm`'s queryset narrowing — mission requirement "never rely on form
+filtering alone") and `ServiceRequestService` (full lifecycle: create → pending_approval/approved →
+assigned → fulfilling → fulfilled, or → rejected/cancelled at the appropriate points). Two defects
+found and fixed while writing tests, not shipped: (1) `approve_request`/`reject_request` originally
+checked only "not self-approval" — a Technician holding `change_servicerequest` (needed for
+assignment/fulfilment) could otherwise have approved a request; added `_assert_may_decide` requiring
+Manager or Administrator specifically. (2) fulfilment-stage transitions (`mark_fulfilling`/
+`mark_fulfilled`) are restricted to the ticket's assignee, a Manager, or an Administrator
+(`_assert_may_fulfil`), not just anyone holding the workflow-change permission.
+
+`approve_request`/`reject_request` reuse `TicketService`/`NotificationService` for everything the
+underlying ticket already owns (assignment, status, comments) rather than duplicating it — assignment
+calls `TicketService.assign_ticket` + advances the ticket to `in_progress`; fulfilment calls
+`TicketService.change_status(ticket, "resolved", ...)`, after which the **existing, unmodified**
+IM-04 requester-confirmation flow closes the ticket — no new confirmation code was needed.
+
+New flat view module `catalog_views.py` (ADR-011, Decision 2 — not appended to the existing `views.py`
+monolith), 14 views, 15 new URL routes, 2 new sidebar entries (`view_catalogitem`/`view_servicerequest`
+gated). RBAC: `get_catalog_item_queryset` (active items for everyone, all items for Manager/Admin) and
+`get_service_request_queryset` (thin wrapper over `get_ticket_queryset`) in `security/policies.py`;
+matching `CatalogItem*`/`ServiceRequest*PermissionMixin` sets in `security/mixins.py`. `create_roles.py`
+extended with the new permissions per role (Requester: browse + submit; Technician: browse + workflow
+actions; Manager/Administrator: full catalogue administration + approval).
+
+7 new templates under `templates/catalog/`. Test suite: `test_service_catalog.py`, 51 new tests (model
+constraints, service-layer department-scoping enforcement bypassing the form, RBAC scoping mirrored from
+Ticket, cross-scope 404, anonymous redirect, POST-only, CSRF, self-approval prevention, the two defects
+above, full lifecycle through real views ending in the reused ticket-confirmation close). Extended
+`test_navigation.py` (admin registration check, manager navigation/reachability tuples) rather than
+duplicating that coverage in the new file.
+
+**Verified:** `check` clean · `makemigrations --check --dry-run` clean · **347/347 tests passing**
+(296 baseline + 51 new).
+
+### Phase 3 — Change Management (complete)
+
+New models: `Change` (title, description, change type — standard/normal/emergency, department,
+requested_by, assigned_to as implementer, impact/urgency, calculated `risk_level`, implementation/test/
+rollback plans, schedule window, 11-state status), `ChangeApproval` (append-only CAB decision: actor,
+decision, comment, timestamp), `ChangeHistory` (audit trail mirroring `TicketHistory`'s shape). Migration
+`0013` (additive only — three new tables).
+
+`ChangeService.STATUS_FLOW` enforces the boundary the mission specified: draft → submitted →
+assessed → approved → scheduled → implementing → validation → completed, with rejected/failed/
+rolled_back off-ramps at the appropriate points; illegal transitions raise `ValidationError`.
+Risk is *calculated* from impact × urgency via a fixed matrix at assessment time — "calculated or
+governed risk level" per the mission spec (calculated by default, CAB approval is the governance step).
+Scheduling checks for overlapping windows against other scheduled/implementing changes in the same
+department and rejects conflicts (`ChangeSelector.get_scheduled_conflicts`).
+
+Separation of duties: `_assert_may_decide` rejects an approver who is either the requester or the
+assigned implementer, and independently requires Manager/Administrator — a Technician holding
+`change_change` (needed to submit/implement their own work) cannot approve *any* change, not just their
+own. `_assert_may_implement` restricts implementation/validation/failure/rollback transitions to the
+assignee, a manager, or an administrator.
+
+RBAC (`get_change_queryset`): Requester excluded entirely (mirrors ADR-010, Decision 1's Problem
+Management precedent — Change Management is internal IT governance, not requester-facing); Manager
+department-scoped; Administrator unrestricted; Technician sees changes they requested *or* are assigned
+to — **a real gap found and fixed while writing tests**: an assigned-only rule would have let a
+Technician raise a change and then be unable to see or submit it until someone else assigned an
+implementer.
+
+New flat `change_views.py` (15 views) per ADR-011, 16 URL routes, one sidebar entry
+(`view_change`-gated), `Change*PermissionMixin` set, extended `create_roles.py` (Requester: none;
+Technician: view/add/change; Manager/Administrator: full). 5 templates under `templates/changes/`.
+32 new tests (`test_change_management.py`): risk calculation, every illegal-transition rejection,
+schedule-conflict rejection (and confirmation that non-overlapping schedules in the same department are
+allowed), the two separation-of-duties checks, RBAC scoping including the Technician-visibility fix
+above, cross-scope 404, anonymous redirect, POST-only, CSRF, and full lifecycle through real views
+covering both the success path and the failure→rollback path.
+
+**Verified:** `check` clean · `makemigrations --check --dry-run` clean · **378/378 tests passing**
+(347 baseline + 31 new — one test doubles as the RBAC-fix regression above).
+
+### Phase 4 — Release Management (complete)
+
+New models: `Release` (name, version, environment — development/staging/production, department, owner,
+`changes` M2M, deployment/validation/rollback plans, schedule window, outcome, 8-state status),
+`ReleaseApproval`, `ReleaseHistory`. Migration `0014` (additive only — three new tables).
+
+`Release.CHANGE_ELIGIBLE_STATUSES` is the mission's "approved eligibility boundary" for linking a
+`Change`: only a change that has cleared CAB approval (`approved`/`scheduled`/`implementing`/
+`validation`/`completed`) may be linked — `ReleaseService.link_change` enforces this directly, not left
+to the UI to filter (the eligible-changes dropdown in the template is a usability narrowing on top, same
+pattern as `CatalogItemForm`'s department narrowing). `ReleaseService.STATUS_FLOW`: draft → approved →
+scheduled → deploying → validation → completed, with a failed → rolled_back off-ramp. Scheduling checks
+for overlapping windows against other scheduled/deploying releases in the same department *and*
+environment (a staging and a production release with the same window don't conflict with each other).
+
+Approval requires Manager/Administrator and rejects the release's own owner (separation of duties, same
+shape as Change Management). Deployment-stage transitions are restricted to the owner, a manager, or an
+administrator.
+
+RBAC (`get_release_queryset`): Requester excluded entirely; Manager department-scoped; Administrator
+unrestricted; Technician sees releases they own. New flat `release_views.py` (14 views), 15 URL routes,
+sidebar entry, `Release*PermissionMixin` set, extended `create_roles.py`, 4 templates. 26 new tests
+(`test_release_management.py`): the eligibility boundary (unapproved and rejected changes both refused),
+separation of duties, schedule-conflict detection including the environment-doesn't-conflict-across
+case, RBAC scoping, cross-scope 404, anonymous redirect, POST-only, CSRF, and full lifecycle through
+real views (including a manager creating a release, failing to self-approve, reassigning ownership, and
+completing the deploy → validate → complete path).
+
+**Verified:** `check` clean · `makemigrations --check --dry-run` clean · **404/404 tests passing**
+(378 baseline + 26 new).
+
+### Phase 5 — CMDB (complete)
+
+New models: `ConfigurationItemType` (admin-managed reference data, mirrors `ServiceCategory`/
+`Department`/`RequestType`), `ConfigurationItem` (type, unique `identifier`, status, criticality,
+department, owner, plus `tickets`/`changes` M2M fields defined here rather than by touching
+`Ticket`/`Change` themselves, keeping those files untouched), `CIRelationship` (directed, validated
+`relationship_type` choice set, `CheckConstraint` against self-reference, `UniqueConstraint` on
+(source, target, type) preventing duplicates — enforced at the database *and* the service layer).
+Migration `0015` (additive only).
+
+RBAC (`get_configuration_item_queryset`): Requester excluded entirely (operational/technical data, same
+rationale as Change/Release); Manager department-scoped *including* retired/disposed items (full asset
+stewardship); Technician sees every non-retired/non-disposed CI system-wide, deliberately not
+department-scoped — troubleshooting routinely needs a CI outside the technician's own department, unlike
+the tightly-scoped governance modules. `get_ci_relationship_queryset` derives visibility from the
+relationship's source CI, so an edge can never be used to reach a CI that would otherwise be out of
+scope.
+
+`CMDBService.add_relationship` rejects self-relationships and duplicates before hitting the database
+constraints (a clean `ValidationError` for the UI rather than a raw `IntegrityError`).
+`CMDBService.assert_department_allowed` mirrors `SupplierService`/`CatalogService` exactly — a Manager
+cannot file a CI under a department they don't manage, checked independently of the form's queryset
+narrowing. CI linking to tickets/changes resolves *both* sides through their own RBAC-scoped queryset
+(`get_ticket_queryset`/`get_change_queryset`) before linking, so linking can't be used to leak or
+associate an out-of-scope object.
+
+New flat `cmdb_views.py` (10 views) per ADR-011, 10 URL routes, sidebar entry, `ConfigurationItem*
+PermissionMixin` set, extended `create_roles.py`, 4 templates. 30 new tests
+(`test_cmdb.py`): duplicate-identifier and self-relationship rejection at both the model and service
+layer, department-scoping enforcement independent of form filtering, the full RBAC matrix including the
+retired-item Technician/Manager asymmetry, relationship-queryset visibility following its source CI,
+cross-scope 404, anonymous redirect, POST-only, CSRF, and the full lifecycle (create two CIs, relate
+them, link a ticket, unlink it) through real views.
+
+**Verified:** `check` clean · `makemigrations --check --dry-run` clean · **434/434 tests passing**
+(404 baseline + 30 new).
+
+### Phase 6 — Knowledge Management (complete)
+
+New models: `KnowledgeCategory` (admin-managed reference data), `KnowledgeArticle` (category, tags,
+author, reviewer, `version` incremented on every publish, 5-state status, 3-level `visibility`,
+`published_at`), `KnowledgeArticleHistory`, `KnowledgeFeedback` (helpful/not-helpful,
+`UniqueConstraint(article, user)` — a second vote updates the first via `update_or_create` rather than
+duplicating). Migration `0016` (additive only).
+
+`get_knowledge_article_queryset` is the mission's core requirement made concrete: it is the *only* path
+every view and the search selector uses to reach a `KnowledgeArticle`, so draft or restricted content
+cannot leak through a direct URL or a search result by construction. Requester sees published+public
+only; Technician adds published+internal; Manager and Administrator see everything past draft
+(Administrator literally everything) regardless of visibility, plus their own drafts. **A real gap found
+while testing:** the first cut scoped Manager to "published, or their own articles" — which meant a
+Manager could never see *another author's* in-review submission, making reviewer assignment and review-
+queue management impossible. Fixed to "everything past draft, or their own drafts", verified by a
+regression test.
+
+`KnowledgeService.STATUS_FLOW`: draft → in_review → approved → published, with published/archived both
+able to restart at draft (the revision cycle) and in_review able to bounce back to draft (send-back).
+Self-review prevention mirrors the separation-of-duties pattern used throughout this program: a reviewer
+may never be the article's own author, checked independently of the `change_knowledgearticle` permission
+a Technician also holds for authoring their own work. Publication is restricted to Manager/Administrator
+and increments `version` on every publish.
+
+New flat `knowledge_views.py` (12 views) per ADR-011, 12 URL routes, sidebar entry (visible to Requester
+too — Knowledge is the one governance-adjacent module Requesters *do* get, since published public
+articles are self-service content), `KnowledgeArticle*PermissionMixin` set, extended `create_roles.py`.
+4 templates. 29 new tests (`test_knowledge_management.py`): the full visibility matrix including the
+Manager-visibility fix above, direct-URL and search leak prevention for both draft and restricted
+content (the mission's explicit requirement, tested literally), self-review prevention, duplicate-
+feedback protection, illegal-transition rejection, POST-only, CSRF, and the full lifecycle through real
+views (create → submit → assign reviewer → approve → publish → Requester reads and leaves feedback →
+archive).
+
+**Verified:** `check` clean · `makemigrations --check --dry-run` clean · **463/463 tests passing**
+(434 baseline + 29 new).
+
+### Phase 7 — Reporting and Analytics (complete)
+
+No new models — this phase is read-only aggregation over the six domains already built, using their
+existing RBAC-scoped queryset functions (`get_ticket_queryset`, `get_change_queryset`, ...) directly.
+There is deliberately no separate, wider "reporting" data path: `ReportingDashboardView` computes each
+section only if the viewer holds that module's own `view_*` permission, and every export view resolves
+records through the exact same scoped queryset its module's list view uses — the mission's "exports must
+use the same scoped querysets as the UI" requirement, satisfied by construction rather than by a parallel
+check. All figures are live query results computed at render time; the dashboard is labelled "Live data
+as of {timestamp}" since there is no historical-snapshot store anywhere in this codebase to distinguish
+it from.
+
+`services/reporting_service.py`: `sanitize_csv_cell` neutralises spreadsheet-formula injection (the
+OWASP-recommended mitigation — a cell starting with `=`, `+`, `-`, `@`, tab or carriage-return gets a
+leading `'`, which every major spreadsheet treats as "force plain text"); `stream_csv` uses
+`StreamingHttpResponse` with a generator over `queryset.iterator()` so export size is bounded by network
+transfer, not server memory, and `select_related` on every export view's queryset keeps per-row cost
+constant rather than N+1; `parse_date_range` turns `date_from`/`date_to` query params into a shared,
+reusable filter.
+
+New flat `reporting_views.py`: one dashboard view plus six CSV export views (tickets, service requests,
+changes, releases, CMDB, knowledge), 7 URL routes, one sidebar entry visible to every authenticated user
+(each section/export self-gates on its own module's permission). 16 new tests (`test_reporting.py`):
+formula-injection neutralisation for every trigger character, dashboard scoping (Requester sees only
+their own record counts, Manager only their department's, further narrowed by the department/date
+filters), export-matches-UI-scope (an out-of-scope record never appears in a CSV), a malicious title
+surviving into the CSV only in its neutralised form, unauthorized export rejected with 403 (not a
+silently empty file), and a comparison-based N+1 regression test (query count does not grow between a
+small and a 20-row-larger export).
+
+**Verified:** `check` clean · `makemigrations --check --dry-run` clean · **479/479 tests passing**
+(463 baseline + 16 new).
+
+### Phase 8 — SLA scheduler monitoring and email hardening (complete)
+
+**Discovery first, not assumed:** the existing SLA/email implementation (SLA-01/NOTIFY-01, 2026-08-27
+sweep) already satisfied most of this phase's mission requirements before this session touched
+anything — verified by reading the code, not re-built: `SLAEscalation` already has
+`UniqueConstraint(fields=["ticket_sla", "kind"])` backing `get_or_create` (duplicate-escalation
+prevention, race-safe at the database level, not just application logic); `process_sla` was already a
+plain management command with no background thread; `NotificationService`'s one log line
+(`logger.exception`) already logs only the notification ID and recipient address, never message content
+or credentials; a test-suitable console/locmem email backend was already configured. Only two concrete
+gaps remained: run monitoring, and consolidated scheduling/verification documentation.
+
+New model `SLARunLog` (started_at, finished_at, processed_count, warnings_count, breaches_count,
+succeeded, error_message) — migration `0017`, additive only. `process_sla` now writes one row per
+non-dry-run execution: on success, processed/warning/breach counts and duration; on any exception, the
+error message is recorded and the exception is **re-raised** afterward, so an external scheduler still
+sees a non-zero exit code and can alert independently of this table. The dry-run path is unchanged
+(writes nothing, as before) since it makes no real assessment to log. The SLA dashboard
+(`SLADashboardView`) gained a "Scheduler Health" panel showing the 10 most recent runs, visible only to
+whoever can already manage SLA policies (Manager/Administrator) — a Requester's dashboard is unaffected.
+
+New `docs/operations/SLA_SCHEDULING.md`: Windows Task Scheduler (`schtasks`/GUI), cron, systemd timer
+(preferred on systemd hosts), and container-compatible scheduling (Kubernetes CronJob with
+`concurrencyPolicy: Forbid`, or host cron driving `docker compose run`) — each with the explicit warning
+against adding a second `command:` to the long-running web container to "also" run `process_sla` in a
+loop, which would reintroduce the exact unmanaged-background-thread problem a one-shot command avoids.
+New `docs/operations/EMAIL_CONFIGURATION.md` consolidates the required environment variables (already in
+`.env.example`, not duplicated content, cross-referenced) and a verification procedure using Django's
+built-in `sendtestemail` command plus a real in-app event check.
+
+9 new tests added to the existing `test_sla_management.py` (not a new file — this is monitoring *of* the
+existing SLA module, not a new module): run-log creation on success (including the zero-due-clocks case),
+no run-log on dry-run, failure recording plus re-raise (mocked `SLAService.process_due` failure), and
+scheduler-health-panel visibility scoped to policy-managing roles only.
+
+**Verified:** `check` clean · `makemigrations --check --dry-run` clean · **485/485 tests passing**
+(479 baseline + 9 new — before/after run counts, not "new module" counts, since this phase extended an
+existing module's tests rather than adding a new test file).
+
+### Phase 9 — Audit, RBAC and integrated acceptance (complete)
+
+No new production code. Every module built in Phases 2-8 already carries its own audit-history model,
+RBAC selector, and a dedicated test file proving anonymous redirect/403/cross-scope-404/POST-only/CSRF
+for that module in isolation — that per-module RBAC coverage is not repeated here. What this phase adds
+is the one thing genuinely missing: proof that the *seams between modules* hold for a real role journey,
+plus an explicit audit-immutability check.
+
+New `test_integrated_acceptance.py`, using the real `create_roles` bootstrap (not a hand-rolled
+permission set, so this exercises the same RBAC configuration a real deployment runs) rather than
+building a fifth copy of the permission matrix:
+
+- **Requester journey** — raise a ticket, browse the catalogue, submit and auto-approve a service
+  request, read a published knowledge article and leave feedback, see only their own ticket count on
+  Reports, confirmed locked out of Change/Release/CMDB (403).
+- **Technician journey** — self-assign a ticket, add a work note, link it to a CMDB item, raise a change
+  and see it before anyone assigns an implementer (the Phase 3 RBAC fix, exercised end-to-end here),
+  author a knowledge article, confirmed unable to approve their own change (separation of duties) even
+  while holding the broader workflow permission, confirmed no supplier access at all.
+- **Manager journey** — assess and approve a change, create a release and link the now-eligible change to
+  it (the Phase 4 eligibility boundary), manage a CMDB relationship in their department, confirmed 404
+  (not 403) on another department's ticket, department-filtered report and matching CSV export.
+- **Administrator journey** — cross-department ticket access, full change approval authority — **found
+  while writing this test, not a bug**: separation of duties rejects self-approval unconditionally,
+  including for Administrators, so the journey has a different user raise the change for the admin to
+  approve, which is the correct security posture, not a gap to work around.
+- **`AuditImmutabilityTests`** — no URL route in `urls.py` targets anything resembling a history/audit
+  model (checked by pattern, not by enumeration, so it stays correct as new modules are added); no
+  reversible update/delete route exists for `TicketHistory`; no history model (checked via
+  `ChangeHistory` as the representative shape every history model added in this program follows) exposes
+  an `update_*`/`edit_*`/`revise_*` method — the only way any of them are ever written is
+  `<Model>Service` calling `<History>.record()`.
+
+**Verified:** `check` clean · `makemigrations --check --dry-run` clean · **492/492 tests passing**
+(485 baseline + 7 new).
+
+### Phase 10 — Operations, backup/recovery, production documentation (complete)
+
+No new models. New management commands `backup_database` (timestamped, verified-non-empty JSON
+`dumpdata` of users/groups/`service_desk`, excluding `auth.permission`/`contenttypes` which `migrate`/
+`create_roles` regenerate deterministically) and `verify_backup` (restores a backup into a brand-new,
+throwaway SQLite database inside a `tempfile.TemporaryDirectory()` it creates and deletes itself, reports
+row counts, then discards it — never touches `settings.DATABASES["default"]`, whatever that points to).
+
+**Two real bugs found and fixed while manually exercising these commands, before any automated test was
+written:** (1) `verify_backup`'s `handle()` originally returned a dict — Django's own `execute()` writes a
+non-`None` return value to stdout and crashes calling `.endswith()` on it when run as a real CLI
+invocation (only surfaced by actually running the command, not by `call_command` in a test, which
+tolerates non-string returns). (2) Testing `verify_backup` via in-process `call_command` inside a
+`TestCase` fights Django's own connection-guard instrumentation (it re-validates every database alias
+against a frozen `cls.databases` snapshot taken at class setup, before the dynamic alias exists) — the
+tests for this command run it as a genuine subprocess instead, which is both simpler and more faithful
+to what the command actually is: a CLI tool that manages its own connection lifecycle.
+
+New `OperationsView` (Administrator/superuser-only — `AdministratorRequiredMixin`, not a `Manager`-
+reachable page like every other dashboard in this program): Django/database/migration status, email
+configuration summary, the 10 most recent SLA runs (same data as the SLA dashboard's panel), and the 10
+most recent backup files with size/timestamp. Entirely read-only — nothing on the page executes a backup,
+a migration, or any other mutating operation.
+
+New `docs/operations/BACKUP_AND_RECOVERY.md`: what's backed up vs. backed up separately (media/
+attachments are files, not database rows), JSON vs. native `pg_dump` and when to use each, scheduling
+(cron/systemd/Windows Task Scheduler/containers, mirroring `SLA_SCHEDULING.md`'s patterns and explicit
+warning against a second in-container loop), a documented retention policy and RPO/RTO defaults, and the
+actual production restore procedure — explicitly marked as manual and never automatic, since this
+repository's own tooling only ever restores into a disposable, throwaway database for verification.
+
+16 new tests (`test_operations.py`): timestamped/non-empty backup naming and content, an empty database
+still producing a valid (non-empty-file) backup rather than being treated as a failure, a `dumpdata`
+failure leaving no partial file, `verify_backup` rejecting a missing/empty/non-JSON/non-list backup, a
+real backup restoring with correct counts, confirmation the live database is untouched after a
+`verify_backup` run, confirmation no dynamic alias survives even a trivial empty-backup run, and
+`OperationsView` RBAC (anonymous redirect, Manager/Technician 403, Administrator 200, sidebar link
+visible only to superusers).
+
+**Verified:** `check` clean · `makemigrations --check --dry-run` clean · **508/508 tests passing**
+(492 baseline + 16 new).
 
 ---
 
@@ -153,6 +539,7 @@ trusting this section once further commits land — it will go stale the moment 
 
 - **ADR-009 — Problem Management Architecture** *(ACCEPTED)*: Problem Management lives inside `apps/service_desk`; one Problem owns exactly one RCA via `problem.rca`. Implemented in `8d30023`/`4c7a37c`.
 - **ADR-010 — Visibility and IM-04 Scope Decisions** *(ACCEPTED)*: Requesters cannot access Problems; Technicians see assigned + unassigned tickets; IM-04 (Work Notes, Attachments, Requester Confirmation) all approved for implementation, with technical shape recorded for each. See [ADR/ADR-010-Visibility-and-IM-04-Scope-Decisions.md](ADR/ADR-010-Visibility-and-IM-04-Scope-Decisions.md).
+- **ADR-011 — Enterprise Completion Program Foundations** *(ACCEPTED)*: fast test-only password hasher (`ticketing/test_settings.py`, mirrored in `postgres_test_settings.py`) fixing a 19+ minute non-completing test run down to 8-11s; new-capability module layout (flat per-capability `*_views.py` alongside `views.py`, matching the existing `services/`/`selectors/`/`forms/` per-file pattern) for every module this program adds. See [ADR/ADR-011-Completion-Program-Foundations.md](ADR/ADR-011-Completion-Program-Foundations.md).
 
 ## Next Recommended Tasks
 

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Request {{ item.name }} — Enterprise Service Desk{% endblock %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item"><a href="{% url 'service_desk:catalog_item_list' %}">Service Catalogue</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'service_desk:catalog_item_detail' item.pk %}">{{ item.name }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Request</li>
+    </ol>
+</nav>
+
+<h1 class="h3 fw-bold mb-2">Request: {{ item.name }}</h1>
+<p class="text-muted small mb-4">
+    {% if item.requires_approval %}
+        This item requires manager approval before fulfilment begins.
+    {% else %}
+        This item is auto-approved and will be routed for fulfilment right away.
+    {% endif %}
+    {% if item.expected_delivery_days %}
+        Typical delivery: {{ item.expected_delivery_days }} day(s).
+    {% endif %}
+</p>
+
+<form method="post" novalidate class="col-12 col-lg-8">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}
+                <p class="mb-0">{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% for field in form %}
+        <div class="mb-3">
+            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+            {% endif %}
+            {% for error in field.errors %}
+                <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary">Submit Request</button>
+    <a href="{% url 'service_desk:catalog_item_detail' item.pk %}" class="btn btn-secondary">Cancel</a>
+</form>
+
+{% endblock %}

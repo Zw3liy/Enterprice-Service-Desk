@@ -20,7 +20,18 @@ from django.contrib.auth.models import (
 
 from django.contrib.contenttypes.models import ContentType
 
-from apps.service_desk.models import Problem, SLAPolicy, Supplier, Ticket
+from apps.service_desk.models import (
+    CatalogItem,
+    Change,
+    ConfigurationItem,
+    KnowledgeArticle,
+    Problem,
+    Release,
+    ServiceRequest,
+    SLAPolicy,
+    Supplier,
+    Ticket,
+)
 
 
 
@@ -45,6 +56,30 @@ class Command(BaseCommand):
 
         sla_policy_content_type = ContentType.objects.get_for_model(
             SLAPolicy
+        )
+
+        catalog_item_content_type = ContentType.objects.get_for_model(
+            CatalogItem
+        )
+
+        service_request_content_type = ContentType.objects.get_for_model(
+            ServiceRequest
+        )
+
+        change_content_type = ContentType.objects.get_for_model(
+            Change
+        )
+
+        release_content_type = ContentType.objects.get_for_model(
+            Release
+        )
+
+        configuration_item_content_type = ContentType.objects.get_for_model(
+            ConfigurationItem
+        )
+
+        knowledge_article_content_type = ContentType.objects.get_for_model(
+            KnowledgeArticle
         )
 
 
@@ -137,6 +172,145 @@ class Command(BaseCommand):
                 content_type=sla_policy_content_type,
                 codename="delete_slapolicy",
             ),
+
+            # Service Catalogue. Everyone may browse (view_catalogitem);
+            # only Manager/Administrator administer items. Requesters
+            # may submit requests (add_servicerequest); Technician/
+            # Manager/Administrator may act on the workflow
+            # (change_servicerequest) — see security.policies.
+            # get_service_request_queryset for the object-level scope
+            # this permission operates within.
+            "view_catalogitem": Permission.objects.get(
+                content_type=catalog_item_content_type,
+                codename="view_catalogitem",
+            ),
+
+            "add_catalogitem": Permission.objects.get(
+                content_type=catalog_item_content_type,
+                codename="add_catalogitem",
+            ),
+
+            "change_catalogitem": Permission.objects.get(
+                content_type=catalog_item_content_type,
+                codename="change_catalogitem",
+            ),
+
+            "delete_catalogitem": Permission.objects.get(
+                content_type=catalog_item_content_type,
+                codename="delete_catalogitem",
+            ),
+
+            "view_servicerequest": Permission.objects.get(
+                content_type=service_request_content_type,
+                codename="view_servicerequest",
+            ),
+
+            "add_servicerequest": Permission.objects.get(
+                content_type=service_request_content_type,
+                codename="add_servicerequest",
+            ),
+
+            "change_servicerequest": Permission.objects.get(
+                content_type=service_request_content_type,
+                codename="change_servicerequest",
+            ),
+
+            "delete_servicerequest": Permission.objects.get(
+                content_type=service_request_content_type,
+                codename="delete_servicerequest",
+            ),
+
+            # Change Management. Requesters get nothing at all — an
+            # internal IT governance process, mirroring ADR-010,
+            # Decision 1's Problem Management precedent (see
+            # security.policies.get_change_queryset).
+            "view_change": Permission.objects.get(
+                content_type=change_content_type,
+                codename="view_change",
+            ),
+
+            "add_change": Permission.objects.get(
+                content_type=change_content_type,
+                codename="add_change",
+            ),
+
+            "change_change": Permission.objects.get(
+                content_type=change_content_type,
+                codename="change_change",
+            ),
+
+            "delete_change": Permission.objects.get(
+                content_type=change_content_type,
+                codename="delete_change",
+            ),
+
+            # Release Management. Requesters get nothing — same
+            # rationale as Change Management.
+            "view_release": Permission.objects.get(
+                content_type=release_content_type,
+                codename="view_release",
+            ),
+
+            "add_release": Permission.objects.get(
+                content_type=release_content_type,
+                codename="add_release",
+            ),
+
+            "change_release": Permission.objects.get(
+                content_type=release_content_type,
+                codename="change_release",
+            ),
+
+            "delete_release": Permission.objects.get(
+                content_type=release_content_type,
+                codename="delete_release",
+            ),
+
+            # CMDB. Requesters get nothing — operational/technical
+            # data, not requester-facing.
+            "view_configurationitem": Permission.objects.get(
+                content_type=configuration_item_content_type,
+                codename="view_configurationitem",
+            ),
+
+            "add_configurationitem": Permission.objects.get(
+                content_type=configuration_item_content_type,
+                codename="add_configurationitem",
+            ),
+
+            "change_configurationitem": Permission.objects.get(
+                content_type=configuration_item_content_type,
+                codename="change_configurationitem",
+            ),
+
+            "delete_configurationitem": Permission.objects.get(
+                content_type=configuration_item_content_type,
+                codename="delete_configurationitem",
+            ),
+
+            # Knowledge Management. Unlike Change/Release/CMDB,
+            # Requesters DO get view access — published, public
+            # articles are self-service content (see
+            # security.policies.get_knowledge_article_queryset).
+            "view_knowledgearticle": Permission.objects.get(
+                content_type=knowledge_article_content_type,
+                codename="view_knowledgearticle",
+            ),
+
+            "add_knowledgearticle": Permission.objects.get(
+                content_type=knowledge_article_content_type,
+                codename="add_knowledgearticle",
+            ),
+
+            "change_knowledgearticle": Permission.objects.get(
+                content_type=knowledge_article_content_type,
+                codename="change_knowledgearticle",
+            ),
+
+            "delete_knowledgearticle": Permission.objects.get(
+                content_type=knowledge_article_content_type,
+                codename="delete_knowledgearticle",
+            ),
         }
 
 
@@ -147,6 +321,10 @@ class Command(BaseCommand):
             "Requester": [
                 permissions["view"],
                 permissions["add"],
+                permissions["view_catalogitem"],
+                permissions["add_servicerequest"],
+                permissions["view_servicerequest"],
+                permissions["view_knowledgearticle"],
             ],
 
 
@@ -159,6 +337,19 @@ class Command(BaseCommand):
                 permissions["view_problem"],
                 permissions["add_problem"],
                 permissions["change_problem"],
+                permissions["view_catalogitem"],
+                permissions["view_servicerequest"],
+                permissions["change_servicerequest"],
+                permissions["view_change"],
+                permissions["add_change"],
+                permissions["change_change"],
+                permissions["view_release"],
+                permissions["change_release"],
+                permissions["view_configurationitem"],
+                permissions["change_configurationitem"],
+                permissions["view_knowledgearticle"],
+                permissions["add_knowledgearticle"],
+                permissions["change_knowledgearticle"],
             ],
 
 
@@ -177,6 +368,23 @@ class Command(BaseCommand):
                 permissions["view_slapolicy"],
                 permissions["add_slapolicy"],
                 permissions["change_slapolicy"],
+                permissions["view_catalogitem"],
+                permissions["add_catalogitem"],
+                permissions["change_catalogitem"],
+                permissions["view_servicerequest"],
+                permissions["change_servicerequest"],
+                permissions["view_change"],
+                permissions["add_change"],
+                permissions["change_change"],
+                permissions["view_release"],
+                permissions["add_release"],
+                permissions["change_release"],
+                permissions["view_configurationitem"],
+                permissions["add_configurationitem"],
+                permissions["change_configurationitem"],
+                permissions["view_knowledgearticle"],
+                permissions["add_knowledgearticle"],
+                permissions["change_knowledgearticle"],
             ],
 
 
@@ -197,6 +405,30 @@ class Command(BaseCommand):
                 permissions["add_slapolicy"],
                 permissions["change_slapolicy"],
                 permissions["delete_slapolicy"],
+                permissions["view_catalogitem"],
+                permissions["add_catalogitem"],
+                permissions["change_catalogitem"],
+                permissions["delete_catalogitem"],
+                permissions["view_servicerequest"],
+                permissions["add_servicerequest"],
+                permissions["change_servicerequest"],
+                permissions["delete_servicerequest"],
+                permissions["view_change"],
+                permissions["add_change"],
+                permissions["change_change"],
+                permissions["delete_change"],
+                permissions["view_release"],
+                permissions["add_release"],
+                permissions["change_release"],
+                permissions["delete_release"],
+                permissions["view_configurationitem"],
+                permissions["add_configurationitem"],
+                permissions["change_configurationitem"],
+                permissions["delete_configurationitem"],
+                permissions["view_knowledgearticle"],
+                permissions["add_knowledgearticle"],
+                permissions["change_knowledgearticle"],
+                permissions["delete_knowledgearticle"],
             ],
 
         }

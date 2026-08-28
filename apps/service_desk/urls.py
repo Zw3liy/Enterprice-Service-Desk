@@ -1,5 +1,12 @@
 from django.urls import path
 from . import views
+from . import catalog_views
+from . import change_views
+from . import release_views
+from . import cmdb_views
+from . import knowledge_views
+from . import reporting_views
+from . import operations_views
 
 app_name = 'service_desk'
 
@@ -53,4 +60,94 @@ urlpatterns = [
     path('problems/<int:pk>/rca/approvals/<int:approval_pk>/decide/', views.ProblemApprovalDecisionView.as_view(), name='problem_approval_decide'),
     path('problems/<int:pk>/close/', views.ProblemCloseView.as_view(), name='problem_close'),
     path('problems/<int:pk>/reopen/', views.ProblemReopenView.as_view(), name='problem_reopen'),
+
+    # Service Catalogue
+    path('catalog/', catalog_views.CatalogItemListView.as_view(), name='catalog_item_list'),
+    path('catalog/new/', catalog_views.CatalogItemCreateView.as_view(), name='catalog_item_create'),
+    path('catalog/<int:pk>/', catalog_views.CatalogItemDetailView.as_view(), name='catalog_item_detail'),
+    path('catalog/<int:pk>/edit/', catalog_views.CatalogItemUpdateView.as_view(), name='catalog_item_update'),
+    path('catalog/<int:pk>/deactivate/', catalog_views.CatalogItemDeactivateView.as_view(), name='catalog_item_deactivate'),
+    path('catalog/<int:pk>/activate/', catalog_views.CatalogItemActivateView.as_view(), name='catalog_item_activate'),
+    path('catalog/<int:item_pk>/request/', catalog_views.ServiceRequestCreateView.as_view(), name='service_request_create'),
+
+    # Service Requests
+    path('requests/', catalog_views.ServiceRequestListView.as_view(), name='service_request_list'),
+    path('requests/<int:pk>/', catalog_views.ServiceRequestDetailView.as_view(), name='service_request_detail'),
+    path('requests/<int:pk>/approve/', catalog_views.ServiceRequestApproveView.as_view(), name='service_request_approve'),
+    path('requests/<int:pk>/reject/', catalog_views.ServiceRequestRejectView.as_view(), name='service_request_reject'),
+    path('requests/<int:pk>/assign/', catalog_views.ServiceRequestAssignView.as_view(), name='service_request_assign'),
+    path('requests/<int:pk>/fulfilling/', catalog_views.ServiceRequestMarkFulfillingView.as_view(), name='service_request_fulfilling'),
+    path('requests/<int:pk>/fulfilled/', catalog_views.ServiceRequestMarkFulfilledView.as_view(), name='service_request_fulfilled'),
+    path('requests/<int:pk>/cancel/', catalog_views.ServiceRequestCancelView.as_view(), name='service_request_cancel'),
+
+    # Change Management
+    path('changes/', change_views.ChangeListView.as_view(), name='change_list'),
+    path('changes/new/', change_views.ChangeCreateView.as_view(), name='change_create'),
+    path('changes/<int:pk>/', change_views.ChangeDetailView.as_view(), name='change_detail'),
+    path('changes/<int:pk>/submit/', change_views.ChangeSubmitView.as_view(), name='change_submit'),
+    path('changes/<int:pk>/assess/', change_views.ChangeAssessView.as_view(), name='change_assess'),
+    path('changes/<int:pk>/approve/', change_views.ChangeApproveView.as_view(), name='change_approve'),
+    path('changes/<int:pk>/reject/', change_views.ChangeRejectView.as_view(), name='change_reject'),
+    path('changes/<int:pk>/schedule/', change_views.ChangeScheduleView.as_view(), name='change_schedule'),
+    path('changes/<int:pk>/assign/', change_views.ChangeAssignView.as_view(), name='change_assign'),
+    path('changes/<int:pk>/implement/', change_views.ChangeStartImplementationView.as_view(), name='change_implement'),
+    path('changes/<int:pk>/validate/', change_views.ChangeRequestValidationView.as_view(), name='change_validate'),
+    path('changes/<int:pk>/complete/', change_views.ChangeCompleteView.as_view(), name='change_complete'),
+    path('changes/<int:pk>/fail/', change_views.ChangeFailView.as_view(), name='change_fail'),
+    path('changes/<int:pk>/rollback/', change_views.ChangeRollbackView.as_view(), name='change_rollback'),
+    path('changes/<int:pk>/comment/', change_views.ChangeCommentView.as_view(), name='change_comment'),
+
+    # Release Management
+    path('releases/', release_views.ReleaseListView.as_view(), name='release_list'),
+    path('releases/new/', release_views.ReleaseCreateView.as_view(), name='release_create'),
+    path('releases/<int:pk>/', release_views.ReleaseDetailView.as_view(), name='release_detail'),
+    path('releases/<int:pk>/approve/', release_views.ReleaseApproveView.as_view(), name='release_approve'),
+    path('releases/<int:pk>/schedule/', release_views.ReleaseScheduleView.as_view(), name='release_schedule'),
+    path('releases/<int:pk>/link-change/', release_views.ReleaseLinkChangeView.as_view(), name='release_link_change'),
+    path('releases/<int:pk>/unlink-change/<int:change_pk>/', release_views.ReleaseUnlinkChangeView.as_view(), name='release_unlink_change'),
+    path('releases/<int:pk>/assign-owner/', release_views.ReleaseAssignOwnerView.as_view(), name='release_assign_owner'),
+    path('releases/<int:pk>/deploy/', release_views.ReleaseStartDeploymentView.as_view(), name='release_deploy'),
+    path('releases/<int:pk>/validate/', release_views.ReleaseRequestValidationView.as_view(), name='release_validate'),
+    path('releases/<int:pk>/complete/', release_views.ReleaseCompleteView.as_view(), name='release_complete'),
+    path('releases/<int:pk>/fail/', release_views.ReleaseFailView.as_view(), name='release_fail'),
+    path('releases/<int:pk>/rollback/', release_views.ReleaseRollbackView.as_view(), name='release_rollback'),
+    path('releases/<int:pk>/comment/', release_views.ReleaseCommentView.as_view(), name='release_comment'),
+
+    # CMDB
+    path('cmdb/', cmdb_views.ConfigurationItemListView.as_view(), name='cmdb_item_list'),
+    path('cmdb/new/', cmdb_views.ConfigurationItemCreateView.as_view(), name='cmdb_item_create'),
+    path('cmdb/<int:pk>/', cmdb_views.ConfigurationItemDetailView.as_view(), name='cmdb_item_detail'),
+    path('cmdb/<int:pk>/edit/', cmdb_views.ConfigurationItemUpdateView.as_view(), name='cmdb_item_update'),
+    path('cmdb/<int:pk>/relationships/add/', cmdb_views.CIRelationshipAddView.as_view(), name='cmdb_relationship_add'),
+    path('cmdb/<int:pk>/relationships/<int:relationship_pk>/remove/', cmdb_views.CIRelationshipRemoveView.as_view(), name='cmdb_relationship_remove'),
+    path('cmdb/<int:pk>/link-ticket/', cmdb_views.CILinkTicketView.as_view(), name='cmdb_link_ticket'),
+    path('cmdb/<int:pk>/unlink-ticket/<int:ticket_pk>/', cmdb_views.CIUnlinkTicketView.as_view(), name='cmdb_unlink_ticket'),
+    path('cmdb/<int:pk>/link-change/', cmdb_views.CILinkChangeView.as_view(), name='cmdb_link_change'),
+    path('cmdb/<int:pk>/unlink-change/<int:change_pk>/', cmdb_views.CIUnlinkChangeView.as_view(), name='cmdb_unlink_change'),
+
+    # Knowledge Management
+    path('knowledge/', knowledge_views.KnowledgeArticleListView.as_view(), name='knowledge_list'),
+    path('knowledge/new/', knowledge_views.KnowledgeArticleCreateView.as_view(), name='knowledge_create'),
+    path('knowledge/<int:pk>/', knowledge_views.KnowledgeArticleDetailView.as_view(), name='knowledge_detail'),
+    path('knowledge/<int:pk>/edit/', knowledge_views.KnowledgeArticleUpdateView.as_view(), name='knowledge_update'),
+    path('knowledge/<int:pk>/submit/', knowledge_views.KnowledgeArticleSubmitView.as_view(), name='knowledge_submit'),
+    path('knowledge/<int:pk>/assign-reviewer/', knowledge_views.KnowledgeArticleAssignReviewerView.as_view(), name='knowledge_assign_reviewer'),
+    path('knowledge/<int:pk>/approve/', knowledge_views.KnowledgeArticleApproveView.as_view(), name='knowledge_approve'),
+    path('knowledge/<int:pk>/send-back/', knowledge_views.KnowledgeArticleSendBackView.as_view(), name='knowledge_send_back'),
+    path('knowledge/<int:pk>/publish/', knowledge_views.KnowledgeArticlePublishView.as_view(), name='knowledge_publish'),
+    path('knowledge/<int:pk>/archive/', knowledge_views.KnowledgeArticleArchiveView.as_view(), name='knowledge_archive'),
+    path('knowledge/<int:pk>/revise/', knowledge_views.KnowledgeArticleStartRevisionView.as_view(), name='knowledge_start_revision'),
+    path('knowledge/<int:pk>/feedback/', knowledge_views.KnowledgeArticleFeedbackView.as_view(), name='knowledge_feedback'),
+
+    # Reporting and Analytics
+    path('reports/', reporting_views.ReportingDashboardView.as_view(), name='reporting_dashboard'),
+    path('reports/export/tickets/', reporting_views.TicketExportView.as_view(), name='reporting_export_tickets'),
+    path('reports/export/service-requests/', reporting_views.ServiceRequestExportView.as_view(), name='reporting_export_service_requests'),
+    path('reports/export/changes/', reporting_views.ChangeExportView.as_view(), name='reporting_export_changes'),
+    path('reports/export/releases/', reporting_views.ReleaseExportView.as_view(), name='reporting_export_releases'),
+    path('reports/export/cmdb/', reporting_views.ConfigurationItemExportView.as_view(), name='reporting_export_cmdb'),
+    path('reports/export/knowledge/', reporting_views.KnowledgeArticleExportView.as_view(), name='reporting_export_knowledge'),
+
+    # Operations (Administrator only)
+    path('operations/', operations_views.OperationsView.as_view(), name='operations_dashboard'),
 ]

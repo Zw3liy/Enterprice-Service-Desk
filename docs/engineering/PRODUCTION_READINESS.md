@@ -7,21 +7,24 @@ running in production". Everything under *Ready* has been implemented and is cov
 tests. Everything under *External requirements* is a deployment-environment input that no amount of
 repository work can satisfy.
 
-Last verified: session `arena/01a04293`, on top of `main` at `040dc7c`.
+Last verified: Enterprise Completion Program, Phase 1, branch
+`feature/service-desk-enterprise-completion-20260828-170022`, on top of `main` at `f5aeccf` (PR #7 merged).
 
 ---
 
 ## Verification commands and results
 
 Run from the repository root against the declared dependencies only (`pip install -r requirements.txt`,
-`Django==5.2.16`).
+`Django==5.2.16`). Test runs use `DJANGO_SETTINGS_MODULE=ticketing.test_settings` — see
+[ADR-011](ADR/ADR-011-Completion-Program-Foundations.md) — which changes only password-hashing speed for
+throwaway test-database users; every other setting is inherited unchanged from `ticketing.settings`.
 
 | Command | Result |
 |---|---|
 | `python manage.py check` | exit 0 — "System check identified no issues (0 silenced)" |
 | `python manage.py makemigrations --check --dry-run` | exit 0 — "No changes detected" |
-| `python manage.py showmigrations --plan` | exit 0 — `service_desk` `0001`–`0010` |
-| `python manage.py test` | exit 0 — **234 tests, OK** |
+| `python manage.py showmigrations --plan` | exit 0 — `service_desk` `0001`–`0011` |
+| `python manage.py test --parallel auto` (`ticketing.test_settings`) | exit 0 — **296 tests, OK**, ~8-11s |
 | `python manage.py check --deploy` | exit 0 — **1 warning** (`security.W004`) when run with a real `DJANGO_SECRET_KEY` and `DJANGO_DEBUG=0`; a second warning (`security.W009`) appears only if the check is run with the development fallback key |
 
 ### `check --deploy` warnings, explained
@@ -61,19 +64,29 @@ and switches on automatically as soon as `DJANGO_DEBUG` is false.
 
 ## Database
 
-Development and CI run on SQLite (`db.sqlite3`), and every migration in this repository is written
-to apply cleanly there. That is a genuine constraint, not a recommendation:
+**Corrected this session (2026-08-28):** the two paragraphs below describing `DATABASES` as hardcoded to
+SQLite with no env-driven path were true when originally written but are now stale — verified directly
+against the current files rather than left uncorrected. `ticketing/production_settings.py` (env-driven,
+`dj_database_url.parse(DATABASE_URL, ...)`, refuses to start without `DATABASE_URL`) and
+`ticketing/postgres_test_settings.py` (CI-safe layer over it) both already exist, `psycopg[binary]` and
+`dj-database-url` are already in `requirements.txt`, and `.github/workflows/deployment.yml` already runs
+the full migration/rollback/reapply/test cycle against a real PostgreSQL 16 service container on every
+push/PR. `ticketing/settings.py` (local dev default, used when no `DJANGO_SETTINGS_MODULE` override is
+set) intentionally still hardcodes SQLite — that default is correct for zero-setup local development, not
+a gap.
 
-- **SQLite is not suitable for production here.** It serialises writes, which the SLA processor and
+Development defaults to SQLite (`db.sqlite3`) when `ticketing.settings` is used directly; every migration
+in this repository applies cleanly there. Production uses PostgreSQL through `ticketing.production_settings`:
+
+- **SQLite is not suitable for production.** It serialises writes, which the SLA processor and
   concurrent ticket updates will contend on, and it offers no network access for multiple app
-  processes.
-- **Recommended production database: PostgreSQL 14+.** The schema uses only portable field types
-  (`JSONField`, `DurationField` arithmetic, partial-free unique constraints and indexes), so no
-  migration rewrite is expected — but the move has **not** been exercised in this repository and must
-  be validated against a real PostgreSQL instance before go-live.
-- Switching requires `DATABASES` to become env-driven (it is currently hardcoded to SQLite) and the
-  `psycopg` driver to be added to `requirements.txt`. Both are deliberately **not** done here: adding
-  an unexercised dependency and an untested settings branch would be worse than documenting the gap.
+  processes. This is why `ticketing.production_settings` requires `DATABASE_URL` and refuses to start
+  without it.
+- **Production database: PostgreSQL 14+** (`postgres:16-alpine` in `compose.yaml`/CI). The schema uses
+  only portable field types (`JSONField`, `DurationField` arithmetic, partial-free unique constraints and
+  indexes) — no migration rewrite was needed. Exercised in CI (`deployment.yml`
+  `postgres-verification` job): migrate from empty, full test suite, rollback `0011`/`0010` to `0009`,
+  reapply, confirm zero drift.
 
 Rollback: **verified, not assumed.** Against a disposable SQLite database this session ran
 `migrate` (forward, clean), `migrate service_desk 0008` (rolls `0010` and `0009` back, clean) and
@@ -108,9 +121,12 @@ reversing them cannot lose ticket, problem or supplier data.
    `tickets/timeline.html` are unreferenced. Reference-count evidence suggests they are dead, but
    they were not covered by prior inspection, so they were left in place rather than deleted on a
    guess.
-2. ~59 unregistered scaffold app directories remain outside `apps/service_desk` (including the now
-   superseded empty `apps/service_desk/sla/` and `apps/service_desk/notifications/` packages). Their
-   removal is a scope decision, not a defect.
-3. `DATABASES` is not yet env-driven (see Database above).
-4. Service Request Management, Change Management, CMDB and Knowledge Management remain unbuilt — see
-   `ITSM_ROADMAP.md`.
+2. ~128 unregistered scaffold app directories remain outside `apps/service_desk` (re-counted
+   2026-08-28; includes the now-superseded empty `apps/service_desk/{sla,notifications,cmdb,knowledge,
+   reporting,automation,identity,api,filters}/` packages). Their removal is a scope decision, not a
+   defect — this program's new modules do not write into any of them (ADR-011).
+3. ~~`DATABASES` is not yet env-driven~~ — **done**, see Database above (corrected 2026-08-28; this item
+   was stale).
+4. Service Request Management, Change Management, Release Management, CMDB and Knowledge Management are
+   the Enterprise Completion Program's remaining scope — see `ITSM_ROADMAP.md` and
+   [SESSION_STATE.md](SESSION_STATE.md) for live status.

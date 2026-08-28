@@ -83,7 +83,20 @@ class URLAndTemplateIntegrityTests(TestCase):
         import apps.service_desk.admin  # noqa: F401
 
         from apps.service_desk.models import (
+            CatalogItem,
+            Change,
+            ChangeApproval,
+            CIRelationship,
+            ConfigurationItem,
+            ConfigurationItemType,
+            KnowledgeArticle,
+            KnowledgeCategory,
             Notification,
+            Release,
+            ReleaseApproval,
+            ServiceCategory,
+            ServiceRequest,
+            ServiceRequestApproval,
             SLAEscalation,
             SLAPolicy,
             TicketSLA,
@@ -97,6 +110,19 @@ class URLAndTemplateIntegrityTests(TestCase):
             TicketSLA,
             SLAEscalation,
             Notification,
+            ServiceCategory,
+            CatalogItem,
+            ServiceRequest,
+            ServiceRequestApproval,
+            Change,
+            ChangeApproval,
+            Release,
+            ReleaseApproval,
+            ConfigurationItemType,
+            ConfigurationItem,
+            CIRelationship,
+            KnowledgeCategory,
+            KnowledgeArticle,
         ):
             with self.subTest(model=model.__name__):
                 self.assertIn(model, admin.site._registry)
@@ -162,6 +188,23 @@ class NavigationRenderingTests(TestCase):
                     "view_slapolicy",
                     "add_slapolicy",
                     "change_slapolicy",
+                    "view_catalogitem",
+                    "add_catalogitem",
+                    "change_catalogitem",
+                    "view_servicerequest",
+                    "change_servicerequest",
+                    "view_change",
+                    "add_change",
+                    "change_change",
+                    "view_release",
+                    "add_release",
+                    "change_release",
+                    "view_configurationitem",
+                    "add_configurationitem",
+                    "change_configurationitem",
+                    "view_knowledgearticle",
+                    "add_knowledgearticle",
+                    "change_knowledgearticle",
                 ]
             )
         )
@@ -205,6 +248,13 @@ class NavigationRenderingTests(TestCase):
             "sla_dashboard",
             "sla_policy_list",
             "notification_list",
+            "catalog_item_list",
+            "service_request_list",
+            "change_list",
+            "release_list",
+            "cmdb_item_list",
+            "knowledge_list",
+            "reporting_dashboard",
         ):
             with self.subTest(url=name):
                 self.assertContains(
@@ -227,6 +277,13 @@ class NavigationRenderingTests(TestCase):
             "sla_dashboard",
             "sla_policy_list",
             "notification_list",
+            "catalog_item_list",
+            "service_request_list",
+            "change_list",
+            "release_list",
+            "cmdb_item_list",
+            "knowledge_list",
+            "reporting_dashboard",
         ):
             with self.subTest(url=name):
                 response = self.client.get(reverse(f"service_desk:{name}"))

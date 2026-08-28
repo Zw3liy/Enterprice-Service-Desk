@@ -19,6 +19,7 @@ from apps.service_desk.models import (
     Department,
     SLAEscalation,
     SLAPolicy,
+    SLARunLog,
     Ticket,
     TicketSLA,
 )
@@ -409,6 +410,49 @@ class SLAServiceTests(TestCase):
         self.assertIn("Dry run", out.getvalue())
         self.assertEqual(SLAEscalation.objects.count(), 0)
 
+    def test_process_sla_writes_a_run_log(self):
+        now = timezone.now()
+        ticket = self._ticket()
+        record = SLAService.attach_to_ticket(ticket)
+        record.started_at = now - timedelta(hours=5)
+        record.response_due_at = now - timedelta(hours=4)
+        record.resolution_due_at = now - timedelta(hours=3)
+        record.save()
+
+        call_command("process_sla", stdout=StringIO())
+
+        run = SLARunLog.objects.latest("started_at")
+        self.assertTrue(run.succeeded)
+        self.assertEqual(run.processed_count, 1)
+        self.assertEqual(run.warnings_count, 0)
+        self.assertEqual(run.breaches_count, 2)
+        self.assertIsNotNone(run.finished_at)
+        self.assertGreaterEqual(run.duration_seconds, 0)
+
+    def test_process_sla_dry_run_does_not_write_a_run_log(self):
+        call_command("process_sla", "--dry-run", stdout=StringIO())
+        self.assertEqual(SLARunLog.objects.count(), 0)
+
+    def test_process_sla_run_with_nothing_due_still_logs(self):
+        call_command("process_sla", stdout=StringIO())
+        run = SLARunLog.objects.latest("started_at")
+        self.assertTrue(run.succeeded)
+        self.assertEqual(run.processed_count, 0)
+
+    def test_process_sla_failure_is_logged_and_reraised(self):
+        from unittest.mock import patch
+
+        with patch.object(
+            SLAService, "process_due", side_effect=RuntimeError("boom")
+        ):
+            with self.assertRaises(RuntimeError):
+                call_command("process_sla", stdout=StringIO())
+
+        run = SLARunLog.objects.latest("started_at")
+        self.assertFalse(run.succeeded)
+        self.assertIn("boom", run.error_message)
+        self.assertIsNotNone(run.finished_at)
+
 
 class SLAVisibilityTests(TestCase):
     """
@@ -518,6 +562,24 @@ class SLAVisibilityTests(TestCase):
         response = self.client.get("/sla/")
         self.assertEqual(response.status_code, 302)
         self.assertIn("/accounts/login/", response["Location"])
+
+    def test_requester_does_not_see_scheduler_health_panel(self):
+        SLARunLog.objects.create(
+            started_at=timezone.now(), succeeded=True, processed_count=3
+        )
+        self.client.login(username="sla-requester", password="password123")
+        response = self.client.get("/sla/")
+        self.assertNotIn("recent_sla_runs", response.context)
+        self.assertNotContains(response, "Scheduler Health")
+
+    def test_manager_sees_scheduler_health_panel(self):
+        SLARunLog.objects.create(
+            started_at=timezone.now(), succeeded=True, processed_count=3
+        )
+        self.client.login(username="sla-manager", password="password123")
+        response = self.client.get("/sla/")
+        self.assertIn("recent_sla_runs", response.context)
+        self.assertContains(response, "Scheduler Health")
 
     def test_requester_cannot_reach_policy_administration(self):
         self.client.login(username="sla-requester", password="password123")

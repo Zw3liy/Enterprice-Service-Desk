@@ -66,6 +66,66 @@
             </li>
             {% endif %}
 
+            {% if perms.service_desk.view_catalogitem %}
+            <li class="nav-item">
+                <a class="nav-link{% if request.resolver_match.url_name == 'catalog_item_list' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:catalog_item_list' %}"
+                   {% if request.resolver_match.url_name == 'catalog_item_list' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-store me-2" aria-hidden="true"></i>Service Catalogue
+                </a>
+            </li>
+            {% endif %}
+
+            {% if perms.service_desk.view_servicerequest %}
+            <li class="nav-item">
+                <a class="nav-link{% if request.resolver_match.url_name == 'service_request_list' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:service_request_list' %}"
+                   {% if request.resolver_match.url_name == 'service_request_list' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-clipboard-list me-2" aria-hidden="true"></i>Service Requests
+                </a>
+            </li>
+            {% endif %}
+
+            {% if perms.service_desk.view_change %}
+            <li class="nav-item">
+                <a class="nav-link{% if request.resolver_match.url_name == 'change_list' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:change_list' %}"
+                   {% if request.resolver_match.url_name == 'change_list' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-arrows-rotate me-2" aria-hidden="true"></i>Changes
+                </a>
+            </li>
+            {% endif %}
+
+            {% if perms.service_desk.view_release %}
+            <li class="nav-item">
+                <a class="nav-link{% if request.resolver_match.url_name == 'release_list' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:release_list' %}"
+                   {% if request.resolver_match.url_name == 'release_list' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-rocket me-2" aria-hidden="true"></i>Releases
+                </a>
+            </li>
+            {% endif %}
+
+            {% if perms.service_desk.view_configurationitem %}
+            <li class="nav-item">
+                <a class="nav-link{% if request.resolver_match.url_name == 'cmdb_item_list' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:cmdb_item_list' %}"
+                   {% if request.resolver_match.url_name == 'cmdb_item_list' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-server me-2" aria-hidden="true"></i>CMDB
+                </a>
+            </li>
+            {% endif %}
+
+            {% if perms.service_desk.view_knowledgearticle %}
+            <li class="nav-item">
+                <a class="nav-link{% if request.resolver_match.url_name == 'knowledge_list' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:knowledge_list' %}"
+                   {% if request.resolver_match.url_name == 'knowledge_list' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-book me-2" aria-hidden="true"></i>Knowledge Base
+                </a>
+            </li>
+            {% endif %}
+
             {% if perms.service_desk.view_ticket %}
             <li class="nav-item">
                 <a class="nav-link{% if request.resolver_match.url_name == 'sla_dashboard' %} active fw-semibold{% endif %}"
@@ -88,6 +148,16 @@
 
             {% if user.is_authenticated %}
             <li class="nav-item">
+                <a class="nav-link{% if request.resolver_match.url_name == 'reporting_dashboard' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:reporting_dashboard' %}"
+                   {% if request.resolver_match.url_name == 'reporting_dashboard' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-chart-line me-2" aria-hidden="true"></i>Reports
+                </a>
+            </li>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+            <li class="nav-item">
                 <a class="nav-link{% if request.resolver_match.url_name == 'notification_list' %} active fw-semibold{% endif %}"
                    href="{% url 'service_desk:notification_list' %}"
                    {% if request.resolver_match.url_name == 'notification_list' %}aria-current="page"{% endif %}>
@@ -95,6 +165,16 @@
                     {% if nav_unread_notifications %}
                         <span class="badge rounded-pill bg-danger ms-1">{{ nav_unread_notifications }}</span>
                     {% endif %}
+                </a>
+            </li>
+            {% endif %}
+
+            {% if user.is_superuser %}
+            <li class="nav-item">
+                <a class="nav-link{% if request.resolver_match.url_name == 'operations_dashboard' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:operations_dashboard' %}"
+                   {% if request.resolver_match.url_name == 'operations_dashboard' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-gauge me-2" aria-hidden="true"></i>Operations
                 </a>
             </li>
             {% endif %}

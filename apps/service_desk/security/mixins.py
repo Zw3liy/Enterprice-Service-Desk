@@ -320,6 +320,364 @@ class SLAPolicyChangePermissionMixin(
 
 
 # =====================================================
+# Catalogue Item Permissions
+# =====================================================
+
+
+class CatalogItemPermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Base catalogue-item access permission.
+
+    Default permission:
+        view_catalogitem
+    """
+
+    permission_required = (
+        "service_desk.view_catalogitem"
+    )
+
+
+class CatalogItemViewPermissionMixin(
+    CatalogItemPermissionMixin
+):
+    """
+    Catalogue browsing permission.
+    """
+
+    permission_required = (
+        "service_desk.view_catalogitem"
+    )
+
+
+class CatalogItemCreatePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Catalogue-item creation permission.
+    """
+
+    permission_required = (
+        "service_desk.add_catalogitem"
+    )
+
+
+class CatalogItemChangePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Catalogue-item update / lifecycle permission.
+    """
+
+    permission_required = (
+        "service_desk.change_catalogitem"
+    )
+
+
+# =====================================================
+# Service Request Permissions
+# =====================================================
+
+
+class ServiceRequestPermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Base service-request access permission.
+
+    Default permission:
+        view_servicerequest
+    """
+
+    permission_required = (
+        "service_desk.view_servicerequest"
+    )
+
+
+class ServiceRequestViewPermissionMixin(
+    ServiceRequestPermissionMixin
+):
+    """
+    Service-request viewing permission.
+    """
+
+    permission_required = (
+        "service_desk.view_servicerequest"
+    )
+
+
+class ServiceRequestCreatePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Service-request creation permission.
+    """
+
+    permission_required = (
+        "service_desk.add_servicerequest"
+    )
+
+
+class ServiceRequestChangePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Service-request workflow-transition permission.
+
+    Covers approve/reject/assign/fulfilling/fulfilled/cancel — every
+    transition additionally re-checks the specific actor rule it
+    needs (e.g. self-approval prevention) at the service layer, this
+    mixin only gates "staff of some kind, not an anonymous or
+    unrelated Requester".
+    """
+
+    permission_required = (
+        "service_desk.change_servicerequest"
+    )
+
+
+# =====================================================
+# Change Permissions
+# =====================================================
+
+
+class ChangePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Base change access permission.
+
+    Default permission:
+        view_change
+    """
+
+    permission_required = (
+        "service_desk.view_change"
+    )
+
+
+class ChangeViewPermissionMixin(
+    ChangePermissionMixin
+):
+    """
+    Change viewing permission.
+    """
+
+    permission_required = (
+        "service_desk.view_change"
+    )
+
+
+class ChangeCreatePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Change creation permission.
+    """
+
+    permission_required = (
+        "service_desk.add_change"
+    )
+
+
+class ChangeChangePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Change workflow-transition permission.
+
+    Covers submit/assess/approve/reject/schedule/implement/validate/
+    complete/fail/rollback — every transition additionally re-checks
+    the specific actor rule it needs (e.g. approval separation of
+    duties) at the service layer; this mixin only gates "staff of
+    some kind".
+    """
+
+    permission_required = (
+        "service_desk.change_change"
+    )
+
+
+# =====================================================
+# Release Permissions
+# =====================================================
+
+
+class ReleasePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Base release access permission.
+
+    Default permission:
+        view_release
+    """
+
+    permission_required = (
+        "service_desk.view_release"
+    )
+
+
+class ReleaseViewPermissionMixin(
+    ReleasePermissionMixin
+):
+    """
+    Release viewing permission.
+    """
+
+    permission_required = (
+        "service_desk.view_release"
+    )
+
+
+class ReleaseCreatePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Release creation permission.
+    """
+
+    permission_required = (
+        "service_desk.add_release"
+    )
+
+
+class ReleaseChangePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Release workflow-transition permission.
+
+    Covers approve/schedule/link-change/unlink-change/assign-owner/
+    deploy/validate/complete/fail/rollback — every transition
+    additionally re-checks the specific actor rule it needs at the
+    service layer; this mixin only gates "staff of some kind".
+    """
+
+    permission_required = (
+        "service_desk.change_release"
+    )
+
+
+# =====================================================
+# CMDB Permissions
+# =====================================================
+
+
+class ConfigurationItemPermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Base CI access permission.
+
+    Default permission:
+        view_configurationitem
+    """
+
+    permission_required = (
+        "service_desk.view_configurationitem"
+    )
+
+
+class ConfigurationItemViewPermissionMixin(
+    ConfigurationItemPermissionMixin
+):
+    """
+    CI viewing permission.
+    """
+
+    permission_required = (
+        "service_desk.view_configurationitem"
+    )
+
+
+class ConfigurationItemCreatePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    CI creation permission.
+    """
+
+    permission_required = (
+        "service_desk.add_configurationitem"
+    )
+
+
+class ConfigurationItemChangePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    CI update / relationship / linking permission.
+    """
+
+    permission_required = (
+        "service_desk.change_configurationitem"
+    )
+
+
+# =====================================================
+# Knowledge Permissions
+# =====================================================
+
+
+class KnowledgeArticlePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Base knowledge-article access permission.
+
+    Default permission:
+        view_knowledgearticle
+    """
+
+    permission_required = (
+        "service_desk.view_knowledgearticle"
+    )
+
+
+class KnowledgeArticleViewPermissionMixin(
+    KnowledgeArticlePermissionMixin
+):
+    """
+    Knowledge-article viewing permission.
+    """
+
+    permission_required = (
+        "service_desk.view_knowledgearticle"
+    )
+
+
+class KnowledgeArticleCreatePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Knowledge-article creation permission.
+    """
+
+    permission_required = (
+        "service_desk.add_knowledgearticle"
+    )
+
+
+class KnowledgeArticleChangePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Knowledge-article workflow-transition permission.
+
+    Covers submit/assign-reviewer/approve/send-back/publish/archive/
+    revise — every transition additionally re-checks the specific
+    actor rule it needs (e.g. reviewer separation of duties) at the
+    service layer; this mixin only gates "staff of some kind".
+    """
+
+    permission_required = (
+        "service_desk.change_knowledgearticle"
+    )
+
+
+# =====================================================
 # Role Enforcement
 # =====================================================
 

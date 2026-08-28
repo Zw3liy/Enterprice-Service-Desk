@@ -1734,6 +1734,11 @@ class SLADashboardView(
             "service_desk.view_slapolicy"
         )
 
+        if context["can_manage_policies"]:
+            from .models import SLARunLog
+
+            context["recent_sla_runs"] = SLARunLog.objects.all()[:10]
+
         return context
 
 

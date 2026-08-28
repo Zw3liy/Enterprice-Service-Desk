@@ -11,7 +11,18 @@ Phase 2.2 Authorization Hardening
 from django.contrib.auth.models import Group
 from django.db.models import Q
 
-from apps.service_desk.models import Problem, Supplier, Ticket
+from apps.service_desk.models import (
+    CatalogItem,
+    Change,
+    CIRelationship,
+    ConfigurationItem,
+    KnowledgeArticle,
+    Problem,
+    Release,
+    ServiceRequest,
+    Supplier,
+    Ticket,
+)
 
 
 
@@ -229,3 +240,258 @@ def get_supplier_queryset(user):
         )
 
     return Supplier.objects.none()
+
+
+
+def get_catalog_item_queryset(user):
+    """
+    Object level catalogue-item visibility.
+
+    Administrator / Manager:
+        every item, including inactive ones — both roles administer
+        the catalogue (see security/mixins.py CatalogItem*
+        PermissionMixin), so they need to see retired items to
+        reactivate or review them.
+
+    Everyone else (Technician, Requester):
+        active items only — an inactive item cannot be requested and
+        must not appear while browsing.
+    """
+
+    if not user.is_authenticated:
+        return CatalogItem.objects.none()
+
+    if is_administrator(user) or is_manager(user):
+        return CatalogItem.objects.all()
+
+    return CatalogItem.objects.filter(is_active=True)
+
+
+
+def get_service_request_queryset(user):
+    """
+    Object level service-request visibility.
+
+    Deliberately reuses ``get_ticket_queryset`` rather than
+    reimplementing role/department scoping — every ``ServiceRequest``
+    wraps exactly one ``Ticket`` (ADR-011, Decision 2: "Link
+    catalogue requests to existing tickets without duplicating ticket
+    security"). Whatever ticket a user may see, they may see the
+    matching service request, and no other.
+    """
+
+    return ServiceRequest.objects.filter(
+        ticket__in=get_ticket_queryset(user)
+    )
+
+
+
+def get_change_queryset(user):
+    """
+    Object level change visibility.
+
+    Administrator:
+        all changes
+
+    Manager:
+        department-scoped
+
+    Technician:
+        changes they requested or are assigned to implement. Unlike
+        Ticket's queue-based unassigned visibility, a Change has no
+        self-assignment/claim concept (an implementer is nominated at
+        approval/scheduling time) — but the Technician who *raised*
+        a change must still be able to see and submit it before
+        anyone has assigned an implementer, or they could never
+        progress their own request past "draft".
+
+    Requester:
+        none — Change Management is an internal IT governance
+        process, not requester-facing (mirrors ADR-010, Decision 1's
+        Problem Management precedent; requester-facing catalogue
+        requests are Service Request Management instead).
+    """
+
+    if not user.is_authenticated:
+        return Change.objects.none()
+
+    if is_administrator(user):
+        return Change.objects.all()
+
+    if is_manager(user):
+        return Change.objects.filter(
+            department__in=user.managed_departments.all()
+        )
+
+    if is_technician(user):
+        return Change.objects.filter(
+            Q(requested_by=user) | Q(assigned_to=user)
+        )
+
+    return Change.objects.none()
+
+
+
+def get_release_queryset(user):
+    """
+    Object level release visibility.
+
+    Administrator:
+        all releases
+
+    Manager:
+        department-scoped
+
+    Technician:
+        releases they own
+
+    Requester:
+        none — same rationale as Change Management: internal IT
+        governance, not requester-facing.
+    """
+
+    if not user.is_authenticated:
+        return Release.objects.none()
+
+    if is_administrator(user):
+        return Release.objects.all()
+
+    if is_manager(user):
+        return Release.objects.filter(
+            department__in=user.managed_departments.all()
+        )
+
+    if is_technician(user):
+        return Release.objects.filter(owner=user)
+
+    return Release.objects.none()
+
+
+
+def get_configuration_item_queryset(user):
+    """
+    Object level CI visibility.
+
+    Administrator:
+        all CIs
+
+    Manager:
+        department-scoped, including retired/disposed items (full
+        asset stewardship for departments they manage).
+
+    Technician:
+        every in-service-or-similar CI, system-wide, excluding
+        retired/disposed — troubleshooting a ticket or a change
+        routinely needs a CI outside the technician's own
+        department, unlike Change/Release which are internal
+        governance records scoped tightly by design.
+
+    Requester:
+        none — CMDB is operational/technical data, not
+        requester-facing (same rationale as Change/Release).
+    """
+
+    if not user.is_authenticated:
+        return ConfigurationItem.objects.none()
+
+    if is_administrator(user):
+        return ConfigurationItem.objects.all()
+
+    if is_manager(user):
+        return ConfigurationItem.objects.filter(
+            department__in=user.managed_departments.all()
+        )
+
+    if is_technician(user):
+        return ConfigurationItem.objects.exclude(
+            status__in=[
+                ConfigurationItem.STATUS_RETIRED,
+                ConfigurationItem.STATUS_DISPOSED,
+            ]
+        )
+
+    return ConfigurationItem.objects.none()
+
+
+
+def get_ci_relationship_queryset(user):
+    """
+    A relationship is visible if its source CI is visible to the
+    user — relationships are read outward from a CI you can already
+    see, never used to reach a CI that would otherwise be out of
+    scope.
+    """
+
+    return CIRelationship.objects.filter(
+        source__in=get_configuration_item_queryset(user)
+    )
+
+
+
+def get_knowledge_article_queryset(user):
+    """
+    Object level knowledge-article visibility.
+
+    This is the one function every knowledge view and the search
+    selector must resolve articles through — draft or restricted
+    content must never leak via a direct URL or a search result, so
+    there is deliberately no other way to reach a
+    ``KnowledgeArticle`` in this codebase.
+
+    Administrator:
+        every article, any status, any visibility (editorial
+        oversight).
+
+    Manager:
+        every article that has left draft (in_review/approved/
+        published/archived), any author, any visibility — Managers
+        are the editorial board that assigns reviewers and manages
+        the review queue, which is impossible without seeing
+        submissions from authors other than themselves — plus their
+        own draft articles. A real gap found while testing: scoping
+        Managers to "published, or their own" left them unable to
+        even see another author's in-review article to assign a
+        reviewer to it.
+
+    Technician:
+        published articles whose visibility is public or internal
+        (not restricted), plus their own articles (author or
+        assigned reviewer) at any status.
+
+    Requester (and anyone else with no elevated role):
+        published, public-visibility articles only — never a draft,
+        never anything in review or approved-but-unpublished, never
+        internal/restricted visibility.
+    """
+
+    if not user.is_authenticated:
+        return KnowledgeArticle.objects.none()
+
+    if is_administrator(user):
+        return KnowledgeArticle.objects.all()
+
+    own = Q(author=user) | Q(reviewer=user)
+
+    if is_manager(user):
+        return KnowledgeArticle.objects.filter(
+            ~Q(status=KnowledgeArticle.STATUS_DRAFT) | own
+        )
+
+    if is_technician(user):
+        return KnowledgeArticle.objects.filter(
+            (
+                Q(status=KnowledgeArticle.STATUS_PUBLISHED)
+                & Q(
+                    visibility__in=[
+                        KnowledgeArticle.VISIBILITY_PUBLIC,
+                        KnowledgeArticle.VISIBILITY_INTERNAL,
+                    ]
+                )
+            )
+            | own
+        )
+
+    return KnowledgeArticle.objects.filter(
+        status=KnowledgeArticle.STATUS_PUBLISHED,
+        visibility=KnowledgeArticle.VISIBILITY_PUBLIC,
+    )

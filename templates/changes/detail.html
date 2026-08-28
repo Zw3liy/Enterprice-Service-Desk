@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block title %}{{ change.title }} — Changes{% endblock %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item"><a href="{% url 'service_desk:change_list' %}">Changes</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ change.title }}</li>
+    </ol>
+</nav>
+
+<h1 class="h3 fw-bold mb-4">
+    {{ change.title }}
+    <span class="badge bg-info text-dark ms-1">{{ change.get_status_display }}</span>
+    {% if change.risk_level %}
+        <span class="badge bg-warning text-dark ms-1">Risk: {{ change.get_risk_level_display }}</span>
+    {% endif %}
+</h1>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-3">Type</dt>
+                    <dd class="col-sm-9">{{ change.get_change_type_display }}</dd>
+
+                    <dt class="col-sm-3">Description</dt>
+                    <dd class="col-sm-9 text-break">{{ change.description }}</dd>
+
+                    <dt class="col-sm-3">Department</dt>
+                    <dd class="col-sm-9">{{ change.department|default:"—" }}</dd>
+
+                    <dt class="col-sm-3">Requested by</dt>
+                    <dd class="col-sm-9">{{ change.requested_by|default:"—" }}</dd>
+
+                    <dt class="col-sm-3">Assigned to</dt>
+                    <dd class="col-sm-9">{{ change.assigned_to|default:"Unassigned" }}</dd>
+
+                    <dt class="col-sm-3">Impact / Urgency</dt>
+                    <dd class="col-sm-9">
+                        {% if change.impact %}{{ change.get_impact_display }} / {{ change.get_urgency_display }}{% else %}Not yet assessed{% endif %}
+                    </dd>
+
+                    <dt class="col-sm-3">Schedule</dt>
+                    <dd class="col-sm-9">
+                        {% if change.scheduled_start %}{{ change.scheduled_start|date:"M d, Y H:i" }} &rarr; {{ change.scheduled_end|date:"M d, Y H:i" }}{% else %}Not scheduled{% endif %}
+                    </dd>
+
+                    <dt class="col-sm-3">Implementation plan</dt>
+                    <dd class="col-sm-9 text-break">{{ change.implementation_plan|default:"—" }}</dd>
+
+                    <dt class="col-sm-3">Test plan</dt>
+                    <dd class="col-sm-9 text-break">{{ change.test_plan|default:"—" }}</dd>
+
+                    <dt class="col-sm-3">Rollback plan</dt>
+                    <dd class="col-sm-9 text-break">{{ change.rollback_plan|default:"—" }}</dd>
+                </dl>
+            </div>
+        </div>
+
+        <h2 class="h5">Approvals</h2>
+        <ul class="list-group mb-4">
+            {% for approval in approvals %}
+                <li class="list-group-item">
+                    <strong>{{ approval.get_decision_display }}</strong> by {{ approval.actor|default:"—" }}
+                    on {{ approval.decided_at|date:"M d, Y H:i" }}
+                    {% if approval.comment %}<div class="small text-muted">{{ approval.comment }}</div>{% endif %}
+                </li>
+            {% empty %}
+                <li class="list-group-item text-muted small">No approval decisions yet.</li>
+            {% endfor %}
+        </ul>
+
+        <h2 class="h5">History</h2>
+        <ul class="list-group mb-4">
+            {% for entry in history %}
+                <li class="list-group-item">
+                    <strong>{{ entry.get_event_type_display }}</strong>
+                    by {{ entry.performed_by|default:"—" }}
+                    on {{ entry.created_at|date:"M d, Y H:i" }}
+                    {% if entry.comment %}<div class="small text-muted">{{ entry.comment }}</div>{% endif %}
+                </li>
+            {% empty %}
+                <li class="list-group-item text-muted small">No history yet.</li>
+            {% endfor %}
+        </ul>
+
+        {% if perms.service_desk.change_change %}
+        <form method="post" action="{% url 'service_desk:change_comment' change.pk %}">
+            {% csrf_token %}
+            <label for="comment" class="form-label small fw-medium">Add comment</label>
+            <textarea name="comment" id="comment" class="form-control form-control-sm mb-2" rows="2"></textarea>
+            <button type="submit" class="btn btn-outline-secondary btn-sm">Comment</button>
+        </form>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-4">
+        {% if perms.service_desk.change_change %}
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h2 class="h6 mb-3">Workflow</h2>
+
+                {% if change.status == "draft" %}
+                    <form method="post" action="{% url 'service_desk:change_submit' change.pk %}" class="mb-2">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary btn-sm w-100">Submit</button>
+                    </form>
+                {% endif %}
+
+                {% if change.status == "submitted" %}
+                    <a href="{% url 'service_desk:change_assess' change.pk %}" class="btn btn-primary btn-sm w-100 mb-2">Assess</a>
+                {% endif %}
+
+                {% if change.status == "submitted" or change.status == "assessed" %}
+                    <form method="post" action="{% url 'service_desk:change_reject' change.pk %}" class="mb-2">
+                        {% csrf_token %}
+                        <textarea name="comment" class="form-control form-control-sm mb-2" rows="2" placeholder="Reason (required)" required></textarea>
+                        <button type="submit" class="btn btn-outline-danger btn-sm w-100">Reject</button>
+                    </form>
+                {% endif %}
+
+                {% if change.status == "assessed" %}
+                    <form method="post" action="{% url 'service_desk:change_approve' change.pk %}" class="mb-2">
+                        {% csrf_token %}
+                        <textarea name="comment" class="form-control form-control-sm mb-2" rows="2" placeholder="Optional comment"></textarea>
+                        <button type="submit" class="btn btn-success btn-sm w-100">Approve</button>
+                    </form>
+                {% endif %}
+
+                {% if change.status == "approved" %}
+                    <a href="{% url 'service_desk:change_schedule' change.pk %}" class="btn btn-primary btn-sm w-100 mb-2">Schedule</a>
+                {% endif %}
+
+                {% if change.status == "scheduled" or change.status == "approved" or change.status == "assessed" %}
+                    <form method="post" action="{% url 'service_desk:change_assign' change.pk %}" class="mb-2">
+                        {% csrf_token %}
+                        <label for="technician_id" class="form-label small fw-medium">Assign Implementer</label>
+                        <div class="d-flex gap-2">
+                            <select name="technician_id" id="technician_id" class="form-select form-select-sm">
+                                {% for technician in available_technicians %}
+                                    <option value="{{ technician.pk }}" {% if change.assigned_to_id == technician.pk %}selected{% endif %}>{{ technician.username }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn btn-outline-primary btn-sm">Assign</button>
+                        </div>
+                    </form>
+                {% endif %}
+
+                {% if change.status == "scheduled" %}
+                    <form method="post" action="{% url 'service_desk:change_implement' change.pk %}" class="mb-2">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-primary btn-sm w-100">Start Implementation</button>
+                    </form>
+                {% endif %}
+
+                {% if change.status == "implementing" %}
+                    <form method="post" action="{% url 'service_desk:change_validate' change.pk %}" class="mb-2">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-primary btn-sm w-100">Move to Validation</button>
+                    </form>
+                {% endif %}
+
+                {% if change.status == "validation" %}
+                    <form method="post" action="{% url 'service_desk:change_complete' change.pk %}" class="mb-2">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success btn-sm w-100">Mark Completed</button>
+                    </form>
+                {% endif %}
+
+                {% if change.status == "implementing" or change.status == "validation" %}
+                    <form method="post" action="{% url 'service_desk:change_fail' change.pk %}" class="mb-2">
+                        {% csrf_token %}
+                        <textarea name="reason" class="form-control form-control-sm mb-2" rows="2" placeholder="Failure reason (required)" required></textarea>
+                        <button type="submit" class="btn btn-outline-danger btn-sm w-100">Mark Failed</button>
+                    </form>
+                {% endif %}
+
+                {% if change.status == "failed" %}
+                    <form method="post" action="{% url 'service_desk:change_rollback' change.pk %}">
+                        {% csrf_token %}
+                        <textarea name="reason" class="form-control form-control-sm mb-2" rows="2" placeholder="Rollback reason (required)" required></textarea>
+                        <button type="submit" class="btn btn-outline-danger btn-sm w-100">Roll Back</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

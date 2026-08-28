@@ -1,11 +1,25 @@
 from django.contrib import admin
 
 from .models import (
+    CatalogItem,
+    Change,
+    ChangeApproval,
+    CIRelationship,
+    ConfigurationItem,
+    ConfigurationItemType,
     Department,
+    KnowledgeArticle,
+    KnowledgeCategory,
     RequestType,
     Notification,
+    Release,
+    ReleaseApproval,
+    ServiceCategory,
+    ServiceRequest,
+    ServiceRequestApproval,
     SLAEscalation,
     SLAPolicy,
+    SLARunLog,
     Supplier,
     Ticket,
     TicketSLA,
@@ -169,6 +183,24 @@ class SLAEscalationAdmin(admin.ModelAdmin):
     )
 
 
+@admin.register(SLARunLog)
+class SLARunLogAdmin(admin.ModelAdmin):
+    list_display = (
+        "started_at",
+        "finished_at",
+        "processed_count",
+        "warnings_count",
+        "breaches_count",
+        "succeeded",
+    )
+    list_filter = (
+        "succeeded",
+    )
+    ordering = (
+        "-started_at",
+    )
+
+
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
     list_display = (
@@ -194,4 +226,289 @@ class NotificationAdmin(admin.ModelAdmin):
         "recipient",
         "ticket",
         "problem",
+    )
+
+
+@admin.register(ServiceCategory)
+class ServiceCategoryAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "description",
+        "is_active",
+        "created_at",
+    )
+    list_filter = (
+        "is_active",
+    )
+    search_fields = (
+        "name",
+    )
+
+
+@admin.register(CatalogItem)
+class CatalogItemAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "category",
+        "fulfillment_department",
+        "requires_approval",
+        "default_priority",
+        "expected_delivery_days",
+        "is_active",
+    )
+    list_filter = (
+        "category",
+        "fulfillment_department",
+        "requires_approval",
+        "is_active",
+    )
+    search_fields = (
+        "name",
+        "description",
+    )
+    autocomplete_fields = (
+        "category",
+        "fulfillment_department",
+    )
+
+
+@admin.register(ServiceRequest)
+class ServiceRequestAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "catalog_item",
+        "ticket",
+        "quantity",
+        "status",
+        "expected_fulfillment_date",
+        "created_at",
+    )
+    list_filter = (
+        "status",
+        "catalog_item",
+    )
+    raw_id_fields = (
+        "ticket",
+    )
+    autocomplete_fields = (
+        "catalog_item",
+    )
+
+
+@admin.register(ServiceRequestApproval)
+class ServiceRequestApprovalAdmin(admin.ModelAdmin):
+    list_display = (
+        "service_request",
+        "actor",
+        "decision",
+        "decided_at",
+    )
+    list_filter = (
+        "decision",
+    )
+    raw_id_fields = (
+        "service_request",
+        "actor",
+    )
+
+
+@admin.register(Change)
+class ChangeAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "title",
+        "change_type",
+        "department",
+        "risk_level",
+        "status",
+        "assigned_to",
+        "created_at",
+    )
+    list_filter = (
+        "change_type",
+        "status",
+        "risk_level",
+        "department",
+    )
+    search_fields = (
+        "title",
+        "description",
+    )
+    autocomplete_fields = (
+        "department",
+    )
+    raw_id_fields = (
+        "requested_by",
+        "assigned_to",
+    )
+    ordering = (
+        "-created_at",
+    )
+
+
+@admin.register(ChangeApproval)
+class ChangeApprovalAdmin(admin.ModelAdmin):
+    list_display = (
+        "change",
+        "actor",
+        "decision",
+        "decided_at",
+    )
+    list_filter = (
+        "decision",
+    )
+    raw_id_fields = (
+        "change",
+        "actor",
+    )
+
+
+@admin.register(Release)
+class ReleaseAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "name",
+        "version",
+        "environment",
+        "department",
+        "status",
+        "owner",
+        "created_at",
+    )
+    list_filter = (
+        "environment",
+        "status",
+        "department",
+    )
+    search_fields = (
+        "name",
+        "version",
+    )
+    autocomplete_fields = (
+        "department",
+    )
+    raw_id_fields = (
+        "owner",
+    )
+    filter_horizontal = (
+        "changes",
+    )
+    ordering = (
+        "-created_at",
+    )
+
+
+@admin.register(ReleaseApproval)
+class ReleaseApprovalAdmin(admin.ModelAdmin):
+    list_display = (
+        "release",
+        "actor",
+        "decision",
+        "decided_at",
+    )
+    list_filter = (
+        "decision",
+    )
+    raw_id_fields = (
+        "release",
+        "actor",
+    )
+
+
+@admin.register(ConfigurationItemType)
+class ConfigurationItemTypeAdmin(admin.ModelAdmin):
+    list_display = ("name", "is_active", "created_at")
+    list_filter = ("is_active",)
+    search_fields = ("name",)
+
+
+@admin.register(ConfigurationItem)
+class ConfigurationItemAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "identifier",
+        "ci_type",
+        "status",
+        "criticality",
+        "department",
+        "owner",
+    )
+    list_filter = (
+        "ci_type",
+        "status",
+        "criticality",
+        "department",
+    )
+    search_fields = (
+        "name",
+        "identifier",
+        "description",
+    )
+    autocomplete_fields = (
+        "ci_type",
+        "department",
+    )
+    raw_id_fields = (
+        "owner",
+    )
+    filter_horizontal = (
+        "tickets",
+        "changes",
+    )
+
+
+@admin.register(CIRelationship)
+class CIRelationshipAdmin(admin.ModelAdmin):
+    list_display = (
+        "source",
+        "relationship_type",
+        "target",
+        "created_by",
+        "created_at",
+    )
+    list_filter = (
+        "relationship_type",
+    )
+    raw_id_fields = (
+        "source",
+        "target",
+        "created_by",
+    )
+
+
+@admin.register(KnowledgeCategory)
+class KnowledgeCategoryAdmin(admin.ModelAdmin):
+    list_display = ("name", "is_active", "created_at")
+    list_filter = ("is_active",)
+    search_fields = ("name",)
+
+
+@admin.register(KnowledgeArticle)
+class KnowledgeArticleAdmin(admin.ModelAdmin):
+    list_display = (
+        "title",
+        "category",
+        "status",
+        "visibility",
+        "version",
+        "author",
+        "reviewer",
+        "published_at",
+    )
+    list_filter = (
+        "category",
+        "status",
+        "visibility",
+    )
+    search_fields = (
+        "title",
+        "content",
+        "tags",
+    )
+    autocomplete_fields = (
+        "category",
+    )
+    raw_id_fields = (
+        "author",
+        "reviewer",
     )

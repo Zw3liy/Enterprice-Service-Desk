@@ -14,8 +14,24 @@ from .root_cause_analysis import (
     Approval,
 )
 from .supplier import Supplier
-from .sla import SLAEscalation, SLAPolicy, TicketSLA
+from .sla import SLAEscalation, SLAPolicy, SLARunLog, TicketSLA
 from .notification import Notification
+from .service_catalog import (
+    CatalogItem,
+    ServiceCategory,
+    ServiceRequest,
+    ServiceRequestApproval,
+    ServiceRequestHistory,
+)
+from .change import Change, ChangeApproval, ChangeHistory
+from .release import Release, ReleaseApproval, ReleaseHistory
+from .cmdb import CIRelationship, ConfigurationItem, ConfigurationItemType
+from .knowledge import (
+    KnowledgeArticle,
+    KnowledgeArticleHistory,
+    KnowledgeCategory,
+    KnowledgeFeedback,
+)
 
 __all__ = [
     "Department",
@@ -35,5 +51,24 @@ __all__ = [
     "SLAPolicy",
     "TicketSLA",
     "SLAEscalation",
+    "SLARunLog",
     "Notification",
+    "ServiceCategory",
+    "CatalogItem",
+    "ServiceRequest",
+    "ServiceRequestApproval",
+    "ServiceRequestHistory",
+    "Change",
+    "ChangeApproval",
+    "ChangeHistory",
+    "Release",
+    "ReleaseApproval",
+    "ReleaseHistory",
+    "ConfigurationItemType",
+    "ConfigurationItem",
+    "CIRelationship",
+    "KnowledgeCategory",
+    "KnowledgeArticle",
+    "KnowledgeArticleHistory",
+    "KnowledgeFeedback",
 ]
