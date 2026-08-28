@@ -66,6 +66,26 @@
             </li>
             {% endif %}
 
+            {% if perms.service_desk.view_catalogitem %}
+            <li class="nav-item">
+                <a class="nav-link{% if request.resolver_match.url_name == 'catalog_item_list' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:catalog_item_list' %}"
+                   {% if request.resolver_match.url_name == 'catalog_item_list' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-store me-2" aria-hidden="true"></i>Service Catalogue
+                </a>
+            </li>
+            {% endif %}
+
+            {% if perms.service_desk.view_servicerequest %}
+            <li class="nav-item">
+                <a class="nav-link{% if request.resolver_match.url_name == 'service_request_list' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:service_request_list' %}"
+                   {% if request.resolver_match.url_name == 'service_request_list' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-clipboard-list me-2" aria-hidden="true"></i>Service Requests
+                </a>
+            </li>
+            {% endif %}
+
             {% if perms.service_desk.view_ticket %}
             <li class="nav-item">
                 <a class="nav-link{% if request.resolver_match.url_name == 'sla_dashboard' %} active fw-semibold{% endif %}"

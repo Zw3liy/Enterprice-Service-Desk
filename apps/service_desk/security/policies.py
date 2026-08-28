@@ -11,7 +11,7 @@ Phase 2.2 Authorization Hardening
 from django.contrib.auth.models import Group
 from django.db.models import Q
 
-from apps.service_desk.models import Problem, Supplier, Ticket
+from apps.service_desk.models import CatalogItem, Problem, ServiceRequest, Supplier, Ticket
 
 
 
@@ -229,3 +229,46 @@ def get_supplier_queryset(user):
         )
 
     return Supplier.objects.none()
+
+
+
+def get_catalog_item_queryset(user):
+    """
+    Object level catalogue-item visibility.
+
+    Administrator / Manager:
+        every item, including inactive ones — both roles administer
+        the catalogue (see security/mixins.py CatalogItem*
+        PermissionMixin), so they need to see retired items to
+        reactivate or review them.
+
+    Everyone else (Technician, Requester):
+        active items only — an inactive item cannot be requested and
+        must not appear while browsing.
+    """
+
+    if not user.is_authenticated:
+        return CatalogItem.objects.none()
+
+    if is_administrator(user) or is_manager(user):
+        return CatalogItem.objects.all()
+
+    return CatalogItem.objects.filter(is_active=True)
+
+
+
+def get_service_request_queryset(user):
+    """
+    Object level service-request visibility.
+
+    Deliberately reuses ``get_ticket_queryset`` rather than
+    reimplementing role/department scoping — every ``ServiceRequest``
+    wraps exactly one ``Ticket`` (ADR-011, Decision 2: "Link
+    catalogue requests to existing tickets without duplicating ticket
+    security"). Whatever ticket a user may see, they may see the
+    matching service request, and no other.
+    """
+
+    return ServiceRequest.objects.filter(
+        ticket__in=get_ticket_queryset(user)
+    )

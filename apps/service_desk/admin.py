@@ -1,9 +1,13 @@
 from django.contrib import admin
 
 from .models import (
+    CatalogItem,
     Department,
     RequestType,
     Notification,
+    ServiceCategory,
+    ServiceRequest,
+    ServiceRequestApproval,
     SLAEscalation,
     SLAPolicy,
     Supplier,
@@ -194,4 +198,87 @@ class NotificationAdmin(admin.ModelAdmin):
         "recipient",
         "ticket",
         "problem",
+    )
+
+
+@admin.register(ServiceCategory)
+class ServiceCategoryAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "description",
+        "is_active",
+        "created_at",
+    )
+    list_filter = (
+        "is_active",
+    )
+    search_fields = (
+        "name",
+    )
+
+
+@admin.register(CatalogItem)
+class CatalogItemAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "category",
+        "fulfillment_department",
+        "requires_approval",
+        "default_priority",
+        "expected_delivery_days",
+        "is_active",
+    )
+    list_filter = (
+        "category",
+        "fulfillment_department",
+        "requires_approval",
+        "is_active",
+    )
+    search_fields = (
+        "name",
+        "description",
+    )
+    autocomplete_fields = (
+        "category",
+        "fulfillment_department",
+    )
+
+
+@admin.register(ServiceRequest)
+class ServiceRequestAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "catalog_item",
+        "ticket",
+        "quantity",
+        "status",
+        "expected_fulfillment_date",
+        "created_at",
+    )
+    list_filter = (
+        "status",
+        "catalog_item",
+    )
+    raw_id_fields = (
+        "ticket",
+    )
+    autocomplete_fields = (
+        "catalog_item",
+    )
+
+
+@admin.register(ServiceRequestApproval)
+class ServiceRequestApprovalAdmin(admin.ModelAdmin):
+    list_display = (
+        "service_request",
+        "actor",
+        "decision",
+        "decided_at",
+    )
+    list_filter = (
+        "decision",
+    )
+    raw_id_fields = (
+        "service_request",
+        "actor",
     )

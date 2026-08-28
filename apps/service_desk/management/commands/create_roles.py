@@ -20,7 +20,14 @@ from django.contrib.auth.models import (
 
 from django.contrib.contenttypes.models import ContentType
 
-from apps.service_desk.models import Problem, SLAPolicy, Supplier, Ticket
+from apps.service_desk.models import (
+    CatalogItem,
+    Problem,
+    ServiceRequest,
+    SLAPolicy,
+    Supplier,
+    Ticket,
+)
 
 
 
@@ -45,6 +52,14 @@ class Command(BaseCommand):
 
         sla_policy_content_type = ContentType.objects.get_for_model(
             SLAPolicy
+        )
+
+        catalog_item_content_type = ContentType.objects.get_for_model(
+            CatalogItem
+        )
+
+        service_request_content_type = ContentType.objects.get_for_model(
+            ServiceRequest
         )
 
 
@@ -137,6 +152,53 @@ class Command(BaseCommand):
                 content_type=sla_policy_content_type,
                 codename="delete_slapolicy",
             ),
+
+            # Service Catalogue. Everyone may browse (view_catalogitem);
+            # only Manager/Administrator administer items. Requesters
+            # may submit requests (add_servicerequest); Technician/
+            # Manager/Administrator may act on the workflow
+            # (change_servicerequest) — see security.policies.
+            # get_service_request_queryset for the object-level scope
+            # this permission operates within.
+            "view_catalogitem": Permission.objects.get(
+                content_type=catalog_item_content_type,
+                codename="view_catalogitem",
+            ),
+
+            "add_catalogitem": Permission.objects.get(
+                content_type=catalog_item_content_type,
+                codename="add_catalogitem",
+            ),
+
+            "change_catalogitem": Permission.objects.get(
+                content_type=catalog_item_content_type,
+                codename="change_catalogitem",
+            ),
+
+            "delete_catalogitem": Permission.objects.get(
+                content_type=catalog_item_content_type,
+                codename="delete_catalogitem",
+            ),
+
+            "view_servicerequest": Permission.objects.get(
+                content_type=service_request_content_type,
+                codename="view_servicerequest",
+            ),
+
+            "add_servicerequest": Permission.objects.get(
+                content_type=service_request_content_type,
+                codename="add_servicerequest",
+            ),
+
+            "change_servicerequest": Permission.objects.get(
+                content_type=service_request_content_type,
+                codename="change_servicerequest",
+            ),
+
+            "delete_servicerequest": Permission.objects.get(
+                content_type=service_request_content_type,
+                codename="delete_servicerequest",
+            ),
         }
 
 
@@ -147,6 +209,9 @@ class Command(BaseCommand):
             "Requester": [
                 permissions["view"],
                 permissions["add"],
+                permissions["view_catalogitem"],
+                permissions["add_servicerequest"],
+                permissions["view_servicerequest"],
             ],
 
 
@@ -159,6 +224,9 @@ class Command(BaseCommand):
                 permissions["view_problem"],
                 permissions["add_problem"],
                 permissions["change_problem"],
+                permissions["view_catalogitem"],
+                permissions["view_servicerequest"],
+                permissions["change_servicerequest"],
             ],
 
 
@@ -177,6 +245,11 @@ class Command(BaseCommand):
                 permissions["view_slapolicy"],
                 permissions["add_slapolicy"],
                 permissions["change_slapolicy"],
+                permissions["view_catalogitem"],
+                permissions["add_catalogitem"],
+                permissions["change_catalogitem"],
+                permissions["view_servicerequest"],
+                permissions["change_servicerequest"],
             ],
 
 
@@ -197,6 +270,14 @@ class Command(BaseCommand):
                 permissions["add_slapolicy"],
                 permissions["change_slapolicy"],
                 permissions["delete_slapolicy"],
+                permissions["view_catalogitem"],
+                permissions["add_catalogitem"],
+                permissions["change_catalogitem"],
+                permissions["delete_catalogitem"],
+                permissions["view_servicerequest"],
+                permissions["add_servicerequest"],
+                permissions["change_servicerequest"],
+                permissions["delete_servicerequest"],
             ],
 
         }

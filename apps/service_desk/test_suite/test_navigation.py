@@ -83,7 +83,11 @@ class URLAndTemplateIntegrityTests(TestCase):
         import apps.service_desk.admin  # noqa: F401
 
         from apps.service_desk.models import (
+            CatalogItem,
             Notification,
+            ServiceCategory,
+            ServiceRequest,
+            ServiceRequestApproval,
             SLAEscalation,
             SLAPolicy,
             TicketSLA,
@@ -97,6 +101,10 @@ class URLAndTemplateIntegrityTests(TestCase):
             TicketSLA,
             SLAEscalation,
             Notification,
+            ServiceCategory,
+            CatalogItem,
+            ServiceRequest,
+            ServiceRequestApproval,
         ):
             with self.subTest(model=model.__name__):
                 self.assertIn(model, admin.site._registry)
@@ -162,6 +170,11 @@ class NavigationRenderingTests(TestCase):
                     "view_slapolicy",
                     "add_slapolicy",
                     "change_slapolicy",
+                    "view_catalogitem",
+                    "add_catalogitem",
+                    "change_catalogitem",
+                    "view_servicerequest",
+                    "change_servicerequest",
                 ]
             )
         )
@@ -205,6 +218,8 @@ class NavigationRenderingTests(TestCase):
             "sla_dashboard",
             "sla_policy_list",
             "notification_list",
+            "catalog_item_list",
+            "service_request_list",
         ):
             with self.subTest(url=name):
                 self.assertContains(
@@ -227,6 +242,8 @@ class NavigationRenderingTests(TestCase):
             "sla_dashboard",
             "sla_policy_list",
             "notification_list",
+            "catalog_item_list",
+            "service_request_list",
         ):
             with self.subTest(url=name):
                 response = self.client.get(reverse(f"service_desk:{name}"))

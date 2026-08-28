@@ -29,6 +29,9 @@ class Notification(models.Model):
     KIND_SLA_WARNING = "sla_warning"
     KIND_SLA_BREACH = "sla_breach"
     KIND_PROBLEM_UPDATE = "problem_update"
+    KIND_SERVICE_REQUEST_APPROVED = "service_request_approved"
+    KIND_SERVICE_REQUEST_REJECTED = "service_request_rejected"
+    KIND_SERVICE_REQUEST_FULFILLED = "service_request_fulfilled"
 
     KIND_CHOICES = [
         (KIND_TICKET_ASSIGNED, "Ticket Assigned"),
@@ -38,6 +41,9 @@ class Notification(models.Model):
         (KIND_SLA_WARNING, "SLA Warning"),
         (KIND_SLA_BREACH, "SLA Breach"),
         (KIND_PROBLEM_UPDATE, "Problem Update"),
+        (KIND_SERVICE_REQUEST_APPROVED, "Service Request Approved"),
+        (KIND_SERVICE_REQUEST_REJECTED, "Service Request Rejected"),
+        (KIND_SERVICE_REQUEST_FULFILLED, "Service Request Fulfilled"),
     ]
 
     recipient = models.ForeignKey(

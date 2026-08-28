@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Service Requests — Enterprise Service Desk{% endblock %}
+
+{% block content %}
+
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-3">
+    <div>
+        <h1 class="h3 fw-bold mb-1">Service Requests</h1>
+        <p class="text-muted small mb-0">
+            {{ stats.total }} in scope &middot; {{ stats.pending_approval }} pending approval &middot;
+            {{ stats.open }} open &middot; {{ stats.fulfilled }} fulfilled
+        </p>
+    </div>
+    <a href="{% url 'service_desk:catalog_item_list' %}" class="btn btn-primary btn-sm">
+        <i class="fa-solid fa-plus me-1" aria-hidden="true"></i> New Request
+    </a>
+</div>
+
+<form method="get" class="row g-2 align-items-end mb-3" role="search">
+    <div class="col-8 col-sm-4 col-lg-3">
+        <label for="status" class="form-label small fw-medium">Status</label>
+        <select id="status" name="status" class="form-select form-select-sm">
+            <option value="" {% if not status_filter %}selected{% endif %}>All</option>
+            {% for value, label in status_choices %}
+                <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-4 col-sm-2">
+        <button type="submit" class="btn btn-outline-secondary btn-sm w-100">Filter</button>
+    </div>
+</form>
+
+<div class="list-group">
+    {% for service_request in service_requests %}
+        <a href="{% url 'service_desk:service_request_detail' service_request.pk %}" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between align-items-start gap-2">
+                <h2 class="h6 mb-1">{{ service_request.catalog_item.name }} (SR-{{ service_request.pk }})</h2>
+                <span class="badge bg-info text-dark text-nowrap">{{ service_request.get_status_display }}</span>
+            </div>
+            <small class="text-muted">
+                Requested by {{ service_request.ticket.created_by|default:"—" }}
+                &middot; Qty {{ service_request.quantity }}
+                {% if service_request.ticket.assigned_to %}
+                    &middot; Assigned to {{ service_request.ticket.assigned_to }}
+                {% endif %}
+            </small>
+        </a>
+    {% empty %}
+        <div class="alert alert-secondary mb-0">
+            No service requests match this filter.
+        </div>
+    {% endfor %}
+</div>
+
+{% if is_paginated %}
+<nav aria-label="Service request pages" class="mt-3">
+    <ul class="pagination pagination-sm">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&amp;status={{ status_filter }}">Previous</a>
+            </li>
+        {% endif %}
+        <li class="page-item disabled">
+            <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        </li>
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}&amp;status={{ status_filter }}">Next</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+{% endblock %}

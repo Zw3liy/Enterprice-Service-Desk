@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}{{ item.name }} — Service Catalogue{% endblock %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item"><a href="{% url 'service_desk:catalog_item_list' %}">Service Catalogue</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ item.name }}</li>
+    </ol>
+</nav>
+
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-4">
+    <h1 class="h3 fw-bold mb-0">
+        {{ item.name }}
+        {% if item.is_active %}
+            <span class="badge bg-success ms-1">Active</span>
+        {% else %}
+            <span class="badge bg-secondary ms-1">Inactive</span>
+        {% endif %}
+    </h1>
+
+    <div class="d-flex gap-2">
+        {% if item.is_active and perms.service_desk.add_servicerequest %}
+            <a href="{% url 'service_desk:service_request_create' item.pk %}" class="btn btn-primary btn-sm">
+                <i class="fa-solid fa-cart-plus me-1" aria-hidden="true"></i> Request this
+            </a>
+        {% endif %}
+        {% if perms.service_desk.change_catalogitem %}
+            <a href="{% url 'service_desk:catalog_item_update' item.pk %}" class="btn btn-outline-primary btn-sm">
+                <i class="fa-solid fa-pen me-1" aria-hidden="true"></i> Edit
+            </a>
+            {% if item.is_active %}
+                <form method="post" action="{% url 'service_desk:catalog_item_deactivate' item.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger btn-sm">Deactivate</button>
+                </form>
+            {% else %}
+                <form method="post" action="{% url 'service_desk:catalog_item_activate' item.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-success btn-sm">Reactivate</button>
+                </form>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Category</dt>
+            <dd class="col-sm-9">{{ item.category.name }}</dd>
+
+            <dt class="col-sm-3">Description</dt>
+            <dd class="col-sm-9 text-break">{{ item.description|default:"—" }}</dd>
+
+            <dt class="col-sm-3">Fulfilment team</dt>
+            <dd class="col-sm-9">{% if item.fulfillment_department %}{{ item.fulfillment_department.name }}{% else %}&mdash;{% endif %}</dd>
+
+            <dt class="col-sm-3">Requires approval</dt>
+            <dd class="col-sm-9">{% if item.requires_approval %}Yes{% else %}No — auto-approved{% endif %}</dd>
+
+            <dt class="col-sm-3">Default priority</dt>
+            <dd class="col-sm-9">{{ item.get_default_priority_display }}</dd>
+
+            <dt class="col-sm-3">Expected delivery</dt>
+            <dd class="col-sm-9">{% if item.expected_delivery_days %}{{ item.expected_delivery_days }} day(s){% else %}&mdash;{% endif %}</dd>
+        </dl>
+    </div>
+</div>
+
+<a href="{% url 'service_desk:catalog_item_list' %}" class="btn btn-secondary btn-sm mt-3">Back to catalogue</a>
+
+{% endblock %}

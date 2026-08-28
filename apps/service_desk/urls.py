@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import catalog_views
 
 app_name = 'service_desk'
 
@@ -53,4 +54,23 @@ urlpatterns = [
     path('problems/<int:pk>/rca/approvals/<int:approval_pk>/decide/', views.ProblemApprovalDecisionView.as_view(), name='problem_approval_decide'),
     path('problems/<int:pk>/close/', views.ProblemCloseView.as_view(), name='problem_close'),
     path('problems/<int:pk>/reopen/', views.ProblemReopenView.as_view(), name='problem_reopen'),
+
+    # Service Catalogue
+    path('catalog/', catalog_views.CatalogItemListView.as_view(), name='catalog_item_list'),
+    path('catalog/new/', catalog_views.CatalogItemCreateView.as_view(), name='catalog_item_create'),
+    path('catalog/<int:pk>/', catalog_views.CatalogItemDetailView.as_view(), name='catalog_item_detail'),
+    path('catalog/<int:pk>/edit/', catalog_views.CatalogItemUpdateView.as_view(), name='catalog_item_update'),
+    path('catalog/<int:pk>/deactivate/', catalog_views.CatalogItemDeactivateView.as_view(), name='catalog_item_deactivate'),
+    path('catalog/<int:pk>/activate/', catalog_views.CatalogItemActivateView.as_view(), name='catalog_item_activate'),
+    path('catalog/<int:item_pk>/request/', catalog_views.ServiceRequestCreateView.as_view(), name='service_request_create'),
+
+    # Service Requests
+    path('requests/', catalog_views.ServiceRequestListView.as_view(), name='service_request_list'),
+    path('requests/<int:pk>/', catalog_views.ServiceRequestDetailView.as_view(), name='service_request_detail'),
+    path('requests/<int:pk>/approve/', catalog_views.ServiceRequestApproveView.as_view(), name='service_request_approve'),
+    path('requests/<int:pk>/reject/', catalog_views.ServiceRequestRejectView.as_view(), name='service_request_reject'),
+    path('requests/<int:pk>/assign/', catalog_views.ServiceRequestAssignView.as_view(), name='service_request_assign'),
+    path('requests/<int:pk>/fulfilling/', catalog_views.ServiceRequestMarkFulfillingView.as_view(), name='service_request_fulfilling'),
+    path('requests/<int:pk>/fulfilled/', catalog_views.ServiceRequestMarkFulfilledView.as_view(), name='service_request_fulfilled'),
+    path('requests/<int:pk>/cancel/', catalog_views.ServiceRequestCancelView.as_view(), name='service_request_cancel'),
 ]

@@ -320,6 +320,124 @@ class SLAPolicyChangePermissionMixin(
 
 
 # =====================================================
+# Catalogue Item Permissions
+# =====================================================
+
+
+class CatalogItemPermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Base catalogue-item access permission.
+
+    Default permission:
+        view_catalogitem
+    """
+
+    permission_required = (
+        "service_desk.view_catalogitem"
+    )
+
+
+class CatalogItemViewPermissionMixin(
+    CatalogItemPermissionMixin
+):
+    """
+    Catalogue browsing permission.
+    """
+
+    permission_required = (
+        "service_desk.view_catalogitem"
+    )
+
+
+class CatalogItemCreatePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Catalogue-item creation permission.
+    """
+
+    permission_required = (
+        "service_desk.add_catalogitem"
+    )
+
+
+class CatalogItemChangePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Catalogue-item update / lifecycle permission.
+    """
+
+    permission_required = (
+        "service_desk.change_catalogitem"
+    )
+
+
+# =====================================================
+# Service Request Permissions
+# =====================================================
+
+
+class ServiceRequestPermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Base service-request access permission.
+
+    Default permission:
+        view_servicerequest
+    """
+
+    permission_required = (
+        "service_desk.view_servicerequest"
+    )
+
+
+class ServiceRequestViewPermissionMixin(
+    ServiceRequestPermissionMixin
+):
+    """
+    Service-request viewing permission.
+    """
+
+    permission_required = (
+        "service_desk.view_servicerequest"
+    )
+
+
+class ServiceRequestCreatePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Service-request creation permission.
+    """
+
+    permission_required = (
+        "service_desk.add_servicerequest"
+    )
+
+
+class ServiceRequestChangePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Service-request workflow-transition permission.
+
+    Covers approve/reject/assign/fulfilling/fulfilled/cancel — every
+    transition additionally re-checks the specific actor rule it
+    needs (e.g. self-approval prevention) at the service layer, this
+    mixin only gates "staff of some kind, not an anonymous or
+    unrelated Requester".
+    """
+
+    permission_required = (
+        "service_desk.change_servicerequest"
+    )
+
+
+# =====================================================
 # Role Enforcement
 # =====================================================
 

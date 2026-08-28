@@ -16,6 +16,13 @@ from .root_cause_analysis import (
 from .supplier import Supplier
 from .sla import SLAEscalation, SLAPolicy, TicketSLA
 from .notification import Notification
+from .service_catalog import (
+    CatalogItem,
+    ServiceCategory,
+    ServiceRequest,
+    ServiceRequestApproval,
+    ServiceRequestHistory,
+)
 
 __all__ = [
     "Department",
@@ -36,4 +43,9 @@ __all__ = [
     "TicketSLA",
     "SLAEscalation",
     "Notification",
+    "ServiceCategory",
+    "CatalogItem",
+    "ServiceRequest",
+    "ServiceRequestApproval",
+    "ServiceRequestHistory",
 ]

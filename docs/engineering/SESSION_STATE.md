@@ -109,6 +109,53 @@ verified starting point for every subsequent phase of the Enterprise Completion 
 Pushed the branch and opened a draft PR before implementation, per the mission's explicit instruction to do
 so early — see the PR for live, truthful status as each phase lands.
 
+### Phase 2 — Service Catalogue and Service Request Management (complete)
+
+New models: `ServiceCategory` (admin-managed reference data, mirroring `Department`/`RequestType` —
+no dedicated app views), `CatalogItem` (browsable offering with category, fulfilment department,
+approval requirement, default priority, expected delivery days, active/inactive lifecycle),
+`ServiceRequest` (wraps exactly one `Ticket` via `OneToOneField` — see ADR-011, Decision 2:
+visibility is derived entirely from `get_ticket_queryset`, not reimplemented), `ServiceRequestApproval`
+(append-only decision record: actor, decision, comment, timestamp), `ServiceRequestHistory` (audit trail
+mirroring `TicketHistory`/`ProblemHistory`'s shape and `record()` classmethod). Migration `0012` (additive
+only — new tables plus a `choices=`-only `AlterField` on `Notification.kind` for three new notification
+kinds).
+
+New service layer: `CatalogService` (item CRUD/lifecycle, with `assert_department_allowed` enforced
+independently of `CatalogItemForm`'s queryset narrowing — mission requirement "never rely on form
+filtering alone") and `ServiceRequestService` (full lifecycle: create → pending_approval/approved →
+assigned → fulfilling → fulfilled, or → rejected/cancelled at the appropriate points). Two defects
+found and fixed while writing tests, not shipped: (1) `approve_request`/`reject_request` originally
+checked only "not self-approval" — a Technician holding `change_servicerequest` (needed for
+assignment/fulfilment) could otherwise have approved a request; added `_assert_may_decide` requiring
+Manager or Administrator specifically. (2) fulfilment-stage transitions (`mark_fulfilling`/
+`mark_fulfilled`) are restricted to the ticket's assignee, a Manager, or an Administrator
+(`_assert_may_fulfil`), not just anyone holding the workflow-change permission.
+
+`approve_request`/`reject_request` reuse `TicketService`/`NotificationService` for everything the
+underlying ticket already owns (assignment, status, comments) rather than duplicating it — assignment
+calls `TicketService.assign_ticket` + advances the ticket to `in_progress`; fulfilment calls
+`TicketService.change_status(ticket, "resolved", ...)`, after which the **existing, unmodified**
+IM-04 requester-confirmation flow closes the ticket — no new confirmation code was needed.
+
+New flat view module `catalog_views.py` (ADR-011, Decision 2 — not appended to the existing `views.py`
+monolith), 14 views, 15 new URL routes, 2 new sidebar entries (`view_catalogitem`/`view_servicerequest`
+gated). RBAC: `get_catalog_item_queryset` (active items for everyone, all items for Manager/Admin) and
+`get_service_request_queryset` (thin wrapper over `get_ticket_queryset`) in `security/policies.py`;
+matching `CatalogItem*`/`ServiceRequest*PermissionMixin` sets in `security/mixins.py`. `create_roles.py`
+extended with the new permissions per role (Requester: browse + submit; Technician: browse + workflow
+actions; Manager/Administrator: full catalogue administration + approval).
+
+7 new templates under `templates/catalog/`. Test suite: `test_service_catalog.py`, 51 new tests (model
+constraints, service-layer department-scoping enforcement bypassing the form, RBAC scoping mirrored from
+Ticket, cross-scope 404, anonymous redirect, POST-only, CSRF, self-approval prevention, the two defects
+above, full lifecycle through real views ending in the reused ticket-confirmation close). Extended
+`test_navigation.py` (admin registration check, manager navigation/reachability tuples) rather than
+duplicating that coverage in the new file.
+
+**Verified:** `check` clean · `makemigrations --check --dry-run` clean · **347/347 tests passing**
+(296 baseline + 51 new).
+
 ---
 
 ## Completed Engineering Milestones
