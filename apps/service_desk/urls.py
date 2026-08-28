@@ -4,6 +4,7 @@ from . import catalog_views
 from . import change_views
 from . import release_views
 from . import cmdb_views
+from . import knowledge_views
 
 app_name = 'service_desk'
 
@@ -121,4 +122,18 @@ urlpatterns = [
     path('cmdb/<int:pk>/unlink-ticket/<int:ticket_pk>/', cmdb_views.CIUnlinkTicketView.as_view(), name='cmdb_unlink_ticket'),
     path('cmdb/<int:pk>/link-change/', cmdb_views.CILinkChangeView.as_view(), name='cmdb_link_change'),
     path('cmdb/<int:pk>/unlink-change/<int:change_pk>/', cmdb_views.CIUnlinkChangeView.as_view(), name='cmdb_unlink_change'),
+
+    # Knowledge Management
+    path('knowledge/', knowledge_views.KnowledgeArticleListView.as_view(), name='knowledge_list'),
+    path('knowledge/new/', knowledge_views.KnowledgeArticleCreateView.as_view(), name='knowledge_create'),
+    path('knowledge/<int:pk>/', knowledge_views.KnowledgeArticleDetailView.as_view(), name='knowledge_detail'),
+    path('knowledge/<int:pk>/edit/', knowledge_views.KnowledgeArticleUpdateView.as_view(), name='knowledge_update'),
+    path('knowledge/<int:pk>/submit/', knowledge_views.KnowledgeArticleSubmitView.as_view(), name='knowledge_submit'),
+    path('knowledge/<int:pk>/assign-reviewer/', knowledge_views.KnowledgeArticleAssignReviewerView.as_view(), name='knowledge_assign_reviewer'),
+    path('knowledge/<int:pk>/approve/', knowledge_views.KnowledgeArticleApproveView.as_view(), name='knowledge_approve'),
+    path('knowledge/<int:pk>/send-back/', knowledge_views.KnowledgeArticleSendBackView.as_view(), name='knowledge_send_back'),
+    path('knowledge/<int:pk>/publish/', knowledge_views.KnowledgeArticlePublishView.as_view(), name='knowledge_publish'),
+    path('knowledge/<int:pk>/archive/', knowledge_views.KnowledgeArticleArchiveView.as_view(), name='knowledge_archive'),
+    path('knowledge/<int:pk>/revise/', knowledge_views.KnowledgeArticleStartRevisionView.as_view(), name='knowledge_start_revision'),
+    path('knowledge/<int:pk>/feedback/', knowledge_views.KnowledgeArticleFeedbackView.as_view(), name='knowledge_feedback'),
 ]

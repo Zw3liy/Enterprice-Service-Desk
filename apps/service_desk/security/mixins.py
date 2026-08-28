@@ -617,6 +617,67 @@ class ConfigurationItemChangePermissionMixin(
 
 
 # =====================================================
+# Knowledge Permissions
+# =====================================================
+
+
+class KnowledgeArticlePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Base knowledge-article access permission.
+
+    Default permission:
+        view_knowledgearticle
+    """
+
+    permission_required = (
+        "service_desk.view_knowledgearticle"
+    )
+
+
+class KnowledgeArticleViewPermissionMixin(
+    KnowledgeArticlePermissionMixin
+):
+    """
+    Knowledge-article viewing permission.
+    """
+
+    permission_required = (
+        "service_desk.view_knowledgearticle"
+    )
+
+
+class KnowledgeArticleCreatePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Knowledge-article creation permission.
+    """
+
+    permission_required = (
+        "service_desk.add_knowledgearticle"
+    )
+
+
+class KnowledgeArticleChangePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Knowledge-article workflow-transition permission.
+
+    Covers submit/assign-reviewer/approve/send-back/publish/archive/
+    revise — every transition additionally re-checks the specific
+    actor rule it needs (e.g. reviewer separation of duties) at the
+    service layer; this mixin only gates "staff of some kind".
+    """
+
+    permission_required = (
+        "service_desk.change_knowledgearticle"
+    )
+
+
+# =====================================================
 # Role Enforcement
 # =====================================================
 

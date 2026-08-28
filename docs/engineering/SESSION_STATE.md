@@ -265,6 +265,44 @@ them, link a ticket, unlink it) through real views.
 **Verified:** `check` clean · `makemigrations --check --dry-run` clean · **434/434 tests passing**
 (404 baseline + 30 new).
 
+### Phase 6 — Knowledge Management (complete)
+
+New models: `KnowledgeCategory` (admin-managed reference data), `KnowledgeArticle` (category, tags,
+author, reviewer, `version` incremented on every publish, 5-state status, 3-level `visibility`,
+`published_at`), `KnowledgeArticleHistory`, `KnowledgeFeedback` (helpful/not-helpful,
+`UniqueConstraint(article, user)` — a second vote updates the first via `update_or_create` rather than
+duplicating). Migration `0016` (additive only).
+
+`get_knowledge_article_queryset` is the mission's core requirement made concrete: it is the *only* path
+every view and the search selector uses to reach a `KnowledgeArticle`, so draft or restricted content
+cannot leak through a direct URL or a search result by construction. Requester sees published+public
+only; Technician adds published+internal; Manager and Administrator see everything past draft
+(Administrator literally everything) regardless of visibility, plus their own drafts. **A real gap found
+while testing:** the first cut scoped Manager to "published, or their own articles" — which meant a
+Manager could never see *another author's* in-review submission, making reviewer assignment and review-
+queue management impossible. Fixed to "everything past draft, or their own drafts", verified by a
+regression test.
+
+`KnowledgeService.STATUS_FLOW`: draft → in_review → approved → published, with published/archived both
+able to restart at draft (the revision cycle) and in_review able to bounce back to draft (send-back).
+Self-review prevention mirrors the separation-of-duties pattern used throughout this program: a reviewer
+may never be the article's own author, checked independently of the `change_knowledgearticle` permission
+a Technician also holds for authoring their own work. Publication is restricted to Manager/Administrator
+and increments `version` on every publish.
+
+New flat `knowledge_views.py` (12 views) per ADR-011, 12 URL routes, sidebar entry (visible to Requester
+too — Knowledge is the one governance-adjacent module Requesters *do* get, since published public
+articles are self-service content), `KnowledgeArticle*PermissionMixin` set, extended `create_roles.py`.
+4 templates. 29 new tests (`test_knowledge_management.py`): the full visibility matrix including the
+Manager-visibility fix above, direct-URL and search leak prevention for both draft and restricted
+content (the mission's explicit requirement, tested literally), self-review prevention, duplicate-
+feedback protection, illegal-transition rejection, POST-only, CSRF, and the full lifecycle through real
+views (create → submit → assign reviewer → approve → publish → Requester reads and leaves feedback →
+archive).
+
+**Verified:** `check` clean · `makemigrations --check --dry-run` clean · **463/463 tests passing**
+(434 baseline + 29 new).
+
 ---
 
 ## Completed Engineering Milestones

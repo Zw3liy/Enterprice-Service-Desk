@@ -24,6 +24,7 @@ from apps.service_desk.models import (
     CatalogItem,
     Change,
     ConfigurationItem,
+    KnowledgeArticle,
     Problem,
     Release,
     ServiceRequest,
@@ -75,6 +76,10 @@ class Command(BaseCommand):
 
         configuration_item_content_type = ContentType.objects.get_for_model(
             ConfigurationItem
+        )
+
+        knowledge_article_content_type = ContentType.objects.get_for_model(
+            KnowledgeArticle
         )
 
 
@@ -282,6 +287,30 @@ class Command(BaseCommand):
                 content_type=configuration_item_content_type,
                 codename="delete_configurationitem",
             ),
+
+            # Knowledge Management. Unlike Change/Release/CMDB,
+            # Requesters DO get view access — published, public
+            # articles are self-service content (see
+            # security.policies.get_knowledge_article_queryset).
+            "view_knowledgearticle": Permission.objects.get(
+                content_type=knowledge_article_content_type,
+                codename="view_knowledgearticle",
+            ),
+
+            "add_knowledgearticle": Permission.objects.get(
+                content_type=knowledge_article_content_type,
+                codename="add_knowledgearticle",
+            ),
+
+            "change_knowledgearticle": Permission.objects.get(
+                content_type=knowledge_article_content_type,
+                codename="change_knowledgearticle",
+            ),
+
+            "delete_knowledgearticle": Permission.objects.get(
+                content_type=knowledge_article_content_type,
+                codename="delete_knowledgearticle",
+            ),
         }
 
 
@@ -295,6 +324,7 @@ class Command(BaseCommand):
                 permissions["view_catalogitem"],
                 permissions["add_servicerequest"],
                 permissions["view_servicerequest"],
+                permissions["view_knowledgearticle"],
             ],
 
 
@@ -317,6 +347,9 @@ class Command(BaseCommand):
                 permissions["change_release"],
                 permissions["view_configurationitem"],
                 permissions["change_configurationitem"],
+                permissions["view_knowledgearticle"],
+                permissions["add_knowledgearticle"],
+                permissions["change_knowledgearticle"],
             ],
 
 
@@ -349,6 +382,9 @@ class Command(BaseCommand):
                 permissions["view_configurationitem"],
                 permissions["add_configurationitem"],
                 permissions["change_configurationitem"],
+                permissions["view_knowledgearticle"],
+                permissions["add_knowledgearticle"],
+                permissions["change_knowledgearticle"],
             ],
 
 
@@ -389,6 +425,10 @@ class Command(BaseCommand):
                 permissions["add_configurationitem"],
                 permissions["change_configurationitem"],
                 permissions["delete_configurationitem"],
+                permissions["view_knowledgearticle"],
+                permissions["add_knowledgearticle"],
+                permissions["change_knowledgearticle"],
+                permissions["delete_knowledgearticle"],
             ],
 
         }

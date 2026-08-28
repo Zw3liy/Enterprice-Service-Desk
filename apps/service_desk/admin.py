@@ -8,6 +8,8 @@ from .models import (
     ConfigurationItem,
     ConfigurationItemType,
     Department,
+    KnowledgeArticle,
+    KnowledgeCategory,
     RequestType,
     Notification,
     Release,
@@ -452,4 +454,42 @@ class CIRelationshipAdmin(admin.ModelAdmin):
         "source",
         "target",
         "created_by",
+    )
+
+
+@admin.register(KnowledgeCategory)
+class KnowledgeCategoryAdmin(admin.ModelAdmin):
+    list_display = ("name", "is_active", "created_at")
+    list_filter = ("is_active",)
+    search_fields = ("name",)
+
+
+@admin.register(KnowledgeArticle)
+class KnowledgeArticleAdmin(admin.ModelAdmin):
+    list_display = (
+        "title",
+        "category",
+        "status",
+        "visibility",
+        "version",
+        "author",
+        "reviewer",
+        "published_at",
+    )
+    list_filter = (
+        "category",
+        "status",
+        "visibility",
+    )
+    search_fields = (
+        "title",
+        "content",
+        "tags",
+    )
+    autocomplete_fields = (
+        "category",
+    )
+    raw_id_fields = (
+        "author",
+        "reviewer",
     )

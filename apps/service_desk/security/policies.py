@@ -16,6 +16,7 @@ from apps.service_desk.models import (
     Change,
     CIRelationship,
     ConfigurationItem,
+    KnowledgeArticle,
     Problem,
     Release,
     ServiceRequest,
@@ -423,4 +424,74 @@ def get_ci_relationship_queryset(user):
 
     return CIRelationship.objects.filter(
         source__in=get_configuration_item_queryset(user)
+    )
+
+
+
+def get_knowledge_article_queryset(user):
+    """
+    Object level knowledge-article visibility.
+
+    This is the one function every knowledge view and the search
+    selector must resolve articles through — draft or restricted
+    content must never leak via a direct URL or a search result, so
+    there is deliberately no other way to reach a
+    ``KnowledgeArticle`` in this codebase.
+
+    Administrator:
+        every article, any status, any visibility (editorial
+        oversight).
+
+    Manager:
+        every article that has left draft (in_review/approved/
+        published/archived), any author, any visibility — Managers
+        are the editorial board that assigns reviewers and manages
+        the review queue, which is impossible without seeing
+        submissions from authors other than themselves — plus their
+        own draft articles. A real gap found while testing: scoping
+        Managers to "published, or their own" left them unable to
+        even see another author's in-review article to assign a
+        reviewer to it.
+
+    Technician:
+        published articles whose visibility is public or internal
+        (not restricted), plus their own articles (author or
+        assigned reviewer) at any status.
+
+    Requester (and anyone else with no elevated role):
+        published, public-visibility articles only — never a draft,
+        never anything in review or approved-but-unpublished, never
+        internal/restricted visibility.
+    """
+
+    if not user.is_authenticated:
+        return KnowledgeArticle.objects.none()
+
+    if is_administrator(user):
+        return KnowledgeArticle.objects.all()
+
+    own = Q(author=user) | Q(reviewer=user)
+
+    if is_manager(user):
+        return KnowledgeArticle.objects.filter(
+            ~Q(status=KnowledgeArticle.STATUS_DRAFT) | own
+        )
+
+    if is_technician(user):
+        return KnowledgeArticle.objects.filter(
+            (
+                Q(status=KnowledgeArticle.STATUS_PUBLISHED)
+                & Q(
+                    visibility__in=[
+                        KnowledgeArticle.VISIBILITY_PUBLIC,
+                        KnowledgeArticle.VISIBILITY_INTERNAL,
+                    ]
+                )
+            )
+            | own
+        )
+
+    return KnowledgeArticle.objects.filter(
+        status=KnowledgeArticle.STATUS_PUBLISHED,
+        visibility=KnowledgeArticle.VISIBILITY_PUBLIC,
     )

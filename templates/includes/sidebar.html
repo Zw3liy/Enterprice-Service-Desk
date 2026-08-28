@@ -116,6 +116,16 @@
             </li>
             {% endif %}
 
+            {% if perms.service_desk.view_knowledgearticle %}
+            <li class="nav-item">
+                <a class="nav-link{% if request.resolver_match.url_name == 'knowledge_list' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:knowledge_list' %}"
+                   {% if request.resolver_match.url_name == 'knowledge_list' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-book me-2" aria-hidden="true"></i>Knowledge Base
+                </a>
+            </li>
+            {% endif %}
+
             {% if perms.service_desk.view_ticket %}
             <li class="nav-item">
                 <a class="nav-link{% if request.resolver_match.url_name == 'sla_dashboard' %} active fw-semibold{% endif %}"
