@@ -23,6 +23,7 @@ from django.contrib.contenttypes.models import ContentType
 from apps.service_desk.models import (
     CatalogItem,
     Change,
+    ConfigurationItem,
     Problem,
     Release,
     ServiceRequest,
@@ -70,6 +71,10 @@ class Command(BaseCommand):
 
         release_content_type = ContentType.objects.get_for_model(
             Release
+        )
+
+        configuration_item_content_type = ContentType.objects.get_for_model(
+            ConfigurationItem
         )
 
 
@@ -255,6 +260,28 @@ class Command(BaseCommand):
                 content_type=release_content_type,
                 codename="delete_release",
             ),
+
+            # CMDB. Requesters get nothing — operational/technical
+            # data, not requester-facing.
+            "view_configurationitem": Permission.objects.get(
+                content_type=configuration_item_content_type,
+                codename="view_configurationitem",
+            ),
+
+            "add_configurationitem": Permission.objects.get(
+                content_type=configuration_item_content_type,
+                codename="add_configurationitem",
+            ),
+
+            "change_configurationitem": Permission.objects.get(
+                content_type=configuration_item_content_type,
+                codename="change_configurationitem",
+            ),
+
+            "delete_configurationitem": Permission.objects.get(
+                content_type=configuration_item_content_type,
+                codename="delete_configurationitem",
+            ),
         }
 
 
@@ -288,6 +315,8 @@ class Command(BaseCommand):
                 permissions["change_change"],
                 permissions["view_release"],
                 permissions["change_release"],
+                permissions["view_configurationitem"],
+                permissions["change_configurationitem"],
             ],
 
 
@@ -317,6 +346,9 @@ class Command(BaseCommand):
                 permissions["view_release"],
                 permissions["add_release"],
                 permissions["change_release"],
+                permissions["view_configurationitem"],
+                permissions["add_configurationitem"],
+                permissions["change_configurationitem"],
             ],
 
 
@@ -353,6 +385,10 @@ class Command(BaseCommand):
                 permissions["add_release"],
                 permissions["change_release"],
                 permissions["delete_release"],
+                permissions["view_configurationitem"],
+                permissions["add_configurationitem"],
+                permissions["change_configurationitem"],
+                permissions["delete_configurationitem"],
             ],
 
         }

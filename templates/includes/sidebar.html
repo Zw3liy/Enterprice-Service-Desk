@@ -106,6 +106,16 @@
             </li>
             {% endif %}
 
+            {% if perms.service_desk.view_configurationitem %}
+            <li class="nav-item">
+                <a class="nav-link{% if request.resolver_match.url_name == 'cmdb_item_list' %} active fw-semibold{% endif %}"
+                   href="{% url 'service_desk:cmdb_item_list' %}"
+                   {% if request.resolver_match.url_name == 'cmdb_item_list' %}aria-current="page"{% endif %}>
+                    <i class="fa-solid fa-server me-2" aria-hidden="true"></i>CMDB
+                </a>
+            </li>
+            {% endif %}
+
             {% if perms.service_desk.view_ticket %}
             <li class="nav-item">
                 <a class="nav-link{% if request.resolver_match.url_name == 'sla_dashboard' %} active fw-semibold{% endif %}"

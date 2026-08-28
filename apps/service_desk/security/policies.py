@@ -11,7 +11,17 @@ Phase 2.2 Authorization Hardening
 from django.contrib.auth.models import Group
 from django.db.models import Q
 
-from apps.service_desk.models import CatalogItem, Change, Problem, Release, ServiceRequest, Supplier, Ticket
+from apps.service_desk.models import (
+    CatalogItem,
+    Change,
+    CIRelationship,
+    ConfigurationItem,
+    Problem,
+    Release,
+    ServiceRequest,
+    Supplier,
+    Ticket,
+)
 
 
 
@@ -354,3 +364,63 @@ def get_release_queryset(user):
         return Release.objects.filter(owner=user)
 
     return Release.objects.none()
+
+
+
+def get_configuration_item_queryset(user):
+    """
+    Object level CI visibility.
+
+    Administrator:
+        all CIs
+
+    Manager:
+        department-scoped, including retired/disposed items (full
+        asset stewardship for departments they manage).
+
+    Technician:
+        every in-service-or-similar CI, system-wide, excluding
+        retired/disposed — troubleshooting a ticket or a change
+        routinely needs a CI outside the technician's own
+        department, unlike Change/Release which are internal
+        governance records scoped tightly by design.
+
+    Requester:
+        none — CMDB is operational/technical data, not
+        requester-facing (same rationale as Change/Release).
+    """
+
+    if not user.is_authenticated:
+        return ConfigurationItem.objects.none()
+
+    if is_administrator(user):
+        return ConfigurationItem.objects.all()
+
+    if is_manager(user):
+        return ConfigurationItem.objects.filter(
+            department__in=user.managed_departments.all()
+        )
+
+    if is_technician(user):
+        return ConfigurationItem.objects.exclude(
+            status__in=[
+                ConfigurationItem.STATUS_RETIRED,
+                ConfigurationItem.STATUS_DISPOSED,
+            ]
+        )
+
+    return ConfigurationItem.objects.none()
+
+
+
+def get_ci_relationship_queryset(user):
+    """
+    A relationship is visible if its source CI is visible to the
+    user — relationships are read outward from a CI you can already
+    see, never used to reach a CI that would otherwise be out of
+    scope.
+    """
+
+    return CIRelationship.objects.filter(
+        source__in=get_configuration_item_queryset(user)
+    )

@@ -228,6 +228,43 @@ completing the deploy → validate → complete path).
 **Verified:** `check` clean · `makemigrations --check --dry-run` clean · **404/404 tests passing**
 (378 baseline + 26 new).
 
+### Phase 5 — CMDB (complete)
+
+New models: `ConfigurationItemType` (admin-managed reference data, mirrors `ServiceCategory`/
+`Department`/`RequestType`), `ConfigurationItem` (type, unique `identifier`, status, criticality,
+department, owner, plus `tickets`/`changes` M2M fields defined here rather than by touching
+`Ticket`/`Change` themselves, keeping those files untouched), `CIRelationship` (directed, validated
+`relationship_type` choice set, `CheckConstraint` against self-reference, `UniqueConstraint` on
+(source, target, type) preventing duplicates — enforced at the database *and* the service layer).
+Migration `0015` (additive only).
+
+RBAC (`get_configuration_item_queryset`): Requester excluded entirely (operational/technical data, same
+rationale as Change/Release); Manager department-scoped *including* retired/disposed items (full asset
+stewardship); Technician sees every non-retired/non-disposed CI system-wide, deliberately not
+department-scoped — troubleshooting routinely needs a CI outside the technician's own department, unlike
+the tightly-scoped governance modules. `get_ci_relationship_queryset` derives visibility from the
+relationship's source CI, so an edge can never be used to reach a CI that would otherwise be out of
+scope.
+
+`CMDBService.add_relationship` rejects self-relationships and duplicates before hitting the database
+constraints (a clean `ValidationError` for the UI rather than a raw `IntegrityError`).
+`CMDBService.assert_department_allowed` mirrors `SupplierService`/`CatalogService` exactly — a Manager
+cannot file a CI under a department they don't manage, checked independently of the form's queryset
+narrowing. CI linking to tickets/changes resolves *both* sides through their own RBAC-scoped queryset
+(`get_ticket_queryset`/`get_change_queryset`) before linking, so linking can't be used to leak or
+associate an out-of-scope object.
+
+New flat `cmdb_views.py` (10 views) per ADR-011, 10 URL routes, sidebar entry, `ConfigurationItem*
+PermissionMixin` set, extended `create_roles.py`, 4 templates. 30 new tests
+(`test_cmdb.py`): duplicate-identifier and self-relationship rejection at both the model and service
+layer, department-scoping enforcement independent of form filtering, the full RBAC matrix including the
+retired-item Technician/Manager asymmetry, relationship-queryset visibility following its source CI,
+cross-scope 404, anonymous redirect, POST-only, CSRF, and the full lifecycle (create two CIs, relate
+them, link a ticket, unlink it) through real views.
+
+**Verified:** `check` clean · `makemigrations --check --dry-run` clean · **434/434 tests passing**
+(404 baseline + 30 new).
+
 ---
 
 ## Completed Engineering Milestones

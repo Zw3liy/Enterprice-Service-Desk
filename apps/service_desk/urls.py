@@ -3,6 +3,7 @@ from . import views
 from . import catalog_views
 from . import change_views
 from . import release_views
+from . import cmdb_views
 
 app_name = 'service_desk'
 
@@ -108,4 +109,16 @@ urlpatterns = [
     path('releases/<int:pk>/fail/', release_views.ReleaseFailView.as_view(), name='release_fail'),
     path('releases/<int:pk>/rollback/', release_views.ReleaseRollbackView.as_view(), name='release_rollback'),
     path('releases/<int:pk>/comment/', release_views.ReleaseCommentView.as_view(), name='release_comment'),
+
+    # CMDB
+    path('cmdb/', cmdb_views.ConfigurationItemListView.as_view(), name='cmdb_item_list'),
+    path('cmdb/new/', cmdb_views.ConfigurationItemCreateView.as_view(), name='cmdb_item_create'),
+    path('cmdb/<int:pk>/', cmdb_views.ConfigurationItemDetailView.as_view(), name='cmdb_item_detail'),
+    path('cmdb/<int:pk>/edit/', cmdb_views.ConfigurationItemUpdateView.as_view(), name='cmdb_item_update'),
+    path('cmdb/<int:pk>/relationships/add/', cmdb_views.CIRelationshipAddView.as_view(), name='cmdb_relationship_add'),
+    path('cmdb/<int:pk>/relationships/<int:relationship_pk>/remove/', cmdb_views.CIRelationshipRemoveView.as_view(), name='cmdb_relationship_remove'),
+    path('cmdb/<int:pk>/link-ticket/', cmdb_views.CILinkTicketView.as_view(), name='cmdb_link_ticket'),
+    path('cmdb/<int:pk>/unlink-ticket/<int:ticket_pk>/', cmdb_views.CIUnlinkTicketView.as_view(), name='cmdb_unlink_ticket'),
+    path('cmdb/<int:pk>/link-change/', cmdb_views.CILinkChangeView.as_view(), name='cmdb_link_change'),
+    path('cmdb/<int:pk>/unlink-change/<int:change_pk>/', cmdb_views.CIUnlinkChangeView.as_view(), name='cmdb_unlink_change'),
 ]

@@ -561,6 +561,62 @@ class ReleaseChangePermissionMixin(
 
 
 # =====================================================
+# CMDB Permissions
+# =====================================================
+
+
+class ConfigurationItemPermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    Base CI access permission.
+
+    Default permission:
+        view_configurationitem
+    """
+
+    permission_required = (
+        "service_desk.view_configurationitem"
+    )
+
+
+class ConfigurationItemViewPermissionMixin(
+    ConfigurationItemPermissionMixin
+):
+    """
+    CI viewing permission.
+    """
+
+    permission_required = (
+        "service_desk.view_configurationitem"
+    )
+
+
+class ConfigurationItemCreatePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    CI creation permission.
+    """
+
+    permission_required = (
+        "service_desk.add_configurationitem"
+    )
+
+
+class ConfigurationItemChangePermissionMixin(
+    ServiceDeskPermissionMixin
+):
+    """
+    CI update / relationship / linking permission.
+    """
+
+    permission_required = (
+        "service_desk.change_configurationitem"
+    )
+
+
+# =====================================================
 # Role Enforcement
 # =====================================================
 

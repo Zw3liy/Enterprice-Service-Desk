@@ -25,6 +25,7 @@ from .service_catalog import (
 )
 from .change import Change, ChangeApproval, ChangeHistory
 from .release import Release, ReleaseApproval, ReleaseHistory
+from .cmdb import CIRelationship, ConfigurationItem, ConfigurationItemType
 
 __all__ = [
     "Department",
@@ -56,4 +57,7 @@ __all__ = [
     "Release",
     "ReleaseApproval",
     "ReleaseHistory",
+    "ConfigurationItemType",
+    "ConfigurationItem",
+    "CIRelationship",
 ]

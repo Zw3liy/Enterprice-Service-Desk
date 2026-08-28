@@ -4,6 +4,9 @@ from .models import (
     CatalogItem,
     Change,
     ChangeApproval,
+    CIRelationship,
+    ConfigurationItem,
+    ConfigurationItemType,
     Department,
     RequestType,
     Notification,
@@ -388,4 +391,65 @@ class ReleaseApprovalAdmin(admin.ModelAdmin):
     raw_id_fields = (
         "release",
         "actor",
+    )
+
+
+@admin.register(ConfigurationItemType)
+class ConfigurationItemTypeAdmin(admin.ModelAdmin):
+    list_display = ("name", "is_active", "created_at")
+    list_filter = ("is_active",)
+    search_fields = ("name",)
+
+
+@admin.register(ConfigurationItem)
+class ConfigurationItemAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "identifier",
+        "ci_type",
+        "status",
+        "criticality",
+        "department",
+        "owner",
+    )
+    list_filter = (
+        "ci_type",
+        "status",
+        "criticality",
+        "department",
+    )
+    search_fields = (
+        "name",
+        "identifier",
+        "description",
+    )
+    autocomplete_fields = (
+        "ci_type",
+        "department",
+    )
+    raw_id_fields = (
+        "owner",
+    )
+    filter_horizontal = (
+        "tickets",
+        "changes",
+    )
+
+
+@admin.register(CIRelationship)
+class CIRelationshipAdmin(admin.ModelAdmin):
+    list_display = (
+        "source",
+        "relationship_type",
+        "target",
+        "created_by",
+        "created_at",
+    )
+    list_filter = (
+        "relationship_type",
+    )
+    raw_id_fields = (
+        "source",
+        "target",
+        "created_by",
     )
