@@ -1,0 +1,59 @@
+# -------------------------------------------------------------------
+# Cloudflare NAMED tunnel — the production replacement for a Quick
+# Tunnel (see docs/operations/SERVER_HARDENING.md §3.1).
+#
+# Install path: /etc/cloudflared/config.yml (or ~/.cloudflared/config.yml)
+# Run as a service:  sudo cloudflared service install <TUNNEL-TOKEN>
+#
+# The token form of `cloudflared service install` configures the tunnel
+# from the dashboard instead of this file. This config.yml is for the
+# cert-file/credentials flow:
+#   1. cloudflared tunnel login          (one-time, browser auth)
+#   2. cloudflared tunnel create esd     (prints a tunnel UUID + JSON)
+#   3. Put the UUID and credentials path below, then:
+#      cloudflared tunnel route dns esd service-desk.example.com
+#   4. cloudflared tunnel run esd
+#   5. cloudflared service install <UUID or token>
+#
+# Cloudflare Access policies (SSO + MFA) are attached to each hostname
+# in the Zero Trust dashboard (Access > Applications) — mandatory for
+# every admin hostname below. Access is enforced at Cloudflare's edge,
+# BEFORE traffic ever reaches this tunnel.
+# -------------------------------------------------------------------
+
+tunnel: <TUNNEL-UUID>
+credentials-file: /etc/cloudflared/<TUNNEL-UUID>.json
+
+# Metrics for the health check (Uptime Kuma can probe this).
+metrics: 127.0.0.1:2000
+no-autoupdate: false
+
+ingress:
+  # --- The service desk application ------------------------------
+  - hostname: service-desk.example.com
+    service: http://127.0.0.1:8000
+    originRequest:
+      connectTimeout: 30s
+      noTLSVerify: false
+      httpHostHeader: service-desk.example.com
+
+  # --- Status page (Uptime Kuma) — optional ----------------------
+  - hostname: status.example.com
+    service: http://127.0.0.1:3001
+    originRequest:
+      connectTimeout: 30s
+
+  # --- ADMIN SURFACES — Cloudflare Access required ----------------
+  - hostname: proxy-admin.example.com
+    service: http://127.0.0.1:81
+    originRequest:
+      connectTimeout: 30s
+
+  - hostname: portainer.example.com
+    service: https://127.0.0.1:9443
+    originRequest:
+      connectTimeout: 30s
+      noTLSVerify: true          # Portainer's self-signed certificate
+
+  # --- Catch-all: required by cloudflared; nothing else routes ----
+  - service: http_status:404

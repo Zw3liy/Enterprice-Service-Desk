@@ -1,0 +1,102 @@
+# -------------------------------------------------------------------
+# Hardened reference stack for the ops tooling that fronts the
+# Enterprise Service Desk: Nginx Proxy Manager, Portainer, Uptime Kuma.
+#
+# This is a REFERENCE for (re)deploying these services the safe way —
+# adjust volumes/ports to your existing data before switching over
+# (keep the volume names identical so existing data is reused).
+#
+# Hardening applied:
+#   * Every published port binds 127.0.0.1 ONLY — the Cloudflare
+#     tunnel reaches them locally; nothing is exposed to the internet
+#     (published Docker ports bypass UFW, so loopback binding is the
+#     only reliable isolation — see SERVER_HARDENING.md §3.2).
+#   * no-new-privileges everywhere.
+#   * Capability sets reduced to the minimum each image actually needs
+#     (NPM's init chowns /data and its nginx master binds 80/4443
+#     inside the container — hence CHOWN/SETUID/SETGID/NET_BIND_SERVICE;
+#     Portainer and Uptime Kuma need nothing).
+#   * Pid + memory limits.
+#   * NPM gets a read-only mount of ./npm-custom -> /data/nginx/custom
+#     for the nginx snippets in scripts/hardening/configs/nginx/.
+#
+# Usage:
+#   docker compose -f ops-stack.hardened.yml up -d
+#   docker exec npm nginx -t && docker exec npm nginx -s reload
+# -------------------------------------------------------------------
+
+services:
+  nginx-proxy-manager:
+    image: jc21/nginx-proxy-manager:latest   # pin a digest in production
+    container_name: npm
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+      - FOWNER
+      - DAC_OVERRIDE
+      - NET_BIND_SERVICE
+    pids_limit: 256
+    mem_limit: 1g
+    ports:
+      - "127.0.0.1:80:80"
+      - "127.0.0.1:443:4443"
+      - "127.0.0.1:81:81"
+    volumes:
+      - npm-data:/data
+      - npm-letsencrypt:/etc/letsencrypt
+      - ./npm-custom:/data/nginx/custom:ro
+    networks:
+      - ops
+
+  portainer:
+    image: portainer/portainer-ce:lts
+    container_name: portainer
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 128
+    mem_limit: 512m
+    ports:
+      - "127.0.0.1:9443:9443"
+    volumes:
+      - portainer_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock   # root-equivalent:
+        # the ONLY container allowed to hold the socket. Lock the
+        # Portainer admin account behind a strong password + MFA.
+    networks:
+      - ops
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:1           # pin a digest in production
+    container_name: uptime-kuma
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 256
+    mem_limit: 512m
+    ports:
+      - "127.0.0.1:3001:3001"
+    volumes:
+      - uptime-kuma:/app/data
+    networks:
+      - ops
+
+volumes:
+  npm-data:
+  npm-letsencrypt:
+  portainer_data:
+  uptime-kuma:
+
+networks:
+  ops:
+    driver: bridge

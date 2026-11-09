@@ -107,6 +107,49 @@ install_dropin() {
     return 0   # signals "changed"
 }
 
+# Install a config file from this kit's configs/ directory, keeping a
+# backup of anything it replaces. Same return convention as
+# install_dropin: 0 = changed, 1 = already up to date.
+install_config() {
+    local src="$1" dest="$2" mode="${3:-0644}"
+
+    [[ -f "${src}" ]] || die "config template missing: ${src}"
+
+    if [[ -f "${dest}" ]] && cmp -s "${src}" "${dest}"; then
+        log "${dest} already up to date."
+        return 1
+    fi
+
+    backup_file "${dest}"
+    if [[ "${DRY_RUN}" == "1" ]]; then
+        log "DRY-RUN: would install ${src} -> ${dest} (mode ${mode})"
+    else
+        mkdir -p "$(dirname "${dest}")"
+        install -m "${mode}" "${src}" "${dest}"
+        log "Installed ${dest} (from $(basename "${src}"))"
+    fi
+    return 0
+}
+
+# Reload/restart a service only if it exists and is active/enable-able.
+reload_service() {
+    local svc="$1"
+    if ! systemctl list-unit-files "${svc}.service" >/dev/null 2>&1; then
+        skip "${svc} not installed on this host — config left in place for when it is."
+        return 2
+    fi
+    if [[ "${DRY_RUN}" == "1" ]]; then
+        log "DRY-RUN: would restart ${svc}"
+        return 0
+    fi
+    if systemctl restart "${svc}"; then
+        ok "Restarted ${svc}."
+        return 0
+    fi
+    warn "Could not restart ${svc} (is systemd running?). Restart it manually."
+    return 1
+}
+
 # Run a command, or just print it under DRY_RUN=1.
 run() {
     if [[ "${DRY_RUN}" == "1" ]]; then

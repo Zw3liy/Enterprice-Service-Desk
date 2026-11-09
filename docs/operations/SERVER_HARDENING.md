@@ -36,29 +36,52 @@ part of this runbook lives in `scripts/hardening/` (see its README).
 
 ## 2. The hardening kit (executable controls)
 
-`scripts/hardening/` implements the host-level layer. After running it
-(`sudo ./harden_*.sh`, then `sudo ./audit_hardening.sh`), the host profile is:
+`scripts/hardening/` implements the host-level layer. After running
+`sudo ./harden_all.sh` (or each `harden_*.sh` individually) and
+`sudo ./audit_hardening.sh`, the host profile is:
 
 * **SSH**: public-key-only (`AuthenticationMethods publickey`), root denied,
   brute-force surface capped (`MaxAuthTries 3`, `MaxStartups 10:30:60`,
   `LoginGraceTime 30`), all forwarding disabled, modern KEX/ciphers/MACs
   only, `LogLevel VERBOSE`.
+* **Firewall (UFW)**: default deny incoming + deny routed, **zero public
+  inbound ports** (the tunnel dials out), rate-limited SSH from a pinned
+  management IP only, optional egress allowlist (`UFW_EGRESS=deny`).
 * **Kernel/network**: anti-spoofing (`rp_filter`), no ICMP redirects,
   SYN cookies + RFC1337, martian logging, ASLR full, kernel pointers
   hidden (`kptr_restrict=2`), `dmesg` restricted, ptrace restricted,
   unprivileged BPF off, core dumps off, SUID dumpable off, rare kernel
   protocols (dccp/sctp/rds/tipc + unused filesystems) blacklisted.
+* **Updates & logging**: unattended security updates (never auto-reboot —
+  the audit flags reboots on your timeline), needrestart auto-restart,
+  journald bounded to 250 MB / 2 weeks.
+* **Login policy**: pwquality 14+ mixed chars + dictionary check,
+  pam_faillock policy (5 fails → 15 min lockout incl. root; activation
+  is a deliberate manual `pam-auth-update` step), login.defs aging
+  (90/1/7) and `UMASK 027` for new accounts.
+* **Fail2Ban**: sshd jail in aggressive mode with exponential recidivist
+  bans (up to 4 weeks), bans enforced through UFW on all ports.
+* **Auditd forensics**: identity/sudoers/sshd/cron/docker/kernel-module/
+  time/mount/delete/perm-change watches, all `ausearch -k` tagged;
+  tamper-evident mode (`-e 2`) ready to enable once the set is final.
 * **Docker**: `no-new-privileges` daemon-wide, `live-restore`, log
   rotation (10 MB × 3), plus an audit of privileged containers,
   `docker.sock` mounts, and published ports.
 * **PostgreSQL**: exposure audit (must be loopback/internal only),
   `pg_hba` trust/ident scan, optional `ALTER SYSTEM` hardening
   (scram-sha-256, connection logging, slow-query log, ssl).
+* **Edge (NPM / Cloudflare)**: Cloudflare real-IP restoration (so bans
+  and logs see real clients), rate-limit zones + per-host activation,
+  security-header and TLS-1.2+ snippets for each proxy host, and a
+  named-tunnel config template to replace the Quick Tunnel.
+* **Schedules**: daily rkhunter scans, continuous SMART disk warnings,
+  weekly posture audit into `/var/log/hardening-audit.log`.
 * **Verification**: `audit_hardening.sh` scores all of the above plus UFW,
   fail2ban, crowdsec, auditd, rkhunter, updates, backups, NTP, admin-UI
   exposure and tunnel type. Exit code 1 on any FAIL → wire it into cron.
 
-Run order and safety notes are in `scripts/hardening/README.md`.
+Raw config templates live in `scripts/hardening/configs/` (install map in
+its README). Run order and safety notes are in `scripts/hardening/README.md`.
 
 ---
 

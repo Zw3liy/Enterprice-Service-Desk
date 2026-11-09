@@ -1,0 +1,34 @@
+// -------------------------------------------------------------------
+// Unattended upgrades — behaviour overrides for the Enterprise
+// Service Desk host. Installed by scripts/hardening/harden_updates.sh
+// to /etc/apt/apt.conf.d/51-enterprise-service-desk
+//
+// Deliberately does NOT redefine Unattended-Upgrade::Allowed-Origins:
+// the distro's own 50unattended-upgrades owns the security origins
+// list, and APT merges list values across files. This file only
+// tightens behaviour around them.
+// -------------------------------------------------------------------
+
+// Remove packages that are no longer needed after upgrades —
+// keeps the image surface small.
+Unattended-Upgrade::Remove-Unused-Dependencies "true";
+Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
+
+// NEVER reboot the host automatically. A service-desk outage must be
+// a human decision; a reboot-required notice is picked up by the
+// hardening audit instead.
+Unattended-Upgrade::Automatic-Reboot "false";
+Unattended-Upgrade::Automatic-Reboot-WithUsers "false";
+
+// Log to syslog (feeds log shipping / monitoring).
+Unattended-Upgrade::SyslogEnable "true";
+Unattended-Upgrade::SyslogLevel "info";
+
+// Mail on change/failure. Requires a local MTA (postfix/ssmtp) — if
+// none is configured these lines are harmless no-ops.
+Unattended-Upgrade::Mail "root";
+Unattended-Upgrade::MailReport "on-change";
+
+// Don't "upgrade" across a release boundary or onto metered links.
+Unattended-Upgrade::Skip-Updates-On-Metered-Connections "true";
+Unattended-Upgrade::MinimalSteps "true";

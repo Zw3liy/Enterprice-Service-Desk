@@ -86,7 +86,8 @@ X11Forwarding no
 
 # --- Crypto (modern-only suites; old clients may need these relaxed) -
 KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512
-Ciphers wendy@openssh.com,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
+Ciphers chacha20-poly1305@openssh.com,aes128-gcm@openssh.com,aes256-gcm@openssh.com
+MACs hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com
 CASignatureAlgorithms ssh-ed25519,rsa-sha2-512,rsa-sha2-256
 
 # --- Logging (feeds fail2ban / crowdsec / auditd) -------------------
@@ -110,6 +111,9 @@ fi
 
 # Validate BEFORE reloading — fail closed.
 step "Validating sshd configuration"
+# sshd -t needs the privilege-separation dir that the daemon's systemd
+# unit normally creates (RuntimeDirectory=sshd). Harmless if present.
+run mkdir -p /run/sshd
 if [[ "${DRY_RUN}" == "1" ]]; then
     log "DRY-RUN: would run: ${SSHD_BIN} -t"
 else
@@ -124,8 +128,13 @@ svc="$(service_name)"
 if [[ "${DRY_RUN}" == "1" ]]; then
     log "DRY-RUN: would run: systemctl reload ${svc}"
 else
-    systemctl reload "${svc}"
-    ok "Reloaded ${svc}. Existing SSH sessions are not disconnected."
+    if systemctl reload "${svc}"; then
+        ok "Reloaded ${svc}. Existing SSH sessions are not disconnected."
+    elif systemctl is-active --quiet "${svc}"; then
+        die "reload of ${svc} failed while it is active — investigate before closing this session."
+    else
+        warn "${svc} is not running on this host — config is validated and installed; it applies when the service starts."
+    fi
 fi
 
 step "Summary"

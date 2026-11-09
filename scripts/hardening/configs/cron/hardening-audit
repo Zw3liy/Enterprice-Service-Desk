@@ -1,0 +1,9 @@
+# /etc/cron.d/hardening-audit — weekly read-only posture audit.
+# Installed by scripts/hardening/harden_monitoring.sh, which replaces
+# @HARDENING_ROOT@ with the real path of this repository checkout.
+# Exit code 1 = at least one FAIL; the output lands in
+# /var/log/hardening-audit.log for review (and any log shipper).
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+17 4 * * 1 root test -x @HARDENING_ROOT@/scripts/hardening/audit_hardening.sh && @HARDENING_ROOT@/scripts/hardening/audit_hardening.sh --quick >> /var/log/hardening-audit.log 2>&1

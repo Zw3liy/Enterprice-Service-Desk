@@ -1,0 +1,67 @@
+# -------------------------------------------------------------------
+# Fail2Ban — hardened jail configuration for the Enterprise Service
+# Desk host. Installed by scripts/hardening/harden_fail2ban.sh to
+#   /etc/fail2ban/jail.d/90-enterprise-service-desk.local
+#
+# Verified against fail2ban 0.11+ (Ubuntu 22.04+/Debian 12):
+#   * banaction "ufw" (shipped upstream) blocks the offender's IP on
+#     ALL ports via `ufw prepend reject from <ip> to any` — fail2ban
+#     and UFW stay consistent, and a UFW reload never re-opens a ban.
+#   * backend = systemd reads journald directly (no auth.log needed).
+# -------------------------------------------------------------------
+
+[DEFAULT]
+banaction         = ufw
+banaction_allports = ufw
+backend           = systemd
+
+# Never ban your own management addresses — CUSTOMISE THIS.
+# Add the IP/subnet you administer the server from, e.g.:
+#   ignoreip = 127.0.0.1/8 ::1 196.x.x.x/32 10.0.0.0/24
+ignoreip = 127.0.0.1/8 ::1
+
+# Exponential recidivist bans: 1h, 2h, 4h ... capped at 4 weeks.
+bantime            = 1h
+bantime.increment  = true
+bantime.factor     = 2
+bantime.maxtime    = 4w
+findtime           = 10m
+maxretry           = 5
+
+# -------------------------------------------------------------------
+# SSH — the main internet-facing auth surface.
+# "aggressive" matches on protocol errors and handshakes too, not just
+# explicit "Failed password" lines (fail2ban 0.11+).
+# -------------------------------------------------------------------
+[sshd]
+enabled  = true
+mode     = aggressive
+port     = ssh
+maxretry = 3
+findtime = 10m
+bantime  = 24h
+
+# -------------------------------------------------------------------
+# recidive — anyone who trips ANY jail repeatedly earns a 4-week ban.
+# -------------------------------------------------------------------
+[recidive]
+enabled  = true
+logpath  = /var/log/fail2ban.log
+bantime  = 4w
+findtime = 1d
+maxretry = 3
+
+# -------------------------------------------------------------------
+# Nginx Proxy Manager admin/API auth failures.
+# The filter ships in filter.d/npm-auth.conf. Enable ONLY after
+# verifying against your real NPM log lines:
+#   fail2ban-regex /path/to/npm/access.log /etc/fail2ban/filter.d/npm-auth.conf
+# then uncomment and adjust logpath to your NPM log volume.
+# -------------------------------------------------------------------
+#[npm-auth]
+#enabled  = true
+#port     = http,https
+#logpath  = /data/logs/*.log
+#maxretry = 5
+#findtime = 10m
+#bantime  = 1h

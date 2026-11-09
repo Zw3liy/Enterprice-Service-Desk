@@ -1,0 +1,78 @@
+# -------------------------------------------------------------------
+# AuditD rules — identity, auth, and container-admin forensics.
+# Installed by scripts/hardening/harden_auditd.sh to
+#   /etc/audit/rules.d/90-enterprise-service-desk.rules
+# Load with:  augenrules --load     (or reboot)
+#
+# Every rule is tagged (-k) so findings are searchable:
+#   ausearch -k identity    | aureport --auth
+#   ausearch -k sshd -i
+#   ausearch -k docker -i
+# -------------------------------------------------------------------
+
+## Identity files — every change to users/roles/passwords.
+-w /etc/passwd -p wa -k identity
+-w /etc/group -p wa -k identity
+-w /etc/shadow -p wa -k identity
+-w /etc/gshadow -p wa -k identity
+-w /etc/security/opasswd -p wa -k identity
+
+## Sudoers — privilege-grant changes.
+-w /etc/sudoers -p wa -k sudoers
+-w /etc/sudoers.d/ -p wa -k sudoers
+
+## SSH configuration and host keys (config change = auth model change).
+-w /etc/ssh/sshd_config -p wa -k sshd
+-w /etc/ssh/sshd_config.d/ -p wa -k sshd
+-w /etc/ssh/ssh_host_ -p wa -k sshd_keys
+-w /root/.ssh/ -p wa -k ssh_keys
+
+## Login accounting.
+-w /var/log/lastlog -p wa -k logins
+-w /var/log/faillog -p wa -k logins
+
+## Cron — persistence mechanism.
+-w /etc/crontab -p wa -k cron
+-w /etc/cron.d/ -p wa -k cron
+-w /etc/cron.daily/ -p wa -k cron
+-w /var/spool/cron/ -p wa -k cron
+
+## Docker — container administration equals host root.
+-w /usr/bin/docker -p x -k docker
+-w /var/run/docker.sock -wa -k docker
+-w /etc/docker/ -p wa -k docker
+-w /etc/systemd/system/docker.service -p wa -k docker
+-w /lib/systemd/system/docker.service -p wa -k docker
+
+## Kernel module loading — rootkit installation surface.
+-w /sbin/insmod -p x -k modules
+-w /sbin/rmmod -p x -k modules
+-w /sbin/modprobe -p x -k modules
+-a always,exit -F arch=b64 -S init_module -S delete_module -k modules
+-a always,exit -F arch=b32 -S init_module -S delete_module -k modules
+
+## Time changes — log correlation depends on honest clocks.
+-a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time
+-a always,exit -F arch=b64 -S clock_settime -k time
+-w /etc/localtime -p wa -k time
+
+## Mounts — hiding data / mounting attacker filesystems.
+-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts
+
+## File deletions by interactive users (anti-forensics trail).
+-a always,exit -F arch=b64 -S unlink -S unlinkat -S rename -S renameat -F auid>=1000 -F auid!=4294967295 -k delete
+
+## Permission changes by interactive users.
+-a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid>=1000 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=1000 -F auid!=4294967295 -k perm_mod
+
+## Privilege escalation attempts.
+## NOTE: this execve/euid=0 rule is HIGH volume on some hosts. It is
+## left disabled on purpose — uncomment only if your audit pipeline
+## can absorb it.
+#-a always,exit -F arch=b64 -S execve -F euid=0 -F auid>=1000 -F auid!=4294967295 -k privilege_escalation
+
+## Make the ruleset tamper-evident: after the next reboot, rules can
+## only be changed with another reboot. Enable AFTER you are happy
+## with the ruleset above (iterate first!).
+##-e 2

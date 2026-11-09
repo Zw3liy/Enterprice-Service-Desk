@@ -1,0 +1,7 @@
+# /etc/cron.d/rkhunter — daily rootkit scan (warnings only, mailed to
+# root), then refresh the file-property database so tomorrow's run is
+# comparable. Installed by scripts/hardening/harden_monitoring.sh.
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+27 3 * * * root /usr/bin/rkhunter --cron --check --skip-keypress --report-warnings-only; /usr/bin/rkhunter --propupd >/dev/null 2>&1

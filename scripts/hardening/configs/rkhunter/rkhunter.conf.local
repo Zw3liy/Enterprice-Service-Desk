@@ -1,0 +1,27 @@
+# -------------------------------------------------------------------
+# rkhunter — policy overrides. Installed by scripts/hardening/
+# harden_monitoring.sh to /etc/rkhunter.conf.local
+# (rkhunter reads /etc/rkhunter.conf first, then this file — never
+# edit the main config; it is replaced by package upgrades.)
+# -------------------------------------------------------------------
+
+# Refresh the file-property database from the distro mirror list.
+UPDATE_MIRRORS=1
+MIRRORS_MODE=0
+
+# Verify against the package manager (dpkg on this host).
+PKGMGR=DPKG
+
+# This box has key-only SSH — root login must stay a finding.
+ALLOW_SSH_ROOT_USER=no
+
+# Don't fetch anything over the network during checks (egress-tight
+# hosts and supply-chain hygiene both win). Mirror updates then need
+# `rkhunter --update` run manually/on a schedule with net access.
+WEB_CMD=""
+
+# Serialize runs (cron + manual can overlap).
+USE_LOCKING=1
+
+# Mail warnings to root (needs a local MTA for delivery).
+MAIL-ON-WARNING=root
