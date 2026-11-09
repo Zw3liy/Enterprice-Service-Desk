@@ -1,4 +1,4 @@
-﻿# Production Deployment
+# Production Deployment
 
 ## Required infrastructure
 
@@ -9,6 +9,11 @@
 - Centralized application logs and uptime monitoring
 - Scheduled execution of `python manage.py process_sla`
 - Encrypted database and media backups
+
+For hardening the host that runs this stack (SSH, kernel, Docker,
+PostgreSQL exposure, firewall, admin UIs, tunnel) and for the posture
+audit that proves it — see `docs/operations/SERVER_HARDENING.md` and
+`scripts/hardening/`.
 
 ## Release procedure
 

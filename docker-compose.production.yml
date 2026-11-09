@@ -1,0 +1,53 @@
+# -------------------------------------------------------------------
+# Hardened production override for the Enterprise Service Desk stack.
+#
+# Usage:
+#   docker compose -f compose.yaml -f docker-compose.production.yml up -d
+#
+# What this adds over compose.yaml:
+#   * web is published on 127.0.0.1 ONLY — with the Cloudflare tunnel
+#     running on this host, nothing needs a host-public :8000. (Note the
+#     classic Docker/UFW gotcha: published ports bypass UFW, so binding
+#     to loopback is the only reliable way to keep a port private.)
+#   * PostgreSQL runs with scram-sha-256 and connection/statement
+#     logging. No 5432 published at all — the web container reaches it
+#     over the internal compose network.
+#   * Memory / CPU / PID limits on both services.
+#
+# Reverse proxy note (Nginx Proxy Manager in a container):
+#   127.0.0.1 is the HOST loopback and is not reachable from another
+#   container. Either:
+#     a) attach NPM to the service-desk compose network and proxy to
+#        http://web:8000  (preferred):
+#          docker network connect enterprice-service-desk_default <npm-container>
+#        (network name = <project>_default; check with `docker network ls`)
+#     b) or run NPM on the host network.
+#
+# NOTE: `ports: !override` requires Docker Compose v2.24+ (without the
+# tag, compose MERGES port lists and you would end up with both bindings).
+# -------------------------------------------------------------------
+
+services:
+  db:
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+    command:
+      - postgres
+      - -c
+      - password_encryption=scram-sha-256
+      - -c
+      - log_connections=on
+      - -c
+      - log_disconnections=on
+      - -c
+      - log_min_duration_statement=1000
+    mem_limit: 1g
+    cpus: 1.0
+    pids_limit: 512
+
+  web:
+    ports: !override
+      - "127.0.0.1:8000:8000"
+    mem_limit: 1g
+    cpus: 1.0
+    pids_limit: 256

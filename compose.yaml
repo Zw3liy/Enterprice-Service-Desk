@@ -1,4 +1,4 @@
-﻿services:
+services:
   db:
     image: postgres:16-alpine
     environment:
@@ -14,6 +14,12 @@
       retries: 10
     volumes:
       - service_desk_postgres:/var/lib/postgresql/data
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 512
+    tmpfs:
+      - /tmp
+    restart: unless-stopped
 
   web:
     build:
@@ -60,6 +66,14 @@
       retries: 10
     volumes:
       - service_desk_media:/app/media
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 256
+    tmpfs:
+      - /tmp
+    restart: unless-stopped
 
 volumes:
   service_desk_postgres:
